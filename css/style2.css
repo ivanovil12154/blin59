@@ -1,0 +1,271 @@
+
+@font-face {
+    font-family: JuraLight; /* Имя шрифта */
+    src: url(../img/20783.ttf); 
+}
+
+body {
+    background-image: url(../img/fon0.jpg);  
+    background-size: 100%;
+}
+/* голова */
+.header {
+    background-color: #6d4c41;
+    opacity: 0.85;
+    height: 80px;  
+    width: 100%;
+    margin: 0%;
+}
+/* заголовок головы */
+.heading_header{
+    margin-top: 0%;
+    padding-left: 35%;
+    padding-top: 10px;
+    font-family: JuraLight;
+    font-size: 36px;
+    color: #9e9e9e;
+}
+
+#key_komp_admin {
+    position: absolute;
+    top: 20%;
+    left: 20%;
+    background-color: #3d2c27;
+    opacity: 0.85;
+    text-decoration: none;
+    font-family: JuraLight;
+    font-size: 32px;
+    color: #efebe9;
+    width: 150px;
+    padding:10px 60px 10px 10px;
+}
+#key_client_admin {
+    position: absolute;
+    top: 30%;
+    left: 20%;
+    background-color: #3d2c27;
+    opacity: 0.85;
+    text-decoration: none;
+    font-family: JuraLight;
+    font-size: 32px;
+    color: #efebe9;
+    width: 150px;
+    padding:10px 60px 10px 10px;
+}
+#key_staff_admin {
+    position: absolute;
+    top: 40%;
+    left: 20%;
+    background-color: #3d2c27;
+    opacity: 0.85;
+    text-decoration: none;
+    font-family: JuraLight;
+    font-size: 32px;
+    color: #efebe9;
+    width: 150px;
+    padding:10px 60px 10px 10px;
+}
+#key_product_admin{
+    position: absolute;
+    top: 20%;
+    left: 40%;
+    background-color: #3d2c27;
+    opacity: 0.85;
+    text-decoration: none;
+    font-family: JuraLight;
+    font-size: 32px;
+    color: #efebe9;
+    width: 150px;
+    padding:10px 60px 10px 10px;
+}
+#key_positions_admin{
+    position: absolute;
+    top: 30%;
+    left: 40%;
+    background-color: #3d2c27;
+    opacity: 0.85;
+    text-decoration: none;
+    font-family: JuraLight;
+    font-size: 32px;
+    color: #efebe9;
+    width: 150px;
+    padding:10px 60px 10px 10px; 
+}
+#key_order_admin{
+    position: absolute;
+    top: 40%;
+    left: 40%;
+    background-color: #3d2c27;
+    opacity: 0.85;
+    text-decoration: none;
+    font-family: JuraLight;
+    font-size: 32px;
+    color: #efebe9;
+    width: 150px;
+    padding:10px 60px 10px 10px; 
+}
+ /* кнопка статистики нет у админа */
+#key_stat_admin{    
+    visibility: hidden; 
+}
+#key_output_admin{
+    position: absolute;
+    top: 3%; 
+    left: 89%;
+    text-decoration: none;
+    font-family: JuraLight;
+    font-size: 26px;
+    color: #efebe9;
+}
+/* Кнопки для директора*/
+#key_komp_boss {
+    position: absolute;
+    top: 20%;
+    left: 20%;
+    background-color: #3d2c27;
+    opacity: 0.85;
+    text-decoration: none;
+    font-family: JuraLight;
+    font-size: 32px;
+    color: #efebe9;
+    width: 150px;
+    padding:10px 60px 10px 10px;
+}
+#key_client_boss {
+    position: absolute;
+    top: 30%;
+    left: 20%;
+    background-color: #3d2c27;
+    opacity: 0.85;
+    text-decoration: none;
+    font-family: JuraLight;
+    font-size: 32px;
+    color: #efebe9;
+    width: 150px;
+    padding:10px 60px 10px 10px;
+}
+#key_staff_boss {
+    position: absolute;
+    top: 40%;
+    left: 20%;
+    background-color: #3d2c27;
+    opacity: 0.85;
+    text-decoration: none;
+    font-family: JuraLight;
+    font-size: 32px;
+    color: #efebe9;
+    width: 150px;
+    padding:10px 60px 10px 10px;
+}
+#key_product_boss{
+    position: absolute;
+    top: 20%;
+    left: 40%;
+    background-color: #3d2c27;
+    opacity: 0.85;
+    text-decoration: none;
+    font-family: JuraLight;
+    font-size: 32px;
+    color: #efebe9;
+    width: 150px;
+    padding:10px 60px 10px 10px;
+}
+#key_positions_boss{
+    position: absolute;
+    top: 30%;
+    left: 40%;
+    background-color: #3d2c27;
+    opacity: 0.85;
+    text-decoration: none;
+    font-family: JuraLight;
+    font-size: 32px;
+    color: #efebe9;
+    width: 150px;
+    padding:10px 60px 10px 10px; 
+}
+#key_order_boss{
+    position: absolute;
+    top: 40%;
+    left: 40%;
+    background-color: #3d2c27;
+    opacity: 0.85;
+    text-decoration: none;
+    font-family: JuraLight;
+    font-size: 32px;
+    color: #efebe9;
+    width: 150px;
+    padding:10px 60px 10px 10px; 
+}
+#key_stat_boss{
+    position: absolute;
+    top: 50%;
+    left: 30%;
+    background-color: #3d2c27;
+    opacity: 0.85;
+    text-decoration: none;
+    font-family: JuraLight;
+    font-size: 32px;
+    color: #efebe9;
+    width: 150px;
+    padding:10px 60px 10px 10px; 
+}
+#key_output_boss{
+    position: absolute;
+    top: 3%; 
+    left: 89%;
+    text-decoration: none;
+    font-family: JuraLight;
+    font-size: 26px;
+    color: #efebe9;
+}
+/* кнопки для бариста */
+#key_komp_BARIST {
+    visibility: hidden; 
+}
+#key_client_BARIST {
+    position: absolute;
+    top: 30%;
+    left: 20%;
+    background-color: #3d2c27;
+    opacity: 0.85;
+    text-decoration: none;
+    font-family: JuraLight;
+    font-size: 32px;
+    color: #efebe9;
+    width: 150px;
+    padding:10px 60px 10px 10px;
+}
+#key_staff_BARIST {
+    visibility: hidden; 
+}
+#key_product_BARIST{
+    visibility: hidden; 
+}
+#key_positions_BARIST{
+    visibility: hidden; 
+}
+#key_order_BARIST{
+    position: absolute;
+    top: 30%;
+    left: 40%;
+    background-color: #3d2c27;
+    opacity: 0.85;
+    text-decoration: none;
+    font-family: JuraLight;
+    font-size: 32px;
+    color: #efebe9;
+    width: 150px;
+    padding:10px 60px 10px 10px; 
+}
+#key_stat_BARIST{
+    visibility: hidden; 
+}
+#key_output_BARIST{
+    position: absolute;
+    top: 3%; 
+    left: 89%;
+    text-decoration: none;
+    font-family: JuraLight;
+    font-size: 26px;
+    color: #efebe9;
+}

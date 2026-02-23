@@ -1,0 +1,39 @@
+H2 {
+   text-align: center
+}
+body {
+    background-image: url(../img/obl.jpg);  /* Путь к фоновому изображению */
+}
+.logo{
+    display: flex;
+}
+.btn{
+    display: flex; 
+    margin-left:250px;
+    margin-bottom:30px;
+}
+
+.button{
+  border-radius: 20px;
+  border: 20px solid #383737;
+  font-size: 18px;
+  line-height: 13px;
+  color: #383737;
+  font-family: "Gilroy";
+  padding: 20px 80px;
+}
+
+#idmain {
+   background-image: url(../img/mram.jpg);  /* Путь к фоновому изображению */
+   position: absolute;
+/*   margin: auto;*/
+   margin-left:auto;
+   margin-right:auto;
+   top: 50% ;
+   left: 20em ;
+   border: 2px solid #383737;
+   padding: 2em;   
+}
+#footer {
+   clear: both;
+}
