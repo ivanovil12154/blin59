@@ -3,20 +3,61 @@
     echo ("ErrorP");
     exit;
   }else{ 
-    echo ("Ok");
+  //  echo ("OK" . $_POST['VLogin']);
 //    $resultaut = 'Ok - POST12';     
   };
-  exit;
+
+  try {
   
+    require "../phpmain.php";    
   /*
-  require "../phpmain.php";    
   $IDUser = 0;
   if (DeCodeIDUser($_POST['VIDUser'], $IDUser)==false){
     echo ('ErrorC');
     exit;
   };
   $NewLogin = filter_var(trim($_POST['VNewLogin']),FILTER_SANITIZE_STRING); 
-  $mysql = ConnBD();
+*/
+    $mysql = ConnBD();
+
+    $VLogin = $_POST['VLogin'];
+    $VPassword = $_POST['VPassword'];
+
+    $SRes = $SRes . ' Login - ' . $VLogin . PHP_EOL; 
+    $SRes = $SRes . ' Password - ' . $VPassword . PHP_EOL; 
+
+    $query = 'SELECT f_name FROM user  WHERE f_login = "' . $VLogin . '"';
+
+    $SRes = $SRes . 'query - ' . $query;
+
+//    $query = 'SELECT f_name FROM user';
+
+    
+
+    $res = mysqli_query($mysql, $query);
+
+    $rows = mysqli_num_rows($res); // количество полученных строк
+
+    if ($rows > 0){
+      $SRes = $SRes . 'Row > 0 ' . (string)$rows;  
+    } else {
+      $SRes = $SRes . 'Row = 0';  
+    };
+
+    $row = mysqli_fetch_assoc($res);
+    $SRes = $SRes . $row['f_name'];
+
+    echo  $SRes;
+  } catch (Exception $e) {
+    echo 'PHP перехватил исключение: ',  $e->getMessage(), "\n";
+  }finally {
+    mysqli_close($mysql);
+    echo 'OK DB ' . $SRes;    
+  }   
+
+  
+
+/*  
 
   $SRes = fTestLogin($mysql, $NewLogin);
 

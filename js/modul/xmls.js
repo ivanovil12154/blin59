@@ -22,7 +22,7 @@ function SendData(addurl, fdata, func, fparam, fune) {
         func(xhr.response, fparam);  
 			};
     }
-  };
+  }; 
   xhr.onerror = function () {
 		divfon.remove();
     alert(`Ошибка соединения`);
@@ -60,4 +60,14 @@ function GetFon(){
 	let vbody = document.querySelector('body');
 	vbody.prepend(divfon);
 	return  divfon;
+}
+
+async function sha256(message) {
+  // Кодируем строку в Uint8Array
+  const msgBuffer = new TextEncoder().encode(message);
+  // Хешируем
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  // Преобразуем в шестнадцатеричную строку
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
