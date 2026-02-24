@@ -26,13 +26,15 @@
   ///////////////////////////////////////////////////
   /////    Проверка логина и пароля
   ///////////////////////////////////////////////////
+
   function QueryCheckUser($mysql, $vlogin, $vpassword, &$vID, &$vName, &$vStatus){
-    $P = md5($vpassword);
+    //$P = md5($vpassword);
+    $P = $vpassword;
     $query = "SELECT IDUser, UserLogin, UserPassword, UserNameS, UserStatus";
-    $query .= " FROM  bdschool.TUser ";
+    $query .= " FROM  u198290_blin.TUser ";
     $query .= " WHERE UserLogin='".$vlogin."'";
 //    $query .= " and UserPassword='".$vpassword."'";
-    $query .= " and UserPass='".$P."'";
+    $query .= " and UserPassword='".$P."'";
     $query .= " and UserEnabled='Y'";
     $res = mysqli_query($mysql, $query);
     $rows = mysqli_num_rows($res); // количество полученных строк
@@ -40,7 +42,8 @@
       return false;
     } else {
       $row = mysqli_fetch_assoc($res);
-      $vID = CodeIDUser($row['IDUser']);
+//      $vID = CodeIDUser($row['IDUser']);
+      $vID = $row['IDUser'];
       $vName = $row['UserNameS'];
       $vStatus = $row['UserStatus'];
       return true;

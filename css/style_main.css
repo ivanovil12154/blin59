@@ -23,6 +23,19 @@ body {
   min-height: 200px; 
 }
 
+.main_left{
+  display: inline-block;
+  padding: 20px; 
+  width: 200px;
+}
+
+.main_right{
+  display: inline-block;
+  padding: 20px; 
+  width: 200px;
+}
+
+
 .footer { 
   /*background-color: #ccc; */
   padding: 20px; 

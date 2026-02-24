@@ -16,6 +16,12 @@
     </div>
 </div>
 <div class="main">
+    <div class="main_left">
+        Left
+    </div>
+    <div class="main_right">
+        right
+    </div>
 </div>
 <div class="footer"></div>
 </body>    
