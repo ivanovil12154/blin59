@@ -1,4 +1,9 @@
-function WM_IdentonKeySend(){
+function work_getmslist(){
+//   alert ('Введите логин');
+   
+
+/*
+
   let ElemLogin = WMIdent.querySelector('#WMIKS_LoginText');
   let ElemPassword = WMIdent.querySelector('#WMIKS_PasswordText');
 
@@ -16,25 +21,28 @@ function WM_IdentonKeySend(){
 		alert('Введите пароль');
 		return;
 	};
+    */
 
 	let LFormDate = new FormData;
-	LFormDate.append('VLogin', TextLogin);
-	LFormDate.append('VPassword', TextPassword);
+	LFormDate.append('VID', LIDUser);
      
-  SendData('fphp/ident/GetIdent.php', LFormDate, FunNLOK, TextLogin, FunNLError);
+  SendData('../fphp/work/GetMsList.php', LFormDate, FunNLOK, '', FunNLError);
 };
 
 function FunNLOK(str, param){
 
+    alert ('Удача - ' + str); 
+/*
+
 	const arr = JSON.parse(str);
 	if (arr.res == "OK") {
-//      alert ('Удача - ' + arr.name); 
+      alert ('Удача - ' + arr.name); 
 	  document.location.href = '../workfol/workindex.php';
 
 	} else if (arr.res == "ErrorLogin") {
 		alert ("Ошибка, логин или пароль не найдены");
 	}
-
+*/
 
 /*
 	if (str == 'LClose'){

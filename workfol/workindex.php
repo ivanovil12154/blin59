@@ -12,9 +12,7 @@
 <body>
 <?php
   $UserName = 'Bdf';
-
   require "../fphp/phpmain.php";    
-
 //  require "../fphp/AdminBDMainFun.php";    
   $mysql = ConnBD();
 
@@ -24,9 +22,7 @@
   $_SESSION['stwork'] = 'adminbd';
   session_write_close(); 
   echo ("<script> let LIDUser=".$IDUser."; let LUserName='".$UserName."' </script>");
-
  ?>
-
 
 <div class="header">
     <?php
@@ -38,17 +34,17 @@
 </div>
 <div class="wmain">
     <div class="wmain_left">
-        <div class="custom-button" role="button" tabindex="0" onclick="document.location.href = 'ident.php'">
-            Список проверки 
+        <div class="custom-button" role="button" tabindex="0" onclick="work_getmslist()">
+            Список необходмых прививок
         </div>
-        <div class="custom-button" role="button" tabindex="0" onclick="document.location.href = 'ident.php'">
-            Список проверки 
+        <div class="custom-button" role="button" tabindex="1" onclick="work_getmslist()">
+            Добавить прививку
         </div>
-        <div class="custom-button" role="button" tabindex="0" onclick="document.location.href = 'ident.php'">
-            Список проверки 
+        <div class="custom-button" role="button" tabindex="1" onclick="document.location.href = 'ident.php'">
+            ------------
         </div>
-        <div class="custom-button" role="button" tabindex="0" onclick="document.location.href = 'ident.php'">
-            Список проверки 
+        <div class="custom-button" role="button" tabindex="1" onclick="document.location.href = 'ident.php'">
+            -------------
         </div>
 
     </div>
@@ -57,5 +53,9 @@
     </div>
 </div>
 <div class="footer"></div>
+
+<script src="../js/work_index.js"></script>
+<script src="../js/modul/xmls.js"></script>
+
 </body>    
 </html>
