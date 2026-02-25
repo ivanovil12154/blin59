@@ -1,18 +1,17 @@
 <?php
+    sleep(6);
+
   if ($_SERVER['REQUEST_METHOD'] <> 'POST') {
     echo ("ErrorP");
     exit;
-  }else{ 
-//    echo ("OK" . $_POST['VLogin']);
-//    $resultaut = 'Ok - POST12';     
   };
 
-  
+  $mysql = null;
 
   try {
- 
     require "../phpmain.php";    
   
+    $mysql = ConnBD();
   
     /*
   $IDUser = 0;
@@ -23,21 +22,24 @@
   $NewLogin = filter_var(trim($_POST['VNewLogin']),FILTER_SANITIZE_STRING); 
 */
 
-    $mysql = ConnBD();
 
     $VLogin = $_POST['VLogin'];
     $VPassword = $_POST['VPassword'];
 
-    
-      $arr = array(
-          "res" => "ErrorLogin",
-          "idr" => '',
-          "name" => '',
-          "status" => '');
-
-
     if (QueryCheckUser($mysql, $VLogin, $VPassword, $vID,  $vName,  $vStatus)){
-//    if (QueryCheckUser($mysql)){
+
+      session_start();
+
+      $_SESSION['idusert'] = $vID; 
+      $_SESSION['username'] = $vName;
+      $_SESSION['userstatus'] = $vStatus;
+      
+      $_SESSION['ua'] = $_SERVER['HTTP_USER_AGENT'];
+      $_SESSION['ra'] = $_SERVER['REMOTE_ADDR'];
+      $_SESSION['ff'] = $_SERVER['HTTP_X_FORWARDED_FOR'];
+
+      session_write_close(); 
+
       $arr = array(
           "res" => "OK",
           "idr" => $vID,
@@ -50,15 +52,11 @@
           "name" => '',
           "status" => '',);
     };
-
-
     echo json_encode($arr);
-  //  echo ('adfasdf');
-
   } catch (Exception $e) {
     echo 'Error, PHP перехватил исключение: ',  $e->getMessage(), "\n";
   }finally {
-//    mysqli_close($mysql);
+    mysqli_close($mysql);
   };   
 
 

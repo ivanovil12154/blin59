@@ -2,10 +2,6 @@ let divfon = null;
 
 let xhr = null;
 
-function prov(){
-  alert(`Проверка`);
-};
-
 function SendData(addurl, fdata, func, fparam, fune) {
 	divfon = GetFon();
   xhr = new XMLHttpRequest();
@@ -54,7 +50,7 @@ function GetFon(){
 	divfon.innerHTML = 'Загрузка';
 	let key = document.createElement('input');
 	key.type = 'button';
-	key.onclick = breakload;
+	key.onclick = "breakload()";
 	key.value = 'Прервать';
 	divfon.append(key);
 	let vbody = document.querySelector('body');

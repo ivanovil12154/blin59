@@ -1,0 +1,87 @@
+.FonLoadWin {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(128, 0, 0, 0.644); /* Black w/ opacity */
+}
+
+
+/*
+////////////  ╨ñ╨╛╨╜ ╨┤╨╗╤Å ╨╝╨╛╨┤╨░╨╗╤î╨╜╤ï╨╣ ╨╛╨║╨╜
+*/
+.FonModalWin {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+
+/*         ╨₧╤ü╨╜╨╛╨▓╨╜╨╛╨╡ ╨╝╨╛╨┤╨░╨╗╤î╨╜╨╛╨╡ ╨╛╨║╨╜╨╛     */
+.CLSWMMain {
+  display: none; /* Hidden by default */
+  position: relative;
+  background-color: #ffffff;
+  margin: auto;
+  padding: 0;
+  border: 2px solid #c5c4c4;
+  width: 400px;
+  /*  height: 330px;   */
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s;
+}
+
+@-webkit-keyframes animatetop {
+  from {
+    top: -300px;
+    opacity: 0;
+  }
+  to {
+    top: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes animatetop {
+  from {
+    top: -300px;
+    opacity: 0;
+  }
+  to {
+    top: 0;
+    opacity: 1;
+  }
+}
+
+.KeyCloseModal {
+  color: rgb(33, 71, 7);
+  float: right;
+  margin-right: 20px;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.KeyCloseModal:hover,
+.KeyCloseModal:focus {
+  color: rgb(235, 1, 1);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 2px 16px;
+}

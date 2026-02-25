@@ -1,0 +1,71 @@
+body {
+  background-color: rgb(51, 51, 32);  
+  background-image: url(../img/fon_work.jpg);
+  background-repeat: no-repeat;
+  background-position: center;   /* Центрирует картинку */
+  background-attachment: fixed;  /* Фиксирует фон при прокрутке */
+  background-size: cover;        /* Растягивает картинку на весь экран */
+  /*background-size: 100%;  /**/
+}
+
+.wmain { 
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;  
+  align-items: stretch;  
+  align-content: stretch;
+
+  width: 100%;  
+  min-height: 400px; 
+  padding: 20px; 
+}
+
+.wmain_left{
+/*  display: inline-block;*/
+  display: flex;
+  flex-direction: column;
+  margin: 5px;
+  padding: 20px; 
+  width: 290px; 
+  flex-grow: 0;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #96bdcf;
+  border-radius: 5px;  
+}
+
+.wmain_right{
+/*  display: inline-block;*/
+  margin: 5px;
+  padding: 20px; 
+  width: 200px;
+  flex-grow: 1;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #96bdcf;
+  border-radius: 5px;  
+}
+
+/*****************************************************/
+.custom-button {
+/*  display: inline-block;*/
+  padding: 10px;
+  margin: 5px;
+  width: 250px;
+  background-color: #030171;
+  color: #fcf268;
+  border-radius: 5px;
+  cursor: pointer; /* Делает курсор в виде руки */
+  user-select: none; /* Запрещает выделение текста */
+  transition: background 0.3s;
+  opacity: 0.8; 
+}
+.custom-button:hover {
+  background-color: #0056b3; /* Эффект при наведении */
+}
+.custom-button:active {
+  transform: translateY(1px); /* Эффект нажатия */
+}
+/*****************************************************/
+

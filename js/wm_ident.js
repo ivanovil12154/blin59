@@ -26,7 +26,16 @@ function WM_IdentonKeySend(){
 
 function FunNLOK(str, param){
 
-    alert (str);
+	const arr = JSON.parse(str);
+	if (arr.res == "OK") {
+      alert ('Удача - ' + arr.name); 
+	  document.location.href = '../workfol/workindex.php';
+
+	} else if (arr.res == "ErrorLogin") {
+		alert ("Ошибка, логин или пароль не найдены");
+	}
+
+
 /*
 	if (str == 'LClose'){
 		alert ('Логин занят')
