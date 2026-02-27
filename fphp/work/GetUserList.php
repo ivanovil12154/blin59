@@ -1,6 +1,4 @@
 <?php
-//    sleep(6);
-
   if ($_SERVER['REQUEST_METHOD'] <> 'POST') {
     echo ("ErrorP");
     exit;
@@ -12,19 +10,38 @@
     require "../phpmain.php";    
   
     $mysql = ConnBD();
-  
-    /*
-  $IDUser = 0;
-  if (DeCodeIDUser($_POST['VIDUser'], $IDUser)==false){
-    echo ('ErrorC');
-    exit;
-  };
-  $NewLogin = filter_var(trim($_POST['VNewLogin']),FILTER_SANITIZE_STRING); 
-*/
+
+    $VID = $_POST['VID'];
 
 
-    $VLogin = $_POST['VLogin'];
-    $VPassword = $_POST['VPassword'];
+    $query = 'select 
+	TUser.IDUser, 
+	TUser.UserNameS, 
+	TProfession.ProfName, 
+	TOffice.OfName 
+from 
+	TUser 
+	left outer join TProfession on TUser.UserProfID = TProfession.IDProf 
+	left outer join TOffice on TUser.UserOfficeID = TOffice.IDOffice 
+order by 
+	TOffice.OfName, 
+	TUser.UserNameS';
+
+    $res = mysqli_query($mysql, $query);
+    $rows = mysqli_num_rows($res); // количество полученных строк
+    if ($rows < 1){
+      $rows = ["OK", 0];
+
+
+    } else {
+      $rows = [["OK", $rows]];
+      while ($row = mysqli_fetch_array($res, MYSQLI_NUM)) {
+        array_push($rows, $row);
+      };
+    };
+    echo json_encode($rows);
+
+/*
 
     if (QueryCheckUser($mysql, $VLogin, $VPassword, $vID,  $vName,  $vStatus)){
 
@@ -53,6 +70,7 @@
           "status" => '',);
     };
     echo json_encode($arr);
+    */
   } catch (Exception $e) {
     echo 'Error, PHP перехватил исключение: ',  $e->getMessage(), "\n";
   }finally {

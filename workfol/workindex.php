@@ -34,6 +34,10 @@
 </div>
 <div class="wmain">
     <div class="wmain_left">
+        <div class="custom-button" role="button" tabindex="0"  onclick="document.location.href = 'work_user_sp.php'">
+            Список персонала
+        </div>
+
         <div class="custom-button" role="button" tabindex="0" onclick="work_getmslist()">
             Список необходмых прививок
         </div>

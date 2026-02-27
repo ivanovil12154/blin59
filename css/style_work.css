@@ -68,4 +68,45 @@ body {
   transform: translateY(1px); /* Эффект нажатия */
 }
 /*****************************************************/
+/******************  GRID*/
+.wmain_grid {
+  display: grid;
+  grid-template-columns: 2fr 2fr 2fr;
+
+  border: 2px solid rgb(80, 145, 27);
+  border-radius: 5px;
+
+}
+.wmain_grid * {
+    border: 1px solid; 
+    border-radius: 0px; /* Скругляем углы на 10 пикселей */
+    background-color: rgba(9 34 163, 0.5); /* Фон красим фиолетовым */
+    text-align: center; /* Контент размещаем в центре по горизонтали */
+    height: 30px;
+}
+
+.grid_row_0 {
+  align-self: stretch;
+  /*align-self: center;*/
+  justify-self: stretch;
+  /*justify-self: center;*/
+  background-color: rgb(9 34 163); /* Фон красим фиолетовым */
+  color:rgb(190, 190, 118);
+
+}
+
+.grid_row {
+  align-self: stretch;
+  /*align-self: center;*/
+  justify-self: stretch;
+  /*justify-self: center;*/
+  /*justify-self: start;*/
+  background-color: rgb(236 239 205); 
+  color:rgb(12, 3, 88);
+
+}
+
+
+
+
 

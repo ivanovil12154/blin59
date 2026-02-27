@@ -1,13 +1,55 @@
-function work_getuserlist1(){
+
+let win_user_list = document.querySelector("#user_list");
+let win_user_edit = document.querySelector("#user_edit");
+
+win_user_list.classList.remove('delete');
+win_user_edit.classList.add('delete');
+
+work_getuserlist();
+
+
+//////////////////////////////////////////////////////////////////////////
+function work_useredit(){
+    win_user_list.classList.add('delete');
+    win_user_edit.classList.remove('delete');
+};
+
+//////////////////////////////////////////////////////////////////////////
+function work_getuserlist(){
+//    alert ('запуск - '); 
+
+//   win_user_list.classList.add('delete');
+//   win_user_edit.classList.remove('delete');
+
+
 	let LFormDate = new FormData;
 	LFormDate.append('VID', LIDUser);
      
-    SendData('../fphp/work/GetUserList.php', LFormDate, FunGUOK, '', FunGUError);
+    SendData('../fphp/work/GetUserList.php', LFormDate, FOK_GetUserList, '', FERR_GetUserList);
 };	
 
-function FunGUOK1(str, param){
+function FOK_GetUserList(str, param){
+  	const arr = JSON.parse(str);
+    if (arr[0][0] != "OK"){
+      alert ('Oшибка - ' + arr[0][1]);     
+      exit;
+    };
+    alert ('Удача, кол-во записей - ' + arr[0][1]);     
 
-    alert ('Удача - ' + str); 
+    let cr = arr.length;
+    if (cr > 1){
+      for (let r = 1; r < arr.length; r++) {
+        let rr = arr[r].length;  
+        for (let c = 1; c < arr[r].length; c++ ) {
+          let elem = document.createElement('div');
+          elem.className = 'grid_row';
+          elem.innerHTML = arr[r][c];
+          let divspis =  document.querySelector("#grid_user_list");
+          divspis.append(elem);
+        };  
+      };
+    };
+    
 /*
 
 	const arr = JSON.parse(str);
@@ -38,7 +80,7 @@ function FunGUOK1(str, param){
     */
 }
 
-function FunGUError1(str, param){
+function FERR_GetUserList(str, param){
 	alert ('Ошибка')
 	return;
 };
@@ -48,7 +90,7 @@ function FunGUError1(str, param){
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
-function work_getmslist1(){
+function work_getmslist(){
 //   alert ('Введите логин');
    
 
@@ -79,7 +121,7 @@ function work_getmslist1(){
   SendData('../fphp/work/GetMsList.php', LFormDate, FunNLOK, '', FunNLError);
 };
 
-function FunNLOK1(str, param){
+function FunNLOK(str, param){
 
     alert ('Удача - ' + str); 
 /*
@@ -112,7 +154,7 @@ function FunNLOK1(str, param){
     */
 }
 
-function FunNLError1(str, param){
+function FunNLError(str, param){
 	alert ('Ошибка')
 	return;
 };
