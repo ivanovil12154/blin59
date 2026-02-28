@@ -105,6 +105,46 @@ body {
   color:rgb(12, 3, 88);
 
 }
+/****************************************/
+.grid {
+	display: table;	
+	width: 100%;
+	/*border-width: 2px;*/
+	/*border-collapse: separate;
+	border-spacing: 5px;*/
+}
+.grid-tr-0 {
+	 display: table-row;
+   height: 30px;
+  background-color:rgb(48 46 135);
+  color:#fdfa1f;
+  text-align: center;
+
+}
+.grid-tr {
+   height: 25px;
+	 display: table-row;
+   background-color:#e7e7cb;
+   color:rgb(25, 0, 255); 
+}
+
+.grid-td {
+	display: table-cell;	
+	width: 33.3%;
+	vertical-align: center;
+	padding: 5px;
+  border: 1px solid; 
+  border-color: black;
+/*  background-color: rgb(236 239 205); 
+  color:rgb(12, 3, 88);
+  */
+
+
+
+
+}
+
+
 
 
 

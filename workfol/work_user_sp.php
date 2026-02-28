@@ -46,6 +46,7 @@
         </div>
     </div>
     <div class="wmain_right">
+<!--*******************   User List **********************     -->        
         <div id="user_list">
             <div class="wmain_zag">
                 Список персонала
@@ -53,9 +54,40 @@
             <div class="wmain_grid" id = "grid_user_list">
                 <div class="grid_row_0">Фамили И.О.</div>
                 <div class="grid_row_0">Должность</div>
-                <div class="grid_row_0" >Мето работы</div>
+                <div class="grid_row_0">Мето работы</div>
             </div>
         </div>
+
+<!--*******************   User List **********************     -->        
+<div id = "user_list1">
+  <div class="grid" id="user_list1_gird">
+	<div class="grid-tr-0">
+		<div class="grid-td">
+			<div class="item">Фамили И.О.</div>
+		</div>
+		<div class="grid-td">
+			<div class="item">Должность</div>
+		</div>
+		<div class="grid-td">
+			<div class="item">Мето работы</div>
+		</div>
+	</div>
+	<div class="grid-tr">
+		<div class="grid-td">
+			<div class="item">Блок №4</div>
+		</div>
+		<div class="grid-td">
+			<div class="item">Блок №5</div>
+		</div>
+		<div class="grid-td">
+			<div class="item">Блок №6</div>
+		</div>
+	</div>
+  </div>
+</div>  
+<!--*******************   User List **********************     -->        
+
+        <!--        User List      -->        
 
         <div id=user_edit>
             <div class="wmain_zag">

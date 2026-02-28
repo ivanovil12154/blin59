@@ -1,5 +1,7 @@
 
 let win_user_list = document.querySelector("#user_list");
+let win_user_list1 = document.querySelector("#user_list1");
+let win_user_list1_grid = document.querySelector("#user_list1_gird");
 let win_user_edit = document.querySelector("#user_edit");
 
 win_user_list.classList.remove('delete');
@@ -39,13 +41,15 @@ function FOK_GetUserList(str, param){
     let cr = arr.length;
     if (cr > 1){
       for (let r = 1; r < arr.length; r++) {
+         let elemrow = document.createElement('div');
+         elemrow.className = "grid-tr";
+		 win_user_list1_grid.append(elemrow);
         let rr = arr[r].length;  
         for (let c = 1; c < arr[r].length; c++ ) {
           let elem = document.createElement('div');
-          elem.className = 'grid_row';
+          elem.className = 'grid-td';
           elem.innerHTML = arr[r][c];
-          let divspis =  document.querySelector("#grid_user_list");
-          divspis.append(elem);
+          elemrow.append(elem);
         };  
       };
     };
