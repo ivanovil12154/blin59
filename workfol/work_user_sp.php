@@ -35,9 +35,11 @@
 <div class="wmain">
     <div class="wmain_left">
         <div class="custom-button" role="button" tabindex="0" onclick="work_getuserlist()">
+            Список персонала
+        </div>
+        <div class="custom-button" role="button" tabindex="0" onclick="work_useredit()">
             Добавить персонал
         </div>
-
         <div class="custom-button" role="button" tabindex="0" onclick="work_useredit()">
             Изменить данные персонала
         </div>
@@ -47,32 +49,21 @@
     </div>
     <div class="wmain_right">
 <!--*******************   User List **********************     -->        
-        <div id="user_list">
-            <div class="wmain_zag">
-                Список персонала
-            </div>
-            <div class="wmain_grid" id = "grid_user_list">
-                <div class="grid_row_0">Фамили И.О.</div>
-                <div class="grid_row_0">Должность</div>
-                <div class="grid_row_0">Мето работы</div>
-            </div>
-        </div>
-
-<!--*******************   User List **********************     -->        
-<div id = "user_list1">
-  <div class="grid" id="user_list1_gird">
-	<div class="grid-tr-0">
-		<div class="grid-td">
-			<div class="item">Фамили И.О.</div>
-		</div>
-		<div class="grid-td">
-			<div class="item">Должность</div>
-		</div>
-		<div class="grid-td">
+    <div id = "user_list">
+      <div class="grid" id="user_list_gird">
+	    <div class="grid-tr-0">
+		  <div class="grid-td">
+		  	<div class="item">Фамили И.О.</div>
+		  </div>
+		  <div class="grid-td">
+		    <div class="item">Должность</div>
+		  </div>
+		  <div class="grid-td">
 			<div class="item">Мето работы</div>
-		</div>
-	</div>
-	<div class="grid-tr">
+		  </div>
+	    </div>
+    
+	<div class="grid-tr" onclick="work_user_sel()">
 		<div class="grid-td">
 			<div class="item">Блок №4</div>
 		</div>
@@ -83,64 +74,50 @@
 			<div class="item">Блок №6</div>
 		</div>
 	</div>
-  </div>
-</div>  
-<!--*******************   User List **********************     -->        
 
-        <!--        User List      -->        
-
-        <div id=user_edit>
-            <div class="wmain_zag">
-                Изменение данных персонала
+      </div>
+    </div>  
+<!--*******************   User Edit **********************     -->        
+    <div id=user_edit>
+        <div class="wmain_zag">
+            Изменение данных персонала
+        </div>
+        <div class="form_edit">
+            <div class="form_edit_c0">Фамилия И.О.</div>
+            <div><input type="text" name="fio" id="name" placeholder="Фамилия И.О."></div>
+            <div class="form_edit_c0">Должность</div>
+            <div><select id="UserEditProf" name="prof" size="1">
+                    <option value="0" >Не указана</option>
+                </select>
             </div>
+            <div class="form_edit_c0">Место работы</div>
             <div>
-
-        <input type="text" class="form-control" name="name" id="name" placeholder="Ваше имя"><br>
-        <input type="password" class="form-control" name="pass" id="pass" placeholder="Ваш пароль"><br>
-
-
-        <select name="staff" size="1">
-            <option >Тварь дрожащая или право имеешь?</option>
-            <?
-/*            $mysql = new mysqli('localhost', 'irina', '1998@01@31', 'bdsweetjoy');
-			// проверка
-			if ($mysql == false){
-               print("Ошибка1: Невозможно подключиться к MySQL " . mysqli_connect_error());
-               exit;
-            };
-            $res = mysql_query($mysql, "SELECT StSurname, StName From TStaff");
-			if (!$res){
-			  print("Ошибка в запросе");
-              exit;			  
-			}
-            while($row = mysql_fetch_assoc($res)){
-				echo ($row[0].$row[1]);		
-                <option value="<?=$row[0]?>"><?=$row[0]?></option>
-*/                
-            
-            ?>
-        </select>
-
-
-
-                <div>Фамилия И.О.
-
-                </div>
-                <div>Должность
-
-
-
-                </div>
-                <div>Место работы
-
-
-
-                </div>
+                <select name="offi" id="UserEditOffi" size="1">
+                    <option value="0" >Не указано</option>
+                </select>
+            </div>
+            <div class="form_edit_c0">Логин</div>
+            <div><input type="text" name="login" placeholder="Логин"></div>
+            <div class="form_edit_c0">Пароль</div>
+            <div><input type="text" name="password" placeholder="Пароль"></div>
+            <div class="form_edit_c0">Status</div>
+            <div><input type="text" name="status" placeholder="Status"></div>
+            <div class="form_edit_c0">ДР</div>
+            <div><input type="date" name="date_birth" placeholder="Дата рождения"></div>
+            <div class="form_edit_c0">Дата приема на работу</div>
+            <div><input type="date" name="date_begin" placeholder="Дата приема на работу"></div>
+        </div>
+        <div>
+            <div class="custom-button" role="button" tabindex="0" onclick="work_add_user()">
+                Сохранить
+            </div>
+            <div class="custom-button" role="button" tabindex="0" onclick="work_getuserlist()">
+                Отмена
             </div>
         </div>
-
-
     </div>
+</div>    
+</div>
 <div class="footer"></div> 
 
 <script src="../js/work_index.js"></script>

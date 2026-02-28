@@ -1,3 +1,7 @@
+
+/*********************************************************************/
+/*********************************************************************/
+/*********************************************************************/
 body {
   background-color: rgb(51, 51, 32);  
   background-image: url(../img/fon_work.jpg);
@@ -25,8 +29,8 @@ body {
 /*  display: inline-block;*/
   display: flex;
   flex-direction: column;
-  margin: 5px;
-  padding: 20px; 
+  margin: 3px;
+  padding: 3px; 
   width: 290px; 
   flex-grow: 0;
   border-style: solid;
@@ -37,8 +41,8 @@ body {
 
 .wmain_right{
 /*  display: inline-block;*/
-  margin: 5px;
-  padding: 20px; 
+  margin: 3px;
+  padding: 3px; 
   width: 200px;
   flex-grow: 1;
   border-style: solid;
@@ -46,7 +50,62 @@ body {
   border-color: #96bdcf;
   border-radius: 5px;  
 }
+/*************************************/
+/*      Списки              **********/
+/*                          **********/
+/*************************************/
+.grid {
+	display: table;	
+	width: 100%;
+}
+.grid-tr-0 {
+	 display: table-row;
+   height: 30px;
+  background-color:rgb(48 46 135);
+  color:#fdfa1f;
+  text-align: center;
 
+}
+.grid-tr {
+   height: 25px;
+	 display: table-row;
+   background-color:#e7e7cb;
+   color:rgb(25, 0, 255); 
+}
+.grid-tr:hover {
+  background-color: hsl(60, 96%, 56%); /* Эффект при наведении */
+}  
+
+
+
+.grid-td {
+	display: table-cell;	
+	width: 33.3%;
+	vertical-align: center;
+	padding: 5px;
+  border: 1px solid; 
+  border-color: black;
+}
+/*****************************************************/
+/*******        Редакт.Добавить               ********/
+/*****************************************************/
+.form_edit {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  margin-top: 10px;
+
+}
+.form_edit * {
+    height: 30px;
+  	padding: 3px;
+    text-align: left; /* Контент размещаем в центре по горизонтали */
+}
+.form_edit_c0 {
+  text-align: right; /* Контент размещаем в центре по горизонтали */
+}
+
+
+/*****************************************************/
 /*****************************************************/
 .custom-button {
 /*  display: inline-block;*/
@@ -67,86 +126,3 @@ body {
 .custom-button:active {
   transform: translateY(1px); /* Эффект нажатия */
 }
-/*****************************************************/
-/******************  GRID*/
-.wmain_grid {
-  display: grid;
-  grid-template-columns: 2fr 2fr 2fr;
-
-  border: 2px solid rgb(80, 145, 27);
-  border-radius: 5px;
-
-}
-.wmain_grid * {
-    border: 1px solid; 
-    border-radius: 0px; /* Скругляем углы на 10 пикселей */
-    background-color: rgba(9 34 163, 0.5); /* Фон красим фиолетовым */
-    text-align: center; /* Контент размещаем в центре по горизонтали */
-    height: 30px;
-}
-
-.grid_row_0 {
-  align-self: stretch;
-  /*align-self: center;*/
-  justify-self: stretch;
-  /*justify-self: center;*/
-  background-color: rgb(9 34 163); /* Фон красим фиолетовым */
-  color:rgb(190, 190, 118);
-
-}
-
-.grid_row {
-  align-self: stretch;
-  /*align-self: center;*/
-  justify-self: stretch;
-  /*justify-self: center;*/
-  /*justify-self: start;*/
-  background-color: rgb(236 239 205); 
-  color:rgb(12, 3, 88);
-
-}
-/****************************************/
-.grid {
-	display: table;	
-	width: 100%;
-	/*border-width: 2px;*/
-	/*border-collapse: separate;
-	border-spacing: 5px;*/
-}
-.grid-tr-0 {
-	 display: table-row;
-   height: 30px;
-  background-color:rgb(48 46 135);
-  color:#fdfa1f;
-  text-align: center;
-
-}
-.grid-tr {
-   height: 25px;
-	 display: table-row;
-   background-color:#e7e7cb;
-   color:rgb(25, 0, 255); 
-}
-
-.grid-td {
-	display: table-cell;	
-	width: 33.3%;
-	vertical-align: center;
-	padding: 5px;
-  border: 1px solid; 
-  border-color: black;
-/*  background-color: rgb(236 239 205); 
-  color:rgb(12, 3, 88);
-  */
-
-
-
-
-}
-
-
-
-
-
-
-
