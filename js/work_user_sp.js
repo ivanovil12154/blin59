@@ -22,10 +22,6 @@ window.onload = function() {
 }
 	*/
 
-function work_user_sel(){
-  alert ("fadfadf");
-};
-
 
 function work_get_proffesion_list(){
 	let LFormDate = new FormData;
@@ -56,8 +52,13 @@ function work_getuserlist(){
 
 	let LFormDate = new FormData;
 	LFormDate.append('VID', LIDUser);
+	LFormDate.append('VLogin', LIDUser);
+	LFormDate.append('VFunction', "GetSpisUserShot");
+	LFormDate.append('VMethod', "GET");
+	LFormDate.append('VSearchFIO', "");
+	LFormDate.append('VSelID', "4");	
      
-    SendData('../fphp/work/GetUserList.php', LFormDate, FOK_GetUserList, '', FERR_GetUserList);
+    SendData('../fphp/phpsql.php', LFormDate, FOK_GetUserList, '', FERR_GetUserList);
 };	
 ///////////////////////////////////////////////////////////////
 function user_list_del(){
@@ -65,8 +66,6 @@ function user_list_del(){
 	for (let element of elements) {
     element.remove();
     };
-
-
 }
 /////////////////////////////////////////////////
 function FOK_GetUserList(str, param){
@@ -77,27 +76,38 @@ function FOK_GetUserList(str, param){
     };
     alert ('Удача, кол-во записей - ' + arr[0][1]);     
 
+	let elem = null;
     let cr = arr.length;
     if (cr > 1){
       for (let r = 1; r < arr.length; r++) {
-         let elemrow = document.createElement('div');
-         elemrow.className = "grid-tr";
-//		 elemrow.onclick = work_user_sel;
+        let elemrow = document.createElement('div');
+        elemrow.className = "grid-tr";
+//		elemrow.onclick = work_user_sel;
 
-         elemrow.onclick = function(event) {
+        elemrow.onclick = function(event) {
             t=event.target||event.srcElement; 
-            alert(t.tagName);
-		 }
+//            alert(t.tagName);
+            alert(t.tagName + t.getAttribute("IDUser"));
+		}
 
+		elemrow.setAttribute("IDUser", arr[r].IDUser);
 
-		 win_user_list_grid.append(elemrow);
-        let rr = arr[r].length;  
-        for (let c = 1; c < arr[r].length; c++ ) {
-          let elem = document.createElement('div');
-          elem.className = 'grid-td';
-          elem.innerHTML = arr[r][c];
-          elemrow.append(elem);
-        };  
+		win_user_list_grid.append(elemrow);
+
+        elem = document.createElement('div');		  
+        elem.className = 'grid-td';
+        elem.innerHTML = arr[r].UserNameS;
+        elemrow.append(elem);
+
+        elem = document.createElement('div');		  
+        elem.className = 'grid-td';
+        elem.innerHTML = arr[r].ProfName;
+        elemrow.append(elem);
+
+        elem = document.createElement('div');		  
+        elem.className = 'grid-td';
+        elem.innerHTML = arr[r].OfName;
+        elemrow.append(elem);
       };
     };
 };
