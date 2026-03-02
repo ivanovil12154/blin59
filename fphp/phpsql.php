@@ -81,16 +81,22 @@ return $pdo;
 function GenSQL(&$Param){
   $VFunction = $_POST['VFunction'];
   $VMethod = $_POST['VMethod'];
-  $VSelID = $_POST['VSelID'];
 
   $Param = [];                  
-
-  
   $Res = '';
   if ($VFunction == "GetSpisUserShot"  and $VMethod == "GET"){
-//    $Param = ['id' => 5];                  
-      
-    $Res = "select " .
+    $Res = GenSQL_GetSpisUserShot($Param);
+  };
+  if ($VFunction == "GetUserFull"  and $VMethod == "GET"){
+    $Res = GenSQL_GetUserFull($Param);
+  };  
+  Return $Res;
+};
+
+function GenSQL_GetSpisUserShot(&$Param){
+  $VSelID = $_POST['VSelID'];
+  $Param = [];                  
+  $Res = "select " .
 	              " TUser.IDUser, " .
 	              " TUser.UserNameS, " .
 	              " TProfession.ProfName, " .
@@ -99,19 +105,26 @@ function GenSQL(&$Param){
 		              " u198290_blin.TUser " .
 		              " left outer join u198290_blin.TProfession on TUser.UserProfID = TProfession.IDProf " .
 		              " left outer join u198290_blin.TOffice on TUser.UserOfficeID = TOffice.IDOffice ";
-//    $Res = $Res . " where IDUser = :id";
-
   if ($VSelID > 0) {
     $Param['id'] = $VSelID;
-//    $Param = ['id' => $VSelID];                  
     $Res = $Res . " where IDUser = :id";
   };  
   $Res = $Res . " order by " .
 		              " TOffice.OfName, " .
 		              " TUser.UserNameS";
-  };
-
   Return $Res;
+};
+
+function GenSQL_GetUserFull(&$Param){
+  $VSelID = $_POST['VSelID'];
+  $Param = [];                  
+  $Param['id'] = $VSelID;  
+  $sql = "select TUser.UserLogin, TUser.UserNameS, TUser.UserStatus, TUser.UserDateBirth, TUser.UserDateBegin, TUser.UserProfID, TUser.UserOfficeID, TProfession.ProfName, TOffice.OfName \n"
+    . "from u198290_blin.TUser \n"
+    . " left outer join u198290_blin.TProfession on TUser.UserProfID = TProfession.IDProf \n"
+    . " left outer join u198290_blin.TOffice on TUser.UserOfficeID = TOffice.IDOffice \n"
+    . "where IDUser = :id "; 
+Return $sql;
 };
 
 

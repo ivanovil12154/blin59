@@ -37,13 +37,13 @@
         <div class="custom-button" role="button" tabindex="0" onclick="work_get_userlist()">
             Список персонала
         </div>
-        <div class="custom-button" role="button" tabindex="0" onclick="work_useredit()">
+        <div class="custom-button" role="button" tabindex="0" onclick="work_user_add()">
             Добавить персонал
         </div>
-        <div class="custom-button" role="button" tabindex="0" onclick="work_useredit()">
+        <div class="custom-button" role="button" tabindex="0" onclick="work_user_edit()">
             Изменить данные персонала
         </div>
-        <div class="custom-button" role="button" tabindex="1" onclick="work_getmslist()">
+        <div class="custom-button" role="button" tabindex="1" onclick="work_user_del()">
             Удалить персонал
         </div>
     </div>
@@ -108,7 +108,7 @@
             <div><input type="date" name="date_begin" placeholder="Дата приема на работу"></div>
         </div>
         <div>
-            <div class="custom-button" role="button" tabindex="0" onclick="work_add_user()">
+            <div class="custom-button" role="button" tabindex="0" onclick="work_click_save_form()">
                 Сохранить
             </div>
             <div class="custom-button" role="button" tabindex="0" onclick="work_get_userlist()">

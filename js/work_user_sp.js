@@ -5,6 +5,8 @@ let win_user_edit = document.querySelector("#user_edit");
 let win_user_edit_prof = document.querySelector("#UserEditProf");
 let win_user_edit_offi = document.querySelector("#UserEditOffi");
 let Elem_KUR = null;
+let RegEdit = "ADD";
+let IDEdit = 0;
 
 
 win_user_list.classList.remove('delete');
@@ -51,7 +53,81 @@ function work_get_userlist(){
 };	
 
 //////////////////////////////////////////////////////////////////////////
-function work_useredit(){
+function work_user_edit(){
+    IDUSer = null;
+	if (Elem_KUR != null){
+		IDUser = Elem_KUR.getAttribute("IDUser");
+	};
+
+    if (IDUser < 1) {
+  		alert("Персонал не определен")
+		return;
+	};
+
+	element = win_user_edit.querySelector(".wmain_zag");
+	if (element != null){
+		element.innerHTML = "Изменить данные персонала"
+	}
+
+    win_user_list.classList.add('delete');
+    win_user_edit.classList.remove('delete');
+
+	let LFormDate = new FormData;
+	LFormDate.append('VID', LIDUser);
+	LFormDate.append('VLogin', LIDUser);
+	LFormDate.append('VFunction', "GetUserFull");
+	LFormDate.append('VMethod', "GET");
+	LFormDate.append('VSearchFIO', "");
+	LFormDate.append('VSelID', IDUser);	
+	IDEdit = IDUser;
+     
+    SendData('../fphp/phpsql.php', LFormDate, FOK_GetUserFull, '', FERR_GetUserList);
+};
+
+function FOK_GetUserFull(str, param){
+  	const arr = JSON.parse(str);
+    if (arr[0][0] != "OK"){
+      alert ('Oшибка - ' + arr[0][1]);     
+      exit;
+    };
+    alert ('Удача, кол-во записей - ' + arr[0][1]);     
+	let fio = win_user_edit.querySelector('[name="fio"]');	
+	let prof = win_user_edit.querySelector('[name="prof"]');	
+	let offi = win_user_edit.querySelector('[name="offi"]');		
+	let login = win_user_edit.querySelector('[name="login"]');		
+	let password = win_user_edit.querySelector('[name="password"]');		
+	let status = win_user_edit.querySelector('[name="status"]');		
+	let date_birth = win_user_edit.querySelector('[name="date_birth"]');		
+	let date_begin = win_user_edit.querySelector('[name="date_begin"]');		
+
+	fio.value = arr[1].UserNameS;
+	prof.value = arr[1].UserProfID; 
+	offi.value = arr[1].UserOfficeID;
+	login.value = arr[1].UserLogin;
+	password.value = "****"
+	status.value = arr[1].UserStatus;
+	date_birth.value = arr[1].UserDateBirth;
+	date_begin.value = arr[1].UserDateBegin;
+
+	element = win_user_edit.querySelector(".wmain_zag");
+	if (element != null){
+		element.innerHTML = "Изменить данные персонала - " + arr[1].UserNameS
+	};
+	RegEdit = "EDIT";
+    IDEdit = 0;
+};	
+
+
+function work_user_add(){
+	element = win_user_edit.querySelector(".wmain_zag");
+	if (element != null){
+		element.innerHTML = "Добавить персонал"
+	}
+    win_user_list.classList.add('delete');
+    win_user_edit.classList.remove('delete');
+};
+
+function work_user_del(){
     win_user_list.classList.add('delete');
     win_user_edit.classList.remove('delete');
 };
@@ -123,6 +199,8 @@ function set_kur(element, zkur){
 	element.setAttribute("SetKur", zkur);
 	if (zkur == "1"){
 		element.classList.add('elem_kur');
+
+		
   		Elem_KUR = element;
 	} else {
       	element.classList.remove('elem_kur');
@@ -174,7 +252,7 @@ function FERR_GetUserList(str, param){
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
-function work_add_user(){
+function work_click_save_form(){
 	let fio = win_user_edit.querySelector('[name="fio"]');	
 	let prof = win_user_edit.querySelector('[name="prof"]');	
 	let offi = win_user_edit.querySelector('[name="offi"]');		
@@ -202,7 +280,17 @@ function work_add_user(){
 	LFormDate.append('status', status_v);
 	LFormDate.append('date_birth', date_birth_v);
 	LFormDate.append('date_begin', date_begin_v);
-    SendData('../fphp/work/AddUser.php', LFormDate, FOK_AddUser, '', FERR_AddUser);
+    if (RegEdit = "ADD") {
+      SendData('../fphp/work/AddUser.php', LFormDate, FOK_AddUser, '', FERR_AddUser);
+	};
+    if (RegEdit = "EDIT") {
+		LFormDate.append('VID', LIDUser);
+		LFormDate.append('VLogin', LIDUser);
+		LFormDate.append('VFunction', "SetUserEdit");
+		LFormDate.append('VMethod', "GET");
+		LFormDate.append('VID_USER_EDIT', "IDEdit");
+    	SendData('../fphp/phpsql.php', LFormDate, FOK_AddUser, '', FERR_AddUser);
+	};
 };
 
 function FOK_AddUser(str, param){

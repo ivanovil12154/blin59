@@ -72,9 +72,12 @@ body {
    background-color:#e7e7cb;
    color:rgb(25, 0, 255); 
 }
+/* Эффект при наведении */
+/*
 .grid-tr:hover {
-  background-color: hsl(60, 96%, 56%); /* Эффект при наведении */
+  background-color: hsl(60, 96%, 56%); 
 }  
+*/
 
 
 
