@@ -34,7 +34,7 @@
 </div>
 <div class="wmain">
     <div class="wmain_left">
-        <div class="custom-button" role="button" tabindex="0" onclick="work_getuserlist()">
+        <div class="custom-button" role="button" tabindex="0" onclick="work_get_userlist()">
             Список персонала
         </div>
         <div class="custom-button" role="button" tabindex="0" onclick="work_useredit()">
@@ -111,7 +111,7 @@
             <div class="custom-button" role="button" tabindex="0" onclick="work_add_user()">
                 Сохранить
             </div>
-            <div class="custom-button" role="button" tabindex="0" onclick="work_getuserlist()">
+            <div class="custom-button" role="button" tabindex="0" onclick="work_get_userlist()">
                 Отмена
             </div>
         </div>

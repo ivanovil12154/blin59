@@ -1,33 +1,28 @@
-
+/*********************  Declare ************************* */
 let win_user_list = document.querySelector("#user_list");
 let win_user_list_grid = document.querySelector("#user_list_gird");
 let win_user_edit = document.querySelector("#user_edit");
 let win_user_edit_prof = document.querySelector("#UserEditProf");
 let win_user_edit_offi = document.querySelector("#UserEditOffi");
+let Elem_KUR = null;
+
 
 win_user_list.classList.remove('delete');
 win_user_edit.classList.add('delete');
 
- work_get_proffesion_list();
 
-//work_get_office_list();
-//work_getuserlist();
+work_get_proffesion_list(work_get_office_list);  
 
-/*
-window.onload = function() {
-    document.body.onclick = function(event) {
-         t=event.target||event.srcElement; 
-         alert(t.tagName);
-    }
-}
-	*/
+//work_get_office_list();  
+//work_get_userlist();
 
-
+/*********************  Function Get ************************* */
 function work_get_proffesion_list(){
 	let LFormDate = new FormData;
     LFormDate.append('VNameSpis', 'ProfList');
     SendData('../fphp/work/GetList.php', LFormDate, FOK_GetProfOffiList, 'prof', FERR_GetUserList);
 };
+
 function work_get_office_list(){
 	let LFormDate = new FormData;
     LFormDate.append('VNameSpis', 'OffiLis');
@@ -36,13 +31,7 @@ function work_get_office_list(){
 
 
 //////////////////////////////////////////////////////////////////////////
-function work_useredit(){
-    win_user_list.classList.add('delete');
-    win_user_edit.classList.remove('delete');
-};
-
-//////////////////////////////////////////////////////////////////////////
-function work_getuserlist(){
+function work_get_userlist(){
 //    alert ('запуск - '); 
 
    win_user_list.classList.remove('delete');
@@ -56,10 +45,18 @@ function work_getuserlist(){
 	LFormDate.append('VFunction', "GetSpisUserShot");
 	LFormDate.append('VMethod', "GET");
 	LFormDate.append('VSearchFIO', "");
-	LFormDate.append('VSelID', "4");	
+	LFormDate.append('VSelID', "");	
      
     SendData('../fphp/phpsql.php', LFormDate, FOK_GetUserList, '', FERR_GetUserList);
 };	
+
+//////////////////////////////////////////////////////////////////////////
+function work_useredit(){
+    win_user_list.classList.add('delete');
+    win_user_edit.classList.remove('delete');
+};
+
+
 ///////////////////////////////////////////////////////////////
 function user_list_del(){
     let elements =  win_user_list_grid.querySelectorAll(".grid-tr");
@@ -82,15 +79,10 @@ function FOK_GetUserList(str, param){
       for (let r = 1; r < arr.length; r++) {
         let elemrow = document.createElement('div');
         elemrow.className = "grid-tr";
-//		elemrow.onclick = work_user_sel;
-
-        elemrow.onclick = function(event) {
-            t=event.target||event.srcElement; 
-//            alert(t.tagName);
-            alert(t.tagName + t.getAttribute("IDUser"));
-		}
-
 		elemrow.setAttribute("IDUser", arr[r].IDUser);
+		elemrow.onclick = work_user_sel;
+
+		elemrow.id = "ID-" + arr[r].IDUser;
 
 		win_user_list_grid.append(elemrow);
 
@@ -111,6 +103,32 @@ function FOK_GetUserList(str, param){
       };
     };
 };
+
+function work_user_sel(){
+	const IDUser = this.getAttribute("IDUser");
+	elements = win_user_list_grid.querySelectorAll(".grid-tr");
+	Elem_KUR = null;
+	for (let i= 0; i< elements.length; i++){
+		element = elements[i];
+		vID = element.getAttribute("IDUser"); 
+		if (vID == IDUser) {
+			set_kur(element, "1");
+		} else if (element.getAttribute("SetKur") == "1") {
+			set_kur(element, "0");	
+		};		
+	};
+};
+
+function set_kur(element, zkur){
+	element.setAttribute("SetKur", zkur);
+	if (zkur == "1"){
+		element.classList.add('elem_kur');
+  		Elem_KUR = element;
+	} else {
+      	element.classList.remove('elem_kur');
+	};
+};
+
 
 function FOK_GetProfOffiList(str, param){
 	const arr = JSON.parse(str);
@@ -144,7 +162,7 @@ function FOK_GetProfOffiList(str, param){
   	if (param == 'prof'){
   		work_get_office_list();
 	} else if (param == 'offi'){
-		work_getuserlist();
+		work_get_userlist();
 	};	
 };
 
@@ -194,7 +212,7 @@ function FOK_AddUser(str, param){
       exit;
     };
     alert ('Удача, кол-во записей - ' + arr[0][1]);     
-	work_getuserlist();
+	work_get_userlist();
 };
 
 

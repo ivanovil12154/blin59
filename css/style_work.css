@@ -126,3 +126,9 @@ body {
 .custom-button:active {
   transform: translateY(1px); /* Эффект нажатия */
 }
+
+.elem_kur {
+  background-color: hwb(103 0% 51%); /* Эффект при наведении */
+  color: rgb(241, 239, 198)
+
+}
