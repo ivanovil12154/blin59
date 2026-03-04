@@ -50,6 +50,25 @@ body {
   border-color: #96bdcf;
   border-radius: 5px;  
 }
+
+
+#win_user_edit{
+  width: 370px;
+  margin: 5px;
+  background-color: #fafbe4;
+  opacity: 0.8; 
+  padding: 5px;
+}
+
+#win_user_edit_MOO {
+  width: 370px;
+  margin: 5px;
+  background-color: #fafbe4;
+  opacity: 0.8; 
+  padding: 5px;
+}
+
+
 /*************************************/
 /*      Списки              **********/
 /*                          **********/
@@ -95,17 +114,48 @@ body {
 .form_edit {
   display: grid;
   grid-template-columns: 120px 1fr;
-  margin-top: 10px;
+  margin: 10px;
+  vertical-align: middle;
+}  
 
-}
 .form_edit * {
     height: 30px;
   	padding: 3px;
     text-align: left; /* Контент размещаем в центре по горизонтали */
+    vertical-align: middle;
 }
+
+.form_edit_MO {  
+  display: grid;
+  grid-template-columns: 300px 50px;
+  margin: 10px;
+  vertical-align: middle;
+}
+
+.form_edit_MO * {
+    height: 30px;
+  	padding: 3px;
+    text-align: left; /* Контент размещаем в центре по горизонтали */
+    vertical-align: middle;
+}
+
+
+
 .form_edit_c0 {
   text-align: right; /* Контент размещаем в центре по горизонтали */
 }
+
+.edit_control{
+  width: 214px;
+  height: 16px;
+}
+
+
+.edit_control_select{
+  width: 214px;
+  height: 24px;
+}
+
 
 
 /*****************************************************/

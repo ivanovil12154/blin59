@@ -10,7 +10,7 @@
   $VFunction = $_POST['VFunction'];
   $VMethod = $_POST['VMethod'];
   $VID = $_POST['VID'];
-
+  
   $Param = null;
   $query = GenSQL($Param);
 
@@ -29,11 +29,20 @@
         $stmt->execute($Param);
       } else {
         $stmt->execute([]);
-      }  
-      $rows = [["OK", 0]];
-      while ($row = $stmt->fetch()) {  // Получить одну строку
-         array_push($rows, $row);
-      };   
+      };
+      $rows = [];  
+      if ($VMethod == "GET") {
+        $count = $stmt->rowCount();
+        $rows = [["OK", $count]];
+        while ($row = $stmt->fetch()) {  // Получить одну строку
+           array_push($rows, $row);
+        };   
+      };  
+      if ($VMethod == "SET") {
+        $count = $stmt->rowCount();
+        $rows = [["OK", $count, $query]];
+      };  
+
       echo json_encode($rows);
     }  
   } catch (Exception $e) {
@@ -89,9 +98,19 @@ function GenSQL(&$Param){
   };
   if ($VFunction == "GetUserFull"  and $VMethod == "GET"){
     $Res = GenSQL_GetUserFull($Param);
-  };  
+  }; 
+  if ($VFunction == "UdUser"  and $VMethod == "SET"){
+    $Res = SetSQL_UdUser($Param);
+  }; 
+  if ($VFunction == "GetUserMOO"  and $VMethod == "GET"){
+    $Res = GetSQL_GetUserMOO($Param);
+  };   
+  
   Return $Res;
 };
+
+/*************************************************** */
+/*************************************************** */
 
 function GenSQL_GetSpisUserShot(&$Param){
   $VSelID = $_POST['VSelID'];
@@ -109,9 +128,7 @@ function GenSQL_GetSpisUserShot(&$Param){
     $Param['id'] = $VSelID;
     $Res = $Res . " where IDUser = :id";
   };  
-  $Res = $Res . " order by " .
-		              " TOffice.OfName, " .
-		              " TUser.UserNameS";
+  $Res = $Res . " order by TUser.UserNameS";
   Return $Res;
 };
 
@@ -126,6 +143,41 @@ function GenSQL_GetUserFull(&$Param){
     . "where IDUser = :id "; 
 Return $sql;
 };
+
+function SetSQL_UdUser(&$Param){
+  $Param = [];                  
+  $Param['UserName'] = $_POST['VUserName'];
+  $Param['UserStatus'] = $_POST['VUserStatus'];
+  $Param['UserOfficeID'] = $_POST['VUserOfficeID'];
+  $Param['UserProfID'] = $_POST['VUserProfID'];
+  $Param['UserDateBirth'] = $_POST['VUserDateBirth'];
+  $Param['UserDateBegin'] = $_POST['VUserDateBegin'];
+  $Param['IDUser'] = $_POST['VSelID'];
+
+  $sql = " UPDATE u198290_blin.TUser SET \n"
+	          ." TUser.UserNameS = :UserName, \n" 
+	          ." TUser.UserStatus = :UserStatus, \n"
+	          ." TUser.UserOfficeID = :UserOfficeID, \n" 
+	          ." TUser.UserProfID = :UserProfID, \n"
+	          ." TUser.UserDateBirth = :UserDateBirth, \n"
+	          ." TUser.UserDateBegin = :UserDateBegin \n"
+	          ." WHERE TUser.IDUser = :IDUser \n";
+  Return $sql;
+};
+
+
+function GetSQL_GetUserMOO(&$Param){
+  $Param = [];                  
+  $Param['IDUser'] = $_POST['VSelID'];
+
+  $sql = "SELECT TMOType.IDMOType, TMOType.MOTName, nvl(TMOObligatory.MOMoObligatory, 0) AS Obligatory, TUser.UserNameS\n"
+    . "FROM u198290_blin.TMOType\n"
+    . "LEFT OUTER JOIN u198290_blin.TMOObligatory ON TMOType.IDMOType = TMOObligatory.MOMoMOTypeID\n"
+    . "LEFT OUTER JOIN u198290_blin.TUser ON (TMOObligatory.MOObUserID = TUser.IDUser and TUser.IDUser = :IDUser)\n"
+    . "order by TMOType.MOTOrder";
+  Return $sql;
+};
+
 
 
 
