@@ -162,8 +162,20 @@ function FOK_GetUserMOO(str, param){
       exit;
     };
 //    alert ('Удача, кол-во записей - ' + arr[0][1]);     
+	element = win_user_edit_MOO.querySelector(".wmain_zag");
+	if (element != null){
+		element.innerHTML = "Настройка обяз. мо для " + arr[1].UserNameS;
+	};
+
+
 
     let mainelem = win_user_edit_MOO.querySelector(".form_edit_MO");
+
+    let elements =  mainelem.querySelectorAll("*");
+	for (let element of elements) {
+      element.remove();
+    };
+
     let cr = arr.length;
     if (cr > 1){
       for (let r = 1; r < arr.length; r++) {

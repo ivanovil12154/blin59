@@ -45,6 +45,7 @@
       };  
     } else {
       $resrow = [];
+      $countOK = 0;
       foreach ($ResARRAY as $ResSet) {
         $stmt = $pdo->prepare($ResSet["query"]);
         if ($ResSet["param"] != null) {
@@ -53,7 +54,7 @@
           $stmt->execute([]);
         };
         $count = $stmt->rowCount();
-        $resrow = [["OK", $count]];
+        $resrow = ["OK", $count];
         if ($VMethod == "GET") {
           while ($row = $stmt->fetch()) {  // Получить одну строку
              array_push($resrow, $row);
@@ -189,11 +190,11 @@ function SetSQL_UdUser(&$Param){
 function GetSQL_GetUserMOO(&$Param){
   $Param = [];                  
   $Param['IDUser'] = $_POST['VSelID'];
-
+  $Param['IDUserr'] = $_POST['VSelID'];
   $sql = "SELECT TMOType.IDMOType, TMOType.MOTName, nvl(TMOObligatory.MOMoObligatory, 0) AS Obligatory, TUser.UserNameS\n"
     . "FROM u198290_blin.TMOType\n"
-    . "LEFT OUTER JOIN u198290_blin.TMOObligatory ON TMOType.IDMOType = TMOObligatory.MOMoMOTypeID\n"
-    . "LEFT OUTER JOIN u198290_blin.TUser ON (TMOObligatory.MOObUserID = TUser.IDUser and TUser.IDUser = :IDUser)\n"
+    . "LEFT OUTER JOIN u198290_blin.TMOObligatory ON (TMOType.IDMOType = TMOObligatory.MOMoMOTypeID  and TMOObligatory.MOObUserID = :IDUser)\n"
+    . "LEFT OUTER JOIN u198290_blin.TUser ON (TMOObligatory.MOObUserID = TUser.IDUser or TUser.IDUser = :IDUserr)\n"
     . "order by TMOType.MOTOrder";
   Return $sql;
 };
@@ -204,7 +205,15 @@ function SetSQL_UdMOO(&$Param, &$ResARRAY){
   $ResMas = json_decode($ResData, false);
   $i = 0;
   foreach ($ResMas as $ResRow) {
+    if ($i == 0 ){
+      unset($para);
+      $sql = "DELETE FROM u198290_blin.TMOObligatory WHERE MOObUserID = :UserID";
+      $para['UserID'] = $ResRow[2];
+      $i = 1;
+      array_push($ResARRAY, array("query" => $sql, "param" =>$para));
+    };
     $sql = "INSERT INTO u198290_blin.TMOObligatory (MOObUserID, MOMoMOTypeID, MOMoObligatory) VALUES (:UserID, :TypeID, :Oblig)";
+    unset($para);
     $para['UserID'] = $ResRow[2];
     $para['TypeID'] = $ResRow[0];
     $para['Oblig'] = $ResRow[1];
