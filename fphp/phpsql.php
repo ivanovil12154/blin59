@@ -11,10 +11,13 @@
   $VMethod = $_POST['VMethod'];
   $VID = $_POST['VID'];
   
-  $Param = null;
-  $query = GenSQL($Param);
+  $Param = [];
+  $ResARRAY = [];
+  $rows = [];  
 
-  if ($query == ''){
+  $ResQuery = GenSQL($Param, $ResARRAY);
+
+  if ($ResQuery == ''){
     $rows = [["ERROR", "NotMethod", $VFunction, $VMethod]];
     echo json_encode($rows);
     exit;
@@ -22,17 +25,15 @@
 
   try{
     $pdo = ConnectPDO();
-    
-    if ($VMethod = "GET") {
-      $stmt = $pdo->prepare($query);
+    if ($ResQuery != "ARRAY") {    
+      $stmt = $pdo->prepare($ResQuery);
       if ($Param != null) {
         $stmt->execute($Param);
       } else {
         $stmt->execute([]);
       };
-      $rows = [];  
       if ($VMethod == "GET") {
-        $count = $stmt->rowCount();
+      $count = $stmt->rowCount();
         $rows = [["OK", $count]];
         while ($row = $stmt->fetch()) {  // Получить одну строку
            array_push($rows, $row);
@@ -42,14 +43,30 @@
         $count = $stmt->rowCount();
         $rows = [["OK", $count, $query]];
       };  
-
-      echo json_encode($rows);
+    } else {
+      $resrow = [];
+      foreach ($ResARRAY as $ResSet) {
+        $stmt = $pdo->prepare($ResSet["query"]);
+        if ($ResSet["Param"] != null) {
+          $stmt->execute($ResSet["Param"]);
+        } else {
+          $stmt->execute([]);
+        };
+        $count = $stmt->rowCount();
+        $resrow = [["OK", $count]];
+        if ($VMethod == "GET") {
+          while ($row = $stmt->fetch()) {  // Получить одну строку
+             array_push($resrow, $row);
+          };   
+        };  
+      };
+      array_push($rows, $resrow);
     }  
+    echo json_encode($rows);
   } catch (Exception $e) {
     $rows = [["ERROR", "PHP", $e->getMessage(), $query]];
     echo json_encode($rows);
   }finally {
-
     $stmt = null; // Закрыть запрос
     $pdo = null;  // Закрыть соединение
   };   
@@ -87,11 +104,10 @@ return $pdo;
 /*************************************************** */
 /*************************************************** */
 
-function GenSQL(&$Param){
+function GenSQL(&$Param, &$ResARRAY){
   $VFunction = $_POST['VFunction'];
   $VMethod = $_POST['VMethod'];
 
-  $Param = [];                  
   $Res = '';
   if ($VFunction == "GetSpisUserShot"  and $VMethod == "GET"){
     $Res = GenSQL_GetSpisUserShot($Param);
@@ -104,6 +120,10 @@ function GenSQL(&$Param){
   }; 
   if ($VFunction == "GetUserMOO"  and $VMethod == "GET"){
     $Res = GetSQL_GetUserMOO($Param);
+  };   
+
+  if ($VFunction == "UdMOO"  and $VMethod == "SET"){
+    $Res = SetSQL_UdMOO($Param, $ResARRAY);
   };   
   
   Return $Res;
@@ -178,6 +198,16 @@ function GetSQL_GetUserMOO(&$Param){
   Return $sql;
 };
 
+
+function SetSQL_UdMOO(&$Param, &$ResARRAY){
+  $ResData = $_POST["VData"];
+  $ResMas = json_decode($ResData, true);
+  foreach ($ResMas as $ResRow) {
+     
+    echo $ResRow . "<br>";
+
+  }
+}  
 
 
 

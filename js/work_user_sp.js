@@ -178,8 +178,12 @@ function FOK_GetUserMOO(str, param){
 
 		let eleminput = document.createElement('input');
 		eleminput.type = "checkbox";
-		elemrow1.setAttribute("IDTypeMO", arr[r].IDMOType);
-		eleminput.value = true;
+		eleminput.setAttribute("IDTypeMO", arr[r].IDMOType);
+		if (arr[r].Obligatory > 0) {
+          eleminput.checked = true;
+		} else {
+          eleminput.checked = false;
+		}
 		elemrow2.append(eleminput);
       };
     };
@@ -194,7 +198,7 @@ function click_edit_moo_save(){
 	let oblic = null;
 	for (let i = 0; i < elements.length; i++){
 		id_mo = elements[i].getAttribute("IDTypeMO");
-		if (elements[i].value){
+		if (elements[i].checked){
 			oblic = 1;
 		} else {
 			oblic = 0;
@@ -202,58 +206,27 @@ function click_edit_moo_save(){
 		const arr = [id_mo, oblic, Edit_ID];
 		ObligMain.push(arr); 
 	}
-	return;
-/*
-	let fio = win_user_edit.querySelector('[name="fio"]');	
-	let prof = win_user_edit.querySelector('[name="prof"]');	
-	let offi = win_user_edit.querySelector('[name="offi"]');		
-	let login = win_user_edit.querySelector('[name="login"]');		
-	let password = win_user_edit.querySelector('[name="password"]');		
-	let status = win_user_edit.querySelector('[name="status"]');		
-	let date_birth = win_user_edit.querySelector('[name="date_birth"]');		
-	let date_begin = win_user_edit.querySelector('[name="date_begin"]');		
+	const resultdata = JSON.stringify(arr);
 
-	let fio_v = fio.value;
-	let prof_v = prof.value;	
-	let offi_v = offi.value;		
-	let login_v = login.value;		
-	let password_v = password.value;		
-	let status_v = status.value;		
-	let date_birth_v = date_birth.value;		
-	let date_begin_v = date_begin.value;		
-
-	let LFormDate = new FormData;
-    if (Edit_Reg == "ADD") {
-	   	LFormDate.append('fio', fio_v);
-		LFormDate.append('prof', prof_v);
-		LFormDate.append('offi', offi_v);
-		LFormDate.append('login', login_v);
-		LFormDate.append('password', password_v);
-		LFormDate.append('status', status_v);
-		LFormDate.append('date_birth', date_birth_v);
-		LFormDate.append('date_begin', date_begin_v);
-        SendData('../fphp/work/AddUser.php', LFormDate, FOK_AddUser, '', FERR_AddUser);
-	};
-    if (Edit_Reg == "EDIT") {
-		LFormDate.append('VID', LIDUser);
-		LFormDate.append('VLogin', LIDUser);
-		LFormDate.append('VFunction', "UdUser");
-		LFormDate.append('VMethod', "SET");
-
-		LFormDate.append('VUserName', fio_v);
-		LFormDate.append('VUserStatus', status_v);
-		LFormDate.append('VUserOfficeID', offi_v);
-		LFormDate.append('VUserProfID', prof_v);
-		LFormDate.append('VUserDateBirth', date_birth_v);
-		LFormDate.append('VUserDateBegin', date_begin_v);
-		LFormDate.append('VIDUser', Edit_ID);
-    	SendData('../fphp/phpsql.php', LFormDate, FOK_AddUser, '', FERR_AddUser);
-	};
-*/
-
-
-
+	LFormDate.append('VID', LIDUser);
+	LFormDate.append('VLogin', LIDUser);
+	LFormDate.append('VFunction', "UdMOO");
+	LFormDate.append('VMethod', "SET");
+	LFormDate.append('VData', resultdata);
+	LFormDate.append('VIDUser', Edit_ID);
+    SendData('../fphp/phpsql.php', LFormDate, FOK_UdMOO, '', FERR_AddUser);
 };
+function FOK_UdMOO(str, param){
+	const arr = JSON.parse(str);
+    if (arr[0][0] != "OK"){
+      alert ('Oшибка - ' + arr[0][1]);     
+      exit;
+    };
+	work_get_userlist();
+}
+
+
+
 /************************************* */
 function work_user_add(){
 	element = win_user_edit.querySelector(".wmain_zag");
@@ -433,7 +406,7 @@ function work_click_save_form(){
 		LFormDate.append('VUserProfID', prof_v);
 		LFormDate.append('VUserDateBirth', date_birth_v);
 		LFormDate.append('VUserDateBegin', date_begin_v);
-		LFormDate.append('VIDUser', Edit_ID);
+		LFormDate.append('VSelID', Edit_ID);
     	SendData('../fphp/phpsql.php', LFormDate, FOK_AddUser, '', FERR_AddUser);
 	};
 };
