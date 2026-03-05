@@ -47,8 +47,8 @@
       $resrow = [];
       foreach ($ResARRAY as $ResSet) {
         $stmt = $pdo->prepare($ResSet["query"]);
-        if ($ResSet["Param"] != null) {
-          $stmt->execute($ResSet["Param"]);
+        if ($ResSet["param"] != null) {
+          $stmt->execute($ResSet["param"]);
         } else {
           $stmt->execute([]);
         };
@@ -201,13 +201,17 @@ function GetSQL_GetUserMOO(&$Param){
 
 function SetSQL_UdMOO(&$Param, &$ResARRAY){
   $ResData = $_POST["VData"];
-  $ResMas = json_decode($ResData, true);
+  $ResMas = json_decode($ResData, false);
+  $i = 0;
   foreach ($ResMas as $ResRow) {
-     
-    echo $ResRow . "<br>";
-
-  }
-}  
+    $sql = "INSERT INTO u198290_blin.TMOObligatory (MOObUserID, MOMoMOTypeID, MOMoObligatory) VALUES (:UserID, :TypeID, :Oblig)";
+    $para['UserID'] = $ResRow[2];
+    $para['TypeID'] = $ResRow[0];
+    $para['Oblig'] = $ResRow[1];
+    array_push($ResARRAY, array("query" => $sql, "param" =>$para));
+  };  
+  return "ARRAY";
+};  
 
 
 

@@ -206,8 +206,9 @@ function click_edit_moo_save(){
 		const arr = [id_mo, oblic, Edit_ID];
 		ObligMain.push(arr); 
 	}
-	const resultdata = JSON.stringify(arr);
+	const resultdata = JSON.stringify(ObligMain);
 
+	let LFormDate = new FormData;
 	LFormDate.append('VID', LIDUser);
 	LFormDate.append('VLogin', LIDUser);
 	LFormDate.append('VFunction', "UdMOO");
