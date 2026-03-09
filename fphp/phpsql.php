@@ -54,7 +54,7 @@
           $stmt->execute([]);
         };
         $count = $stmt->rowCount();
-        $resrow = ["OK", $count];
+        array_push($resrow, ["OK", $count]);
         if ($VMethod == "GET") {
           while ($row = $stmt->fetch()) {  // Получить одну строку
              array_push($resrow, $row);
@@ -126,7 +126,17 @@ function GenSQL(&$Param, &$ResARRAY){
   if ($VFunction == "UdMOO"  and $VMethod == "SET"){
     $Res = SetSQL_UdMOO($Param, $ResARRAY);
   };   
-  
+  if ($VFunction == "GetMOTypeList"  and $VMethod == "GET"){
+    $Res = GetMOTypeList($Param, $ResARRAY);
+  };   
+
+  if ($VFunction == "ADDMO"  and $VMethod == "SET"){
+    $Res = SetSQL_ADDMO($Param, $ResARRAY);
+  };   
+  if ($VFunction == "ShowMOList"  and $VMethod == "GET"){
+    $Res = GetSQL_ShowMOList($Param, $ResARRAY);
+  };   
+
   Return $Res;
 };
 
@@ -222,7 +232,39 @@ function SetSQL_UdMOO(&$Param, &$ResARRAY){
   return "ARRAY";
 };  
 
+function SetSQL_ADDMO(&$Param, &$ResARRAY){
+  $sql = "INSERT INTO u198290_blin.TMOReestr(MOReUserID, MOReMOTypeID, MOReDateFrom, MOReDateTo, MOReAuthorUserID, MOReDopInf)  VALUES " .
+    "(:UserID, :MOTypeID, :DateFrom, :DateTo, :AutorUserID, :DopInf)";
+  $para['UserID'] = $_POST["VSelID"];
+  $para['MOTypeID'] = $_POST["VMOType"];
+  $para['DateFrom'] = $_POST["VDateFrom"];
+  $para['DateTo'] = $_POST["VDateTo"];
+  $para['AutorUserID'] = $_POST["VID"];
+  $para['DopInf'] = $_POST["VDopInf"];
+  array_push($ResARRAY, array("query" => $sql, "param" =>$para));
+  return "ARRAY";
+};
 
+
+function GetMOTypeList(&$Param, &$ResARRAY){
+  $Res = "SELECT TMOType.IDMOType AS f_id, TMOType.MOTName AS f_name, MOTPeriodMon, MOTOnlyLife, MOTOnlyBegin " .
+    "FROM u198290_blin.TMOType ORDER BY TMOType.MOTOrder";
+  return $Res;
+};
+
+
+function GetSQL_ShowMOList(&$Param, &$ResARRAY){
+  $para['MOReUserID'] = $_POST["VSelID"];
+  $sql = "SELECT re.IDMOReestr, re.MOReDateFrom, re.MOReDateTo, re.MOReDopInf, re.MOReDateInser, mot.MOTName, usa.UserNameS \n"
+    . "FROM u198290_blin.TMOReestr re\n"
+    . "LEFT JOIN u198290_blin.TMOType mot ON re.MOReMOTypeID = mot.IDMOType\n"
+    . "LEFT JOIN u198290_blin.TUser usa ON re.MOReAuthorUserID = usa.IDUser\n"
+    . "WHERE re.MOReUserID = :MOReUserID\n"
+    . "ORDER BY re.MOReDateFrom DESC"
+    ;
+  array_push($ResARRAY, array("query" => $sql, "param" =>$para));
+  return "ARRAY";
+};
 
 
 

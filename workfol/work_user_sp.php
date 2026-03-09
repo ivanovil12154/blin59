@@ -37,17 +37,23 @@
         <div class="custom-button" role="button" tabindex="0" onclick="work_get_userlist()">
             Список персонала
         </div>
-        <div class="custom-button" role="button" tabindex="0" onclick="work_user_add()">
+        <div class="custom-button" role="button" tabindex="0" onclick="KeyADDUser_click()">
             Добавить персонал
         </div>
-        <div class="custom-button" role="button" tabindex="0" onclick="work_user_edit()">
+        <div class="custom-button" role="button" tabindex="0" onclick="KeyEditUser_click()"">
             Изменить данные персонала
         </div>
-        <div class="custom-button" role="button" tabindex="1" onclick="work_user_edit_MO()">
+        <div class="custom-button" role="button" tabindex="1" onclick="KeyEditMOO_click()">
             Настройка мед.осмотров
         </div>
+        <div class="custom-button" role="button" tabindex="1" onclick="KeyADDMO_click()">
+            Добавить мед.осмотр
+        </div>
+        <div class="custom-button" role="button" tabindex="1" onclick="KeyShowMO_click()">
+            Просмотр мед.осмотров
+        </div>
 
-        <div class="custom-button" role="button" tabindex="1" onclick="work_user_del()">
+        <div class="custom-button" role="button" tabindex="1" onclick="KeyDelUser_click()">
             Удалить персонал
         </div>
     </div>
@@ -121,7 +127,7 @@
             <div><input type="date" name="date_begin" class="edit_control" placeholder="Дата приема на работу"></div>
         </div>
         <div>
-            <div class="custom-button" role="button" tabindex="0" onclick="work_click_save_form()">
+            <div class="custom-button" role="button" tabindex="0" onclick="KeyADDUserSave_click()">
                 Сохранить
             </div>
             <div class="custom-button" role="button" tabindex="0" onclick="work_get_userlist()">
@@ -149,7 +155,7 @@
 -->
         </div>
         <div>
-            <div class="custom-button" role="button" tabindex="0" onclick="click_edit_moo_save()">
+            <div class="custom-button" role="button" tabindex="0" onclick="KeyEditMOOSave_click()">
                 Сохранить
             </div>
             <div class="custom-button" role="button" tabindex="0" onclick="work_get_userlist()">
@@ -157,7 +163,78 @@
             </div>
         </div>
     </div>
+<!--*******************  WiNDOWS **********************     -->            
+<!--*******************   MOADD **********************     -->        
+    <div id=win_user_MOADD>
+        <div class="wmain_zag">
+            Добавить мед.осмотр для 
+        </div>
+        <div class="form_edit">
+            <div class="form_edit_c0">Тим MO</div>
+            <div><select id="ListMOType" class= "edit_control_select" size="1" onchange="ListMO_change()">
+                    <option value="0" dopinf = "adf">Не указана</option>
+                </select>
+            </div>
+            <div class="form_edit_c0">Описание МО</div>
+            <div id ="MO_desc">fasfasdf</div>
 
+            <div class="form_edit_c0">Дата прохождения</div>
+            <div><input type="date" name="date_from" class="edit_control"></div>
+            <div class="form_edit_c0">Действует до</div>
+            <div><input type="date" name="date_to" class="edit_control"></div>
+            <div class="form_edit_c0">Примечание</div>
+            <div>
+                <input type="text" name="DopInf" class="edit_control" placeholder="Дополнительная информация">
+            </div>
+        </div>
+        <div>
+            <div class="custom-button" role="button" tabindex="0" onclick="KeyADDMOSave_click()">
+                Добавить
+            </div>
+            <div class="custom-button" role="button" tabindex="0" onclick="work_get_userlist()">
+                Отмена
+            </div>
+        </div>
+    </div>
+<!--*******************  WiNDOWS **********************     -->                
+<!--*******************   User List **********************     -->        
+    <div id = "win_showmo_list">
+        <div class="wmain_zag">
+            Список МО персонала 
+        </div>
+
+        <div class="grid" id="grid_list_showmo">           
+
+	        <div class="grid-tr-0">
+		    <div class="grid-td_mo">
+		  	    <div class="item">МО</div>
+		    </div>
+		    <div class="grid-td_mo">
+		        <div class="item">Дата с</div>
+		    </div>
+		    <div class="grid-td_mo">
+			    <div class="item">Дата до</div>
+		    </div>
+		    <div class="grid-td_mo">
+			    <div class="item">Кто внес(когда)</div>
+		    </div>
+	    </div>
+        <!--
+    <div class="grid-tr" onclick="work_user_sel()">
+		<div class="grid-td">
+			<div class="item">Блок №4</div>
+		</div>
+		<div class="grid-td">
+			<div class="item">Блок №5</div>
+		</div>
+		<div class="grid-td">
+			<div class="item">Блок №6</div>
+		</div>
+	</div>
+        -->
+
+      </div>
+    </div>  
 </div>    
 </div>
 <div class="footer"></div> 
