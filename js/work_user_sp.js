@@ -16,7 +16,12 @@ let Elem_KUR = null;
 let Edit_Reg = "ADD";
 let Edit_ID = 0;
 let Edit_FIO = '';
-let GSession = '1212';
+
+/*let GSession = '1212';
+let GIDUser = LIDUser;
+let GUserFIO = "adfasdf";
+let GUserLogin = "asdfa";
+*/
 
 
 win_user_list.classList.remove('delete');
@@ -46,8 +51,8 @@ function work_get_office_list(){
 
 function GetMOTypeList(){
 	let LFormDate = new FormData;
-	LFormDate.append('VID', LIDUser);
-	LFormDate.append('VLogin', LIDUser);
+	LFormDate.append('VID', GIDUser);
+	LFormDate.append('VLogin', GUserLogin);
 	LFormDate.append('VSession', GSession);
 	LFormDate.append('VFunction', "GetMOTypeList"); 
 	LFormDate.append('VMethod', "GET");
@@ -115,8 +120,8 @@ function work_get_userlist(){
    user_list_del();
 
 	let LFormDate = new FormData;
-	LFormDate.append('VID', LIDUser);
-	LFormDate.append('VLogin', LIDUser);
+	LFormDate.append('VID', GIDUser);
+	LFormDate.append('VLogin', GUserLogin);
 	LFormDate.append('VFunction', "GetSpisUserShot");
 	LFormDate.append('VMethod', "GET");
 	LFormDate.append('VSearchFIO', "");
@@ -149,8 +154,9 @@ function KeyEditUser_click(){
 	}
 
 	let LFormDate = new FormData;
-	LFormDate.append('VID', LIDUser);
-	LFormDate.append('VLogin', LIDUser);
+	LFormDate.append('VID', GIDUser);
+	LFormDate.append('VLogin', GUserLogin);
+    LFormDate.append('VSession', GSession);
 	LFormDate.append('VFunction', "GetUserFull");
 	LFormDate.append('VMethod', "GET");
 	LFormDate.append('VSearchFIO', "");
@@ -215,8 +221,9 @@ function KeyEditMOO_click(){
 	};
 
 	let LFormDate = new FormData;
-	LFormDate.append('VID', LIDUser);
-	LFormDate.append('VLogin', LIDUser);
+	LFormDate.append('VID', GIDUser);
+	LFormDate.append('VLogin', GUserLogin);
+    LFormDate.append('VSession', GSession);
 	LFormDate.append('VFunction', "GetUserMOO");
 	LFormDate.append('VMethod', "GET");
 	LFormDate.append('VSearchFIO', "");
@@ -292,8 +299,9 @@ function KeyEditMOOSave_click(){
 	const resultdata = JSON.stringify(ObligMain);
 
 	let LFormDate = new FormData;
-	LFormDate.append('VID', LIDUser);
-	LFormDate.append('VLogin', LIDUser);
+	LFormDate.append('VID', GIDUser);
+	LFormDate.append('VLogin', GUserLogin);
+    LFormDate.append('VSession', GSession);
 	LFormDate.append('VFunction', "UdMOO");
 	LFormDate.append('VMethod', "SET");
 	LFormDate.append('VData', resultdata);
@@ -378,9 +386,9 @@ function KeyADDMOSave_click(){
 		return;
 	}
 
-	LFormDate.append('VID', LIDUser);
-	LFormDate.append('VLogin', LIDUser);
-	LFormDate.append('VSession', GSession);
+	LFormDate.append('VID', GIDUser);
+	LFormDate.append('VLogin', GUserLogin);
+    LFormDate.append('VSession', GSession);
 	LFormDate.append('VFunction', "ADDMO");
 	LFormDate.append('VMethod', "SET");
 	LFormDate.append('VSelID', Edit_ID);
@@ -555,8 +563,9 @@ function KeyADDUserSave_click(){
         SendData('../fphp/work/AddUser.php', LFormDate, FOK_AddUser, '', FERR_AddUser);
 	};
     if (Edit_Reg == "EDIT") {
-		LFormDate.append('VID', LIDUser);
-		LFormDate.append('VLogin', LIDUser);
+		LFormDate.append('VID', GIDUser);
+		LFormDate.append('VLogin', GUserLogin);
+    	LFormDate.append('VSession', GSession);
 		LFormDate.append('VFunction', "UdUser");
 		LFormDate.append('VMethod', "SET");
 
@@ -601,9 +610,9 @@ function KeyShowMO_click(){
 	Zag.innerHTML = 'Список МО персонала "' + Edit_FIO + '"';
 
 	let LFormDate = new FormData;
-	LFormDate.append('VID', LIDUser);
-	LFormDate.append('VLogin', LIDUser);
-	LFormDate.append('VSession', GSession);
+	LFormDate.append('VID', GIDUser);
+	LFormDate.append('VLogin', GUserLogin);
+    LFormDate.append('VSession', GSession);
 	LFormDate.append('VFunction', "ShowMOList");
 	LFormDate.append('VMethod', "GET");
 	LFormDate.append('VSelID', Edit_ID);
@@ -655,7 +664,18 @@ function FOK_KeyShowMO_click(str, param){
     	};
 	};
 };	
-	
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+function KeyGoMainMenu_click(){
+	let params = {VGIDUser: GIDUser, 
+		         VGUserFIO: GUserFIO, 
+				 VGLogin: GUserLogin,
+				 VGSession: GSession};
+    postToSameTab("workindex.php", params);
+};
+
+
 
 function FERR_AddUser(str, param){
 	alert ('Ошибка')
@@ -692,7 +712,7 @@ function work_getmslist(){
     */
 
 	let LFormDate = new FormData;
-	LFormDate.append('VID', LIDUser);
+	LFormDate.append('VID', GIDUser);
      
   SendData('../fphp/work/GetMsList.php', LFormDate, FunNLOK, '', FunNLError);
 };

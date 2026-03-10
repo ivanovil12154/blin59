@@ -67,3 +67,27 @@ async function sha256(message) {
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
+
+
+function postToSameTab(url, params) {
+  // Создаем форму
+  var form = document.createElement("form");
+  form.method = "POST";
+  form.action = url;
+  form.target = "_self"; // Открыть в той же вкладке
+
+  // Добавляем параметры
+  for (var key in params) {
+    if (params.hasOwnProperty(key)) {
+      var hiddenField = document.createElement("input");
+      hiddenField.type = "hidden";
+      hiddenField.name = key;
+      hiddenField.value = params[key];
+      form.appendChild(hiddenField);
+    }
+  }
+
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form); // Удаляем форму после отправки
+}

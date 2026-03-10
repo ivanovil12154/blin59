@@ -26,8 +26,8 @@
   ///////////////////////////////////////////////////
   /////    Проверка логина и пароля
   ///////////////////////////////////////////////////
-
-  function QueryCheckUser($mysql, $vlogin, $vpassword, &$vID, &$vName, &$vStatus){
+ 
+  function QueryCheckUser($mysql, $vlogin, $vpassword, &$vID, &$vName, &$vStatus, &$vuserlogin,  &$vsession){
     //$P = md5($vpassword);
     $P = $vpassword;
     $query = "SELECT IDUser, UserLogin, UserPassword, UserNameS, UserStatus";
@@ -46,6 +46,8 @@
       $vID = $row['IDUser'];
       $vName = $row['UserNameS'];
       $vStatus = $row['UserStatus'];
+      $vuserlogin = $row['UserLogin'];
+      $vsession = '123fdsfa';
       return true;
     };
   };

@@ -29,8 +29,13 @@ function FunNLOK(str, param){
 	const arr = JSON.parse(str);
 	if (arr.res == "OK") {
 //      alert ('Удача - ' + arr.name); 
-	  document.location.href = '../workfol/workindex.php';
+//	  	document.location.href = '../workfol/workindex.php';
 
+		let params = {VGIDUser: arr.iduser, 
+		         VGUserFIO: arr.username, 
+				 VGLogin: arr.userlogin,
+				 VGSession: arr.session};
+    	postToSameTab('../workfol/workindex.php', params);
 	} else if (arr.res == "ErrorLogin") {
 		alert ("Ошибка, логин или пароль не найдены");
 	}

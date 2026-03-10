@@ -11,9 +11,10 @@
 
 <body>
 <?php
-  $UserName = 'Bdf';
+//  $UserName = 'Bdf';
   require "../fphp/phpmain.php";    
 //  require "../fphp/AdminBDMainFun.php";    
+/*
   $mysql = ConnBD();
 
   session_start();
@@ -22,6 +23,22 @@
   $_SESSION['stwork'] = 'adminbd';
   session_write_close(); 
   echo ("<script> let LIDUser=".$IDUser."; let LUserName='".$UserName."' </script>");
+  */
+
+    echo ("<script>");
+    if ($_SERVER['REQUEST_METHOD'] <> 'POST') {
+/*        echo ("let GIDUser=".$IDUser.";");
+        echo ("let GUserFIO='".$UserName."';");
+        echo ("let GUserLogin='';");
+        echo ("let GSession='';");*/
+    } else {
+        echo ("let GIDUser=".$_POST['VGIDUser'].";");
+        echo ("let GUserFIO='".$_POST['VGUserFIO']."';");
+        echo ("let GUserLogin='".$_POST['VGLogin']."';");
+        echo ("let GSession='".$_POST['VGSession']."';");
+        $UserName = $_POST['VGUserFIO'];
+    };
+    echo ("</script>");
  ?>
 
 <div class="header">
@@ -56,6 +73,10 @@
         <div class="custom-button" role="button" tabindex="1" onclick="KeyDelUser_click()">
             Удалить персонал
         </div>
+        <div class="custom-button" role="button" tabindex="1" onclick="KeyGoMainMenu_click()">
+            Основное меню
+        </div>
+
     </div>
     <div class="wmain_right">
 <!--*******************  WiNDOWS **********************     -->                

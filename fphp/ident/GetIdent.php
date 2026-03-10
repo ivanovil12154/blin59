@@ -26,7 +26,7 @@
     $VLogin = $_POST['VLogin'];
     $VPassword = $_POST['VPassword'];
 
-    if (QueryCheckUser($mysql, $VLogin, $VPassword, $vID,  $vName,  $vStatus)){
+    if (QueryCheckUser($mysql, $VLogin, $VPassword, $vID,  $vName,  $vStatus,  $vuserlogin,  $vsession)){
 
       session_start();
 
@@ -42,8 +42,10 @@
 
       $arr = array(
           "res" => "OK",
-          "idr" => $vID,
-          "name" => $vName,
+          "iduser" => $vID,
+          "username" => $vName,
+          "userlogin" => $vuserlogin,
+          "session" => $vsession,
           "status" => $vStatus,);
     } else {
       $arr = array(

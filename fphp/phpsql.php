@@ -136,7 +136,12 @@ function GenSQL(&$Param, &$ResARRAY){
   if ($VFunction == "ShowMOList"  and $VMethod == "GET"){
     $Res = GetSQL_ShowMOList($Param, $ResARRAY);
   };   
-
+  if ($VFunction == "ShowMOZad"  and $VMethod == "GET"){
+    $Res = GetSQL_ShowMOZad($Param, $ResARRAY);
+  };   
+  if ($VFunction == "MOOverdueList"  and $VMethod == "GET"){
+    $Res = GetSQL_MOOverdueList($Param, $ResARRAY);
+  };   
   Return $Res;
 };
 
@@ -266,6 +271,84 @@ function GetSQL_ShowMOList(&$Param, &$ResARRAY){
   return "ARRAY";
 };
 
+function GetSQL_ShowMOZad(&$Param, &$ResARRAY){
+
+
+
+   $sql = " SELECT T.IDUser, T.UserNameS, T.IDMOType, T.MOTName, T.MOAV, T.MODONE, TIMESTAMPDIFF(MONTH, T.MODONE, CURDATE()) as TTTT ".
+         " FROM  ".
+         " (SELECT TUser.IDUser, TUser.UserNameS, TMOType.IDMOType, TMOType.MOTName, TMOType.MOTPeriodMon AS MOAV,  ".
+         " nvl((SELECT TMOReestr.MOReDateTo  ".
+         " FROM TMOReestr  ".
+         " WHERE TMOReestr.MOReUserID = TUser.IDUser  ".
+         " AND TMOReestr.MOReMOTypeID = TMOType.IDMOType  ".
+         " ORDER BY MOReDateTo DESC  ".
+         " LIMIT 1  ".
+         " ), STR_TO_DATE('1900-01-01', '%Y-%m-%d')) AS MODONE  ".
+         " FROM TMOType ".
+         " INNER JOIN TMOObligatory ON TMOType.IDMOType = TMOObligatory.MOMoMOTypeID ".
+         " INNER JOIN TUser ON TMOObligatory.MOObUserID = TUser.IDUser ".
+         " WHERE TMOType.MOTPeriodMon > 0) T ".
+         " WHERE TIMESTAMPDIFF(MONTH, T.MODONE, CURDATE()) > -2 ".
+         " ORDER BY TTTT DESC ";
+
+
+$para['MOReUserID'] = $_POST["VSelID"];
+  $sql = "SELECT re.IDMOReestr, re.MOReDateFrom, re.MOReDateTo, re.MOReDopInf, re.MOReDateInser, mot.MOTName, usa.UserNameS \n"
+    . "FROM u198290_blin.TMOReestr re\n"
+    . "LEFT JOIN u198290_blin.TMOType mot ON re.MOReMOTypeID = mot.IDMOType\n"
+    . "LEFT JOIN u198290_blin.TUser usa ON re.MOReAuthorUserID = usa.IDUser\n"
+    . "WHERE re.MOReUserID = :MOReUserID\n"
+    . "ORDER BY re.MOReDateFrom DESC"
+    ;
+  array_push($ResARRAY, array("query" => $sql, "param" =>$para));
+  return "ARRAY";
+};
+
+function GetSQL_MOOverdueList($Param, $ResARRAY){
+  $sql = "SELECT TUser.IDUser, TUser.UserNameS, TMOType.IDMOType, TMOType.MOTName, TMOType.MOTOnlyLife AS MOAV, \n"  
+  ." (SELECT COUNT(*) FROM TMOReestr WHERE TMOReestr.MOReUserID = TUser.IDUser AND TMOReestr.MOReMOTypeID = TMOType.IDMOType) AS MODONE \n"  
+  ." FROM TMOType \n"  
+  ." INNER JOIN TMOObligatory ON TMOType.IDMOType = TMOObligatory.MOMoMOTypeID \n"  
+  ." INNER JOIN TUser ON TMOObligatory.MOObUserID = TUser.IDUser \n"  
+  ." WHERE MOTOnlyLife > 0 \n"  
+  ." HAVING MOAV > MODONE \n"  
+  ." ORDER BY (MOAV - MODONE) \n";  
+  $Par = [];
+  array_push($ResARRAY, array("query" => $sql, "param" =>$Par));
+
+  $sql = "SELECT TUser.IDUser, TUser.UserNameS, TMOType.IDMOType, TMOType.MOTName, TMOType.MOTOnlyBegin AS MOAV, \n"  
+  ." (SELECT COUNT(*) FROM TMOReestr WHERE TMOReestr.MOReUserID = TUser.IDUser AND TMOReestr.MOReMOTypeID = TMOType.IDMOType) AS MODONE \n"  
+  ." FROM TMOType \n"  
+  ." INNER JOIN TMOObligatory ON TMOType.IDMOType = TMOObligatory.MOMoMOTypeID \n"  
+  ." INNER JOIN TUser ON TMOObligatory.MOObUserID = TUser.IDUser \n"  
+  ." WHERE TMOType.MOTOnlyBegin > 0 \n"  
+  ." HAVING MOAV > MODONE \n"  
+  ." ORDER BY (MOAV - MODONE) DESC \n";  
+  $Par = [];
+  array_push($ResARRAY, array("query" => $sql, "param" =>$Par));
+
+  $sql = "SELECT T.IDUser, T.UserNameS, T.IDMOType, T.MOTName, \n"  
+  ." T.MOAV, T.MODONE, TIMESTAMPDIFF(MONTH, T.MODONE, CURDATE()) as TTTT \n"  
+  ." FROM  \n"  
+  ." (SELECT TUser.IDUser, TUser.UserNameS, TMOType.IDMOType, TMOType.MOTName, TMOType.MOTPeriodMon AS MOAV,   \n"  
+  ." nvl((SELECT TMOReestr.MOReDateTo  \n"  
+   ." FROM TMOReestr  \n"  
+   ." WHERE TMOReestr.MOReUserID = TUser.IDUser  \n"  
+   ." AND TMOReestr.MOReMOTypeID = TMOType.IDMOType \n"  
+   ." ORDER BY MOReDateTo DESC \n"  
+   ." LIMIT 1 \n"  
+  ." ), STR_TO_DATE('1900-01-01', '%Y-%m-%d')) AS MODONE, \n"  
+  ." nvl(TUser.IDUser, 123123) \n"  
+  ." FROM TMOType \n"  
+  ." INNER JOIN TMOObligatory ON TMOType.IDMOType = TMOObligatory.MOMoMOTypeID \n"  
+  ." INNER JOIN TUser ON TMOObligatory.MOObUserID = TUser.IDUser \n"  
+  ." WHERE TMOType.MOTPeriodMon > 0) T \n"  
+  ." WHERE TIMESTAMPDIFF(MONTH, T.MODONE, CURDATE()) > -2 \n"  
+  ." ORDER BY TTTT DESC \n";  
+  $Par = [];  
+    array_push($ResARRAY, array("query" => $sql, "param" =>$Par));
+};
 
 
 
