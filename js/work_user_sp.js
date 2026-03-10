@@ -310,7 +310,7 @@ function KeyEditMOOSave_click(){
 };
 function FOK_UdMOO(str, param){
 	const arr = JSON.parse(str);
-    if (arr[0][0] != "OK"){
+    if (arr[0][0][0] != "OK"){
       alert ('Oшибка - ' + arr[0][1]);     
       exit;
     };

@@ -79,6 +79,7 @@
         </div>
 
         <div class="grid" id="grid_MOOverdueList">           
+        <!--
 
 	        <div class="grid-tr-0">
 		    <div class="grid-td_mo">
@@ -88,13 +89,12 @@
 		        <div class="item">МО</div>
 		    </div>
 		    <div class="grid-td_mo">
-			    <div class="item">Кол-во в Жизни</div>
+			    <div class="item">Кол-во необходимо</div>
 		    </div>
 		    <div class="grid-td_mo">
-			    <div class="item">Уже сдалано</div>
+			    <div class="item">Кол-во сдалано</div>
 		    </div>
 	    </div>
-        <!--
     <div class="grid-tr" onclick="work_user_sel()">
 		<div class="grid-td">
 			<div class="item">Блок №4</div>

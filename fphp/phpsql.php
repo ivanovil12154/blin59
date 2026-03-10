@@ -47,6 +47,7 @@
       $resrow = [];
       $countOK = 0;
       foreach ($ResARRAY as $ResSet) {
+        $resrow = [];
         $stmt = $pdo->prepare($ResSet["query"]);
         if ($ResSet["param"] != null) {
           $stmt->execute($ResSet["param"]);
@@ -60,8 +61,8 @@
              array_push($resrow, $row);
           };   
         };  
+        array_push($rows, $resrow);
       };
-      array_push($rows, $resrow);
     }  
     echo json_encode($rows);
   } catch (Exception $e) {
@@ -136,9 +137,9 @@ function GenSQL(&$Param, &$ResARRAY){
   if ($VFunction == "ShowMOList"  and $VMethod == "GET"){
     $Res = GetSQL_ShowMOList($Param, $ResARRAY);
   };   
-  if ($VFunction == "ShowMOZad"  and $VMethod == "GET"){
+/*  if ($VFunction == "ShowMOZad"  and $VMethod == "GET"){
     $Res = GetSQL_ShowMOZad($Param, $ResARRAY);
-  };   
+  };   */
   if ($VFunction == "MOOverdueList"  and $VMethod == "GET"){
     $Res = GetSQL_MOOverdueList($Param, $ResARRAY);
   };   
@@ -270,7 +271,7 @@ function GetSQL_ShowMOList(&$Param, &$ResARRAY){
   array_push($ResARRAY, array("query" => $sql, "param" =>$para));
   return "ARRAY";
 };
-
+/*
 function GetSQL_ShowMOZad(&$Param, &$ResARRAY){
 
 
@@ -304,25 +305,27 @@ $para['MOReUserID'] = $_POST["VSelID"];
   array_push($ResARRAY, array("query" => $sql, "param" =>$para));
   return "ARRAY";
 };
+*/
 
-function GetSQL_MOOverdueList($Param, $ResARRAY){
+function GetSQL_MOOverdueList(&$Param, &$ResARRAY){
   $sql = "SELECT TUser.IDUser, TUser.UserNameS, TMOType.IDMOType, TMOType.MOTName, TMOType.MOTOnlyLife AS MOAV, \n"  
-  ." (SELECT COUNT(*) FROM TMOReestr WHERE TMOReestr.MOReUserID = TUser.IDUser AND TMOReestr.MOReMOTypeID = TMOType.IDMOType) AS MODONE \n"  
-  ." FROM TMOType \n"  
-  ." INNER JOIN TMOObligatory ON TMOType.IDMOType = TMOObligatory.MOMoMOTypeID \n"  
-  ." INNER JOIN TUser ON TMOObligatory.MOObUserID = TUser.IDUser \n"  
-  ." WHERE MOTOnlyLife > 0 \n"  
+  ." (SELECT COUNT(*) FROM u198290_blin.TMOReestr WHERE TMOReestr.MOReUserID = TUser.IDUser AND TMOReestr.MOReMOTypeID = TMOType.IDMOType) AS MODONE \n"  
+  ." FROM u198290_blin.TMOType \n"  
+  ." INNER JOIN u198290_blin.TMOObligatory ON TMOType.IDMOType = TMOObligatory.MOMoMOTypeID \n"  
+  ." INNER JOIN u198290_blin.TUser ON TMOObligatory.MOObUserID = TUser.IDUser \n"  
+  ." WHERE MOTOnlyLife > 0 and TMOObligatory.MOMoObligatory = 1 \n"  
   ." HAVING MOAV > MODONE \n"  
   ." ORDER BY (MOAV - MODONE) \n";  
+
   $Par = [];
   array_push($ResARRAY, array("query" => $sql, "param" =>$Par));
 
   $sql = "SELECT TUser.IDUser, TUser.UserNameS, TMOType.IDMOType, TMOType.MOTName, TMOType.MOTOnlyBegin AS MOAV, \n"  
-  ." (SELECT COUNT(*) FROM TMOReestr WHERE TMOReestr.MOReUserID = TUser.IDUser AND TMOReestr.MOReMOTypeID = TMOType.IDMOType) AS MODONE \n"  
-  ." FROM TMOType \n"  
-  ." INNER JOIN TMOObligatory ON TMOType.IDMOType = TMOObligatory.MOMoMOTypeID \n"  
-  ." INNER JOIN TUser ON TMOObligatory.MOObUserID = TUser.IDUser \n"  
-  ." WHERE TMOType.MOTOnlyBegin > 0 \n"  
+  ." (SELECT COUNT(*) FROM u198290_blin.TMOReestr WHERE TMOReestr.MOReUserID = TUser.IDUser AND TMOReestr.MOReMOTypeID = TMOType.IDMOType) AS MODONE \n"  
+  ." FROM u198290_blin.TMOType \n"  
+  ." INNER JOIN u198290_blin.TMOObligatory ON TMOType.IDMOType = TMOObligatory.MOMoMOTypeID \n"  
+  ." INNER JOIN u198290_blin.TUser ON TMOObligatory.MOObUserID = TUser.IDUser \n"  
+  ." WHERE TMOType.MOTOnlyBegin > 0 and TMOObligatory.MOMoObligatory = 1\n"  
   ." HAVING MOAV > MODONE \n"  
   ." ORDER BY (MOAV - MODONE) DESC \n";  
   $Par = [];
@@ -333,23 +336,24 @@ function GetSQL_MOOverdueList($Param, $ResARRAY){
   ." FROM  \n"  
   ." (SELECT TUser.IDUser, TUser.UserNameS, TMOType.IDMOType, TMOType.MOTName, TMOType.MOTPeriodMon AS MOAV,   \n"  
   ." nvl((SELECT TMOReestr.MOReDateTo  \n"  
-   ." FROM TMOReestr  \n"  
+   ." FROM u198290_blin.TMOReestr  \n"  
    ." WHERE TMOReestr.MOReUserID = TUser.IDUser  \n"  
    ." AND TMOReestr.MOReMOTypeID = TMOType.IDMOType \n"  
    ." ORDER BY MOReDateTo DESC \n"  
    ." LIMIT 1 \n"  
   ." ), STR_TO_DATE('1900-01-01', '%Y-%m-%d')) AS MODONE, \n"  
   ." nvl(TUser.IDUser, 123123) \n"  
-  ." FROM TMOType \n"  
-  ." INNER JOIN TMOObligatory ON TMOType.IDMOType = TMOObligatory.MOMoMOTypeID \n"  
-  ." INNER JOIN TUser ON TMOObligatory.MOObUserID = TUser.IDUser \n"  
-  ." WHERE TMOType.MOTPeriodMon > 0) T \n"  
+  ." FROM u198290_blin.TMOType \n"  
+  ." INNER JOIN u198290_blin.TMOObligatory ON TMOType.IDMOType = TMOObligatory.MOMoMOTypeID \n"  
+  ." INNER JOIN u198290_blin.TUser ON TMOObligatory.MOObUserID = TUser.IDUser \n"  
+  ." WHERE TMOType.MOTPeriodMon > 0  and TMOObligatory.MOMoObligatory = 1) T \n"  
   ." WHERE TIMESTAMPDIFF(MONTH, T.MODONE, CURDATE()) > -2 \n"  
   ." ORDER BY TTTT DESC \n";  
   $Par = [];  
-    array_push($ResARRAY, array("query" => $sql, "param" =>$Par));
-};
+  array_push($ResARRAY, array("query" => $sql, "param" =>$Par));
+  return "ARRAY";
 
+};
 
 
 /*
