@@ -11,26 +11,17 @@
 
 <body>
 <?php
-//  $UserName = 'Bdf';
-  require "../fphp/phpmain.php";    
-//  require "../fphp/AdminBDMainFun.php";    
-/*
-  $mysql = ConnBD();
-
-  session_start();
-  $IDUser = $_SESSION['idusert']; 
-  $UserName = $_SESSION['username']; 
-  $_SESSION['stwork'] = 'adminbd';
-  session_write_close(); 
-  echo ("<script> let LIDUser=".$IDUser."; let LUserName='".$UserName."' </script>");
-/****************************** */
+    require "../fphp/phpmain.php";    
     echo ("<script>");
     if ($_SERVER['REQUEST_METHOD'] <> 'POST') {
-/*        echo ("let GIDUser=".$IDUser.";");
-        echo ("let GUserFIO='".$UserName."';");
-        echo ("let GUserLogin='';");
-        echo ("let GSession='';");
-        */
+//    if (true) {
+        session_start();
+        echo ("let GIDUser=".$_SESSION['iduser'].";");
+        echo ("let GUserFIO='(".$_SESSION['username'].")';");
+        echo ("let GUserLogin='".$_SESSION['userlogin']."';");
+        echo ("let GSession='".$_SESSION['session']."';");
+        $UserName = "(".$_SESSION['username'].")";
+        session_write_close(); 
     } else {
         echo ("let GIDUser=".$_POST['VGIDUser'].";");
         echo ("let GUserFIO='".$_POST['VGUserFIO']."';");
@@ -39,7 +30,6 @@
         $UserName = $_POST['VGUserFIO'];
     };
     echo ("</script>");
-
  ?>
 
 <div class="header">

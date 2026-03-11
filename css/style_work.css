@@ -11,7 +11,7 @@ body {
   background-size: cover;        /* Растягивает картинку на весь экран */
   /*background-size: 100%;  /**/
 }
-
+/************************************************/
 .wmain { 
   display: flex;
   flex-direction: row;
@@ -50,6 +50,9 @@ body {
   border-color: #96bdcf;
   border-radius: 5px;  
 }
+/*****************************************************/
+
+
 
 
 #win_user_edit{
@@ -179,6 +182,9 @@ body {
 /*****************************************************/
 .custom-button {
 /*  display: inline-block;*/
+  font-size: 18px;
+  font-style: normal;
+
   padding: 10px;
   margin: 5px;
   width: 250px;

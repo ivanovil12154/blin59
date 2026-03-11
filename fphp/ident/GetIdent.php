@@ -33,10 +33,21 @@
       $_SESSION['idusert'] = $vID; 
       $_SESSION['username'] = $vName;
       $_SESSION['userstatus'] = $vStatus;
+
+      $_SESSION['res'] = "OK";
+      $_SESSION['iduser'] = $vID;
+      $_SESSION['username'] = $vName;
+      $_SESSION['userlogin'] = $vuserlogin;
+      $_SESSION['session'] = $vsession;
+      $_SESSION['status'] = $vStatus;
+
+
       
       $_SESSION['ua'] = $_SERVER['HTTP_USER_AGENT'];
       $_SESSION['ra'] = $_SERVER['REMOTE_ADDR'];
       $_SESSION['ff'] = $_SERVER['HTTP_X_FORWARDED_FOR'];
+
+
 
       session_write_close(); 
 
