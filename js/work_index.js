@@ -1,8 +1,6 @@
 let win_MOOverduelist = document.querySelector("#win_MOOverduelist");
 let grid_MOOverduelist = win_MOOverduelist.querySelector(".grid");
 
-
-
 function KeyGoUserList(){
 	let params = {VGIDUser: GIDUser, 
 		         VGUserFIO: GUserFIO, 
@@ -13,12 +11,17 @@ function KeyGoUserList(){
 
 
 function KeyMOOverdue_Click(){
+	let v = document.querySelector("#serch_fio");
+	let v1 = v.value;
 	let LFormDate = new FormData;
 		LFormDate.append('VID', GIDUser);
 		LFormDate.append('VLogin', GUserLogin);
 		LFormDate.append('VSession', GSession);
 		LFormDate.append('VFunction', "MOOverdueList"); 
 		LFormDate.append('VMethod', "GET");
+		LFormDate.append('VSerchFio', document.querySelector("#serch_fio").value);
+		LFormDate.append('VSerchOffi', document.querySelector("#serch_offise").value);
+		LFormDate.append('VSerchMOT', document.querySelector("#serch_mot").value);
     	SendData('../fphp/phpsql.php', LFormDate, KeyMOOverdue_ClickOK, 'MOType', FERR_Error);
 };	
 function GeneratorRow(Row0, names){
@@ -48,59 +51,28 @@ function GeneratorRow(Row0, names){
 	}
 }
 
-
-
 function KeyMOOverdue_ClickOK(str, param){  
   	const arr = JSON.parse(str);
 	for (let q = 0; q < arr.length; q++){
 	    if ((arr[q][0][0] == "OK") && (arr[q][0][1] > 0)){
 			if (q == 0){
-				GeneratorRow(true, ["Персонал", "MO", "Кол-во в жизни", "Кол-во сделано"]);
+				GeneratorRow(true, ["Персонал", "Место. раб", "MO", "Кол-во в жизни", "Кол-во сделано"]);
 			} else if (q == 1){
-				GeneratorRow(true, ["Персонал", "MO", "Кол-во на работе", "Кол-во сделано"]);
+				GeneratorRow(true, ["Персонал", "Место. раб", "MO", "Кол-во на работе", "Кол-во сделано"]);
 			} else if (q == 2){
-				GeneratorRow(true, ["Персонал", "MO", "Дата окончания", "Кол-во месяц"]);
+				GeneratorRow(true, ["Персонал", "Место. раб", "MO", "Дата окончания", "Кол-во месяц"]);
 			}	
 
     		for (let r = 1; r < arr[q].length; r++) {
 				if (q < 2){
-					GeneratorRow(false, [arr[q][r].UserNameS, arr[q][r].MOTName, arr[q][r].MOAV, arr[q][r].MODONE]);
+					GeneratorRow(false, [arr[q][r].UserNameS, arr[q][r].OfName, arr[q][r].MOTName, arr[q][r].MOAV, arr[q][r].MODONE]);
 				} else {
 					if (arr[q][r].TTTT > 1000) {
-						GeneratorRow(false, [arr[q][r].UserNameS, arr[q][r].MOTName, "-", "-"]);
+						GeneratorRow(false, [arr[q][r].UserNameS, arr[q][r].OfName, arr[q][r].MOTName, "-", "-"]);
 					} else {
-						GeneratorRow(false, [arr[q][r].UserNameS, arr[q][r].MOTName, arr[q][r].MODONE, arr[q][r].TTTT]);
+						GeneratorRow(false, [arr[q][r].UserNameS, arr[q][r].OfName, arr[q][r].MOTName, arr[q][r].MODONE, arr[q][r].TTTT]);
 					}	
 				}
-/*
-
-		        let elemrow = document.createElement('div');
-        		elemrow.className = "grid-tr";
-//				elemrow.setAttribute("IDUser", arr[q][r].IDUser);
-//				elemrow.setAttribute("IDMOType", arr[q][r].IDMOType);
-		//		elemrow.onclick = row_user_click;
-				grid_MOOverduelist.append(elemrow);
-
-		        elem = document.createElement('div');		  
-		        elem.className = 'grid-td_mo';
-				
-		        elem.innerHTML = arr[q][r].UserNameS;
-		        elemrow.append(elem);
-
-		        elem = document.createElement('div');		  
-		        elem.className = 'grid-td_mo';
-		        elem.innerHTML = arr[q][r].MOTName;
-		        elemrow.append(elem);
-
-		        elem = document.createElement('div');		  
-		        elem.className = 'grid-td_mo';
-		        elem.innerHTML = arr[q][r].MOAV;
-		        elemrow.append(elem);
-
-		        elem = document.createElement('div');		  
-		        elem.className = 'grid-td_mo';
-		        elem.innerHTML = arr[q][r].MODONE;
-		        elemrow.append(elem);*/
 			}
 		}
 	}
@@ -161,28 +133,7 @@ function FunGUError1(str, param){
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
-
-/*
-	if (str == 'LClose'){
-		alert ('Логин занят')
-		return;
-	};
-
-	if (str != 'OK'){
-		alert ('Ошибка')
-		return;
-	};
-    alert ('Удача')
-	return;
-
-	OnClickCloseWinPred();
-	Llogin = param;
-    */
-
-
+ 
 function FunNLError1(str, param){
 	alert ('Ошибка')
 	return;

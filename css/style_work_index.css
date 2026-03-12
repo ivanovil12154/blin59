@@ -1,0 +1,28 @@
+#win_MOOverduelist{
+    background-color: #fafbe4;
+    color: #000000;
+    opacity: 0.6;
+    font-family: JuraLight;
+    font-weight: 800;
+    font-size: 15px; 
+    text-align: center;
+}
+
+.wmain_serch{
+    margin: 3px;    
+    text-align: left;
+}
+
+#win_MOOverduelist input{
+    font-weight: 500;
+    font-size: 15px; 
+    height: 17px;
+
+} 
+#win_MOOverduelist .custom-button{
+    font-size: 18px;
+    font-style: normal;
+    padding: 2px;
+    margin: 2px;
+    width: 79px;
+}    

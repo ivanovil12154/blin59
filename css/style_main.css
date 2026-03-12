@@ -36,7 +36,7 @@ body {
   flex-direction: column;
   margin: 3px;
   padding: 3px; 
-  width: 235px; 
+  width: 165px; 
   flex-grow: 0;
   border-style: solid;
   border-width: 2px;
@@ -48,7 +48,7 @@ body {
 /*  display: inline-block;*/
   margin: 3px;
   padding: 3px; 
-  width: 200px;
+  width: 440px;
   flex-grow: 1;
   border-style: solid;
   border-width: 2px;
@@ -264,7 +264,7 @@ body {
 }
 /*******************************************************/
 #win_offers_get{
-/*  width: 370px; */
+  min-width: 350px; 
   margin: 5px;
   background-color: #fafbe4;
   opacity: 0.8; 
@@ -279,7 +279,6 @@ body {
   
   color: #000000;
   opacity: 0.9;  
-/*  width: 80%;*/
 
   border-radius: 5px;
   border-style: solid;
@@ -292,9 +291,10 @@ body {
 
 .form_offers {
   display: grid;
-  grid-template-columns: 220px 1fr;
-  margin: 10px;
+  grid-template-columns: 166px 1fr;
+  margin: 3px;
   vertical-align: middle;
+  font-size: 18px;
 }  
 
 .form_offers * {
@@ -321,8 +321,8 @@ body {
 
 #win_offers_get textarea {
   font-family: JuraLight;
-  font-size: 20px;
-  width: 100%;
+  font-size: 18px;
+  width: 98%;
 }
 
 .button_offers {
@@ -388,20 +388,22 @@ body {
 /*  --------------------------------------------------*/
 /*  --------------------------------------------------*/
 .custom-button {
-  display: inline-block;
-  padding: 10px;
-  margin: 5px;
-  width: 200px;
-  font-size: 30px;
-  font-style: italic;
-  background-color: #0c0c00;
-  color: #e1ff01;
-  border-radius: 5px;
-  cursor: pointer; /* Делает курсор в виде руки */
-  user-select: none; /* Запрещает выделение текста */
-  transition: background 0.3s;
-  opacity: 0.6; 
+    display: inline-block;
+    padding: 10px;
+    margin: 5px;
+    width: 138px;
+    font-size: 20px;
+    /* font-style: italic; */
+    background-color: #f5f0d4;
+    color: #4a5fb1;
+    border-radius: 5px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.3s;
+    opacity: 0.9;
 }
+
+
 
 .header .custom-button {
     padding: 6px;
@@ -411,7 +413,7 @@ body {
     font-style: normal;
     background-color: #0c0c00;
     color: #e1ff01;
-    opacity: 0.2;
+    opacity: 0.5;
 }    
 
 .custom-button:hover {

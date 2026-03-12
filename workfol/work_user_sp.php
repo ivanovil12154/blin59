@@ -71,7 +71,7 @@
         </div>
 
         <div class="custom-button" role="button" tabindex="1" onclick="KeyDelUser_click()">
-            Удалить персонал
+            Удалить персонал(не раб)
         </div>
         <div class="custom-button" role="button" tabindex="1" onclick="KeyGoMainMenu_click()">
             Основное меню

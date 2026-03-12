@@ -308,33 +308,67 @@ $para['MOReUserID'] = $_POST["VSelID"];
 */
 
 function GetSQL_MOOverdueList(&$Param, &$ResARRAY){
-  $sql = "SELECT TUser.IDUser, TUser.UserNameS, TMOType.IDMOType, TMOType.MOTName, TMOType.MOTOnlyLife AS MOAV, \n"  
+  $VSerchFio = $_POST["VSerchFio"];
+  $VSerchOffi = $_POST["VSerchOffi"];
+  $VSerchMOT = $_POST["VSerchMOT"];
+  $para = [];
+
+  if ($VSerchFio != ''){
+    $para['VSerchFio'] = "%". $VSerchFio . "%";
+  };
+  if ($VSerchOffi != ''){
+    $para['VSerchOffi'] = "%". $VSerchOffi . "%";
+  };
+  if ($VSerchMOT != ''){
+    $para['VSerchMOT'] = "%". $VSerchMOT . "%";
+  };
+
+  $sql = "SELECT TUser.IDUser, TUser.UserNameS, TOffice.OfName, TMOType.IDMOType, TMOType.MOTName, TMOType.MOTOnlyLife AS MOAV, \n"  
   ." (SELECT COUNT(*) FROM u198290_blin.TMOReestr WHERE TMOReestr.MOReUserID = TUser.IDUser AND TMOReestr.MOReMOTypeID = TMOType.IDMOType) AS MODONE \n"  
   ." FROM u198290_blin.TMOType \n"  
   ." INNER JOIN u198290_blin.TMOObligatory ON TMOType.IDMOType = TMOObligatory.MOMoMOTypeID \n"  
   ." INNER JOIN u198290_blin.TUser ON TMOObligatory.MOObUserID = TUser.IDUser \n"  
-  ." WHERE MOTOnlyLife > 0 and TMOObligatory.MOMoObligatory = 1 \n"  
-  ." HAVING MOAV > MODONE \n"  
+  ." INNER JOIN u198290_blin.TOffice ON TUser.UserOfficeID = TOffice.IDOffice \n"  
+  ." WHERE MOTOnlyLife > 0 and TMOObligatory.MOMoObligatory = 1 \n";
+  if ($VSerchFio != ''){
+    $sql = $sql . " AND TUser.UserNameS like :VSerchFio \n";
+  };
+  if ($VSerchOffi != ''){
+    $sql = $sql . " AND TOffice.OfName like :VSerchOffi \n";
+  };
+  if ($VSerchMOT != ''){
+    $sql = $sql . " AND TMOType.MOTName like :VSerchMOT \n";
+  };
+  $sql = $sql . " HAVING MOAV > MODONE \n"  
   ." ORDER BY (MOAV - MODONE) \n";  
+  array_push($ResARRAY, array("query" => $sql, "param" =>$para));
 
-  $Par = [];
-  array_push($ResARRAY, array("query" => $sql, "param" =>$Par));
-
-  $sql = "SELECT TUser.IDUser, TUser.UserNameS, TMOType.IDMOType, TMOType.MOTName, TMOType.MOTOnlyBegin AS MOAV, \n"  
+  $sql = "SELECT TUser.IDUser, TUser.UserNameS, TOffice.OfName, TMOType.IDMOType, TMOType.MOTName, TMOType.MOTOnlyBegin AS MOAV, \n"  
   ." (SELECT COUNT(*) FROM u198290_blin.TMOReestr WHERE TMOReestr.MOReUserID = TUser.IDUser AND TMOReestr.MOReMOTypeID = TMOType.IDMOType) AS MODONE \n"  
   ." FROM u198290_blin.TMOType \n"  
   ." INNER JOIN u198290_blin.TMOObligatory ON TMOType.IDMOType = TMOObligatory.MOMoMOTypeID \n"  
   ." INNER JOIN u198290_blin.TUser ON TMOObligatory.MOObUserID = TUser.IDUser \n"  
-  ." WHERE TMOType.MOTOnlyBegin > 0 and TMOObligatory.MOMoObligatory = 1\n"  
-  ." HAVING MOAV > MODONE \n"  
+  ." INNER JOIN u198290_blin.TOffice ON TUser.UserOfficeID = TOffice.IDOffice \n"  
+  ." WHERE TMOType.MOTOnlyBegin > 0 and TMOObligatory.MOMoObligatory = 1\n";  
+  if ($VSerchFio != ''){
+    $sql = $sql . " AND TUser.UserNameS like :VSerchFio \n";
+  };
+  if ($VSerchOffi != ''){
+    $sql = $sql . " AND TOffice.OfName like :VSerchOffi \n";
+  };
+  if ($VSerchMOT != ''){
+    $sql = $sql . " AND TMOType.MOTName like :VSerchMOT \n";
+  };
+  $sql = $sql . " HAVING MOAV > MODONE \n"  
   ." ORDER BY (MOAV - MODONE) DESC \n";  
-  $Par = [];
-  array_push($ResARRAY, array("query" => $sql, "param" =>$Par));
+  array_push($ResARRAY, array("query" => $sql, "param" =>$para));
 
   $sql = "SELECT T.IDUser, T.UserNameS, T.IDMOType, T.MOTName, \n"  
+  ." T.OfName,  \n" 
   ." T.MOAV, T.MODONE, TIMESTAMPDIFF(MONTH, T.MODONE, CURDATE()) as TTTT \n"  
   ." FROM  \n"  
-  ." (SELECT TUser.IDUser, TUser.UserNameS, TMOType.IDMOType, TMOType.MOTName, TMOType.MOTPeriodMon AS MOAV,   \n"  
+  ." (SELECT TUser.IDUser, TUser.UserNameS, TMOType.IDMOType, TMOType.MOTName, TMOType.MOTPeriodMon AS MOAV,   \n" 
+  ." TOffice.OfName,  \n" 
   ." nvl((SELECT TMOReestr.MOReDateTo  \n"  
    ." FROM u198290_blin.TMOReestr  \n"  
    ." WHERE TMOReestr.MOReUserID = TUser.IDUser  \n"  
@@ -346,11 +380,21 @@ function GetSQL_MOOverdueList(&$Param, &$ResARRAY){
   ." FROM u198290_blin.TMOType \n"  
   ." INNER JOIN u198290_blin.TMOObligatory ON TMOType.IDMOType = TMOObligatory.MOMoMOTypeID \n"  
   ." INNER JOIN u198290_blin.TUser ON TMOObligatory.MOObUserID = TUser.IDUser \n"  
+  ." INNER JOIN u198290_blin.TOffice ON TUser.UserOfficeID = TOffice.IDOffice \n"  
   ." WHERE TMOType.MOTPeriodMon > 0  and TMOObligatory.MOMoObligatory = 1) T \n"  
-  ." WHERE TIMESTAMPDIFF(MONTH, T.MODONE, CURDATE()) > -2 \n"  
-  ." ORDER BY TTTT DESC \n";  
+  ." WHERE TIMESTAMPDIFF(MONTH, T.MODONE, CURDATE()) > -2 \n";  
+  if ($VSerchFio != ''){
+    $sql = $sql . " AND T.UserNameS like :VSerchFio \n";
+  };
+  if ($VSerchOffi != ''){
+    $sql = $sql . " AND T.OfName like :VSerchOffi \n";
+  };
+  if ($VSerchMOT != ''){
+    $sql = $sql . " AND T.MOTName like :VSerchMOT \n";
+  };
+  $sql = $sql . " ORDER BY TTTT DESC \n";  
   $Par = [];  
-  array_push($ResARRAY, array("query" => $sql, "param" =>$Par));
+  array_push($ResARRAY, array("query" => $sql, "param" =>$para));
   return "ARRAY";
 
 };

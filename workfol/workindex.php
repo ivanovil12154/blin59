@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/style_main.css">
     <link rel="stylesheet" href="../css/style_work.css">
+    <link rel="stylesheet" href="../css/style_work_index.css">
+
     <title>Работа</title>
 </head>
 
@@ -34,10 +36,10 @@
 
 <div class="header">
     <?php
-          echo('<p>Администратор БД - '.$UserName.'</p>');
+          echo($UserName);
     ?>    
-    <div class="custom-button" role="button" tabindex="0" onclick="document.location.href = 'ident.php'">
-        Войти
+    <div class="custom-button" role="button" tabindex="0" onclick="document.location.href = '../index.php'">
+        Выйти
     </div>
 </div>
 <div class="wmain">
@@ -49,25 +51,22 @@
         <div class="custom-button" role="button" tabindex="0" onclick="KeyMOOverdue_Click()">
             Список необходмых прививок
         </div>
-        <div class="custom-button" role="button" tabindex="1" onclick="work_getmslist()">
-            Добавить прививку
-        </div>
-        <div class="custom-button" role="button" tabindex="1" onclick="document.location.href = 'ident.php'">
-            ------------
-        </div>
-        <div class="custom-button" role="button" tabindex="1" onclick="document.location.href = 'ident.php'">
-            -------------
-        </div>
-
     </div>
     <div class="wmain_right">
 <!--*******************  WiNDOWS **********************     -->                
 <!--*******************   MOOverdueList **********************     -->        
     <div id = "win_MOOverduelist">
         <div class="wmain_zag">
-            Список МО персонала 
+           Необходимые Мед.Осмотры 
         </div>
-
+        <div class="wmain_serch">
+           <input type="text" id="serch_fio">
+           <input type="text" id="serch_offise">>
+           <input type="text" id="serch_mot">>>
+           <div class="custom-button" role="button"onclick="KeyMOOverdue_Click()">
+              обновить
+            </div>
+        </div>
         <div class="grid" id="grid_MOOverdueList">           
         <!--
 

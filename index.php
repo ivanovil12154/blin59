@@ -126,7 +126,7 @@
             Обратная связь
         </div>
         <div class="form_offers">
-            <div class="form_edit_c0">Представтесь</div>
+            <div class="form_edit_c0">Имя</div>
             <div>
                 <input type="text" name="fio" id="name" class="edit_control" placeholder="Имя">
             </div>
