@@ -7,6 +7,7 @@
     <!--
     <link rel="stylesheet" href="/css/style_work.css">
 -->
+    <link rel="stylesheet" href="/css/style_general.css">
     <link rel="stylesheet" href="/css/style_main.css">
 
     <title>Масленица в Березниках</title>

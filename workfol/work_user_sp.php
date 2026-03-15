@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/style_general.css">
+    <link rel="stylesheet" href="../css/style_gridform.css">
     <link rel="stylesheet" href="../css/style_main.css">
     <link rel="stylesheet" href="../css/style_work.css">
     <title>Список персонала</title>
@@ -116,7 +118,7 @@
     </div>  
 <!--*******************  WiNDOWS **********************     -->            
 <!--*******************   User Edit **********************     -->        
-    <div id=win_user_edit>
+    <div id=win_user_edit class="win_form">
         <div class="wmain_zag">
             Изменение данных персонала
         </div>
@@ -159,7 +161,7 @@
 
 <!--*******************  WiNDOWS **********************     -->        
 <!--*******************   User Edit MO Obligate **********************     -->        
-    <div id=win_user_edit_MOO>
+    <div id=win_user_edit_MOO class="win_form">
         <div class="wmain_zag">
             Настройка мед.осмотров - 
         </div>
@@ -186,7 +188,7 @@
     </div>
 <!--*******************  WiNDOWS **********************     -->            
 <!--*******************   MOADD **********************     -->        
-    <div id=win_user_MOADD>
+    <div id=win_user_MOADD class="win_form">
         <div class="wmain_zag">
             Добавить мед.осмотр для 
         </div>

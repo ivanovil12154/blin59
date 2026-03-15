@@ -289,35 +289,11 @@ body {
   text-align: center;
 }
 
-.form_offers {
-  display: grid;
+.form_edit {
   grid-template-columns: 166px 1fr;
   margin: 3px;
-  vertical-align: middle;
   font-size: 18px;
 }  
-
-.form_offers * {
-    height: 30px;
-  	padding: 3px;
-    text-align: left; /* Контент размещаем в центре по горизонтали */
-    vertical-align: middle;
-}
-
-.form_edit_MO {  
-  display: grid;
-  grid-template-columns: 300px 50px;
-  margin: 10px;
-  vertical-align: middle;
-}
-
-.form_edit_MO * {
-    height: 30px;
-  	padding: 3px;
-    text-align: left; /* Контент размещаем в центре по горизонтали */
-    vertical-align: middle;
-}
-
 
 #win_offers_get textarea {
   font-family: JuraLight;
@@ -341,11 +317,6 @@ body {
     opacity: 0.6;
 }    
 
-
-.form_edit_c0 {
-  text-align: right; /* Контент размещаем в центре по горизонтали */
-}
-
 .edit_control{
   width: 214px;
   height: 16px;
@@ -357,28 +328,6 @@ body {
   height: 24px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .footer { 
   /*background-color: #ccc; */
   padding: 20px; 
@@ -386,24 +335,6 @@ body {
 }
 
 /*  --------------------------------------------------*/
-/*  --------------------------------------------------*/
-.custom-button {
-    display: inline-block;
-    padding: 10px;
-    margin: 5px;
-    width: 138px;
-    font-size: 20px;
-    /* font-style: italic; */
-    background-color: #f5f0d4;
-    color: #4a5fb1;
-    border-radius: 5px;
-    cursor: pointer;
-    user-select: none;
-    transition: background 0.3s;
-    opacity: 0.9;
-}
-
-
 
 .header .custom-button {
     padding: 6px;
@@ -415,32 +346,6 @@ body {
     color: #e1ff01;
     opacity: 0.5;
 }    
-
-.custom-button:hover {
-  background-color: #0056b3; /* Эффект при наведении */
-}
-.custom-button:active {
-  transform: translateY(1px); /* Эффект нажатия */
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /*******************************************/
@@ -513,74 +418,5 @@ body {
 /**********************************************************************************/
 /**********************************************************************************/
 /**********************************************************************************/
-
-
-/*************************************/
-/*      Списки              **********/
-/*                          **********/
-/*************************************/
-.grid {
-	display: table;	
-	width: 100%;
-}
-.grid-tr-0 {
-	 display: table-row;
-   height: 30px;
-  background-color:rgb(48 46 135);
-  color:#fdfa1f;
-  text-align: center;
-
-}
-.grid-tr {
-   height: 25px;
-	 display: table-row;
-   background-color:#e7e7cb;
-   color:rgb(25, 0, 255); 
-}
-/* Эффект при наведении */
-/*
-.grid-tr:hover {
-  background-color: hsl(60, 96%, 56%); 
-}  
-*/
-
-.grid-td {
-	display: table-cell;	
-	width: 33.3%;
-	vertical-align: center;
-	padding: 5px;
-  border: 1px solid; 
-  border-color: black;
-}
-
-.grid-td_mo {
-	display: table-cell;	
-	width: 25%;
-	vertical-align: center;
-	padding: 5px;
-  border: 1px solid; 
-  border-color: black;
-}
-
-/*****************************************************/
-/*******        Редакт.Добавить               ********/
-/*****************************************************/
-.form_edit {
-  display: grid;
-  grid-template-columns: 120px 1fr;
-  margin: 10px;
-  vertical-align: middle;
-}  
-
-.form_edit * {
-    height: 30px;
-  	padding: 3px;
-    text-align: left; /* Контент размещаем в центре по горизонтали */
-    vertical-align: middle;
-}
-
-
-
-
 
 

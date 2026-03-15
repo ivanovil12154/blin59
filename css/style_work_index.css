@@ -1,7 +1,7 @@
 #win_MOOverduelist{
     background-color: #fafbe4;
     color: #000000;
-    opacity: 0.6;
+    opacity: 0.8;
     font-family: JuraLight;
     font-weight: 800;
     font-size: 15px; 
@@ -17,6 +17,7 @@
     font-weight: 500;
     font-size: 15px; 
     height: 17px;
+    width: 100px;
 
 } 
 #win_MOOverduelist .custom-button{
@@ -26,3 +27,12 @@
     margin: 2px;
     width: 79px;
 }    
+
+.form_edit {
+  grid-template-columns: 100px 1fr;
+}
+
+#win_file_save .custom-button{
+  font-size: 14px;
+  width: 140px;
+}

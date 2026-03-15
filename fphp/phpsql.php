@@ -23,6 +23,12 @@
     exit;
   };
 
+  if ($ResQuery == "ERROR"){
+    $rows = [["ERROR", "Error", $VFunction, $VMethod]];
+    echo json_encode($rows);
+    exit;
+  }
+
   try{
     $pdo = ConnectPDO();
     if ($ResQuery != "ARRAY") {    
@@ -143,6 +149,11 @@ function GenSQL(&$Param, &$ResARRAY){
   if ($VFunction == "MOOverdueList"  and $VMethod == "GET"){
     $Res = GetSQL_MOOverdueList($Param, $ResARRAY);
   };   
+
+  if ($VFunction == "SaveFile"  and $VMethod == "SET"){
+    $Res = GetSQL_SaveFile($Param, $ResARRAY);
+  };   
+
   Return $Res;
 };
 
@@ -396,7 +407,30 @@ function GetSQL_MOOverdueList(&$Param, &$ResARRAY){
   $Par = [];  
   array_push($ResARRAY, array("query" => $sql, "param" =>$para));
   return "ARRAY";
+};
 
+function GetSQL_SaveFile(&$Param, &$ResARRAY){
+  if ($_FILES['VFileData']['error'] === UPLOAD_ERR_OK) {
+    // 1. Получаем бинарные данные файла
+    $fileData = file_get_contents($_FILES['VFileData']['tmp_name']);
+    $fileName = $_FILES['VFileData']['name'];
+    $fileSize = $_FILES['VFileData']['size'];    
+
+    $sql = "INSERT INTO u198290_blin.TFiles(FileAutorID, FileDesc, FileName, FileSize, FilePrivilege, FileData)\n"  
+        ." VALUES (:FUserID, :FDesc, :FName, :FSize, :FPrivilege, :FData)";
+
+    $para['FUserID'] = $_POST["VID"];
+    $para['FDesc'] = $_POST["VDesc"];
+    $para['FName'] = $fileName;
+    $para['FSize'] = $fileSize;
+    $para['FPrivilege'] = $_POST["VPrivilege"];
+    $para['FData'] = $fileData;
+    
+    array_push($ResARRAY, array("query" => $sql, "param" =>$para));
+    return "ARRAY";
+  }else{
+    return "ERROR";
+  };
 };
 
 
