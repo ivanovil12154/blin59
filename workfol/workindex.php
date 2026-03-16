@@ -139,7 +139,7 @@
         </div>
 <!--*******************  WiNDOWS **********************     -->                
 <!--*******************   FileList **********************     -->        
-        <div id = "winFileList" class="win_list">
+        <div id = "win_file_list" class="win_list">
             <div class="wmain_zag">
                 Просмотр файлов
             </div>
@@ -151,7 +151,7 @@
                       обновить
                 </div>
             </div>    
-            <div class="grid" id="grid_MOOverdueList">           
+            <div class="grid" id="grid_File_List">           
     	        <div class="grid-tr-0">
 	        	    <div class="grid-td_mo">
 		  	            <div class="item">Дата</div>
@@ -189,15 +189,13 @@
             </div>
         </div>  
 <!--*******************  WiNDOWS **********************     -->                
-
-
     </div>
 </div>
 <div class="footer"></div>
 
+<script src="../js/modul/general_fun.js"></script>
 <script src="../js/work_index.js"></script>
 <script src="../js/modul/xmls.js"></script>
-<script src="../js/modul/general_fun.js"></script>
 
 
 </body>    

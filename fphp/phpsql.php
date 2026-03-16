@@ -61,10 +61,22 @@
           $stmt->execute([]);
         };
         $count = $stmt->rowCount();
-        array_push($resrow, ["OK", $count]);
+        if ($VMethod == "INSERT"){
+          $lastId = $pdo->lastInsertId();
+          array_push($resrow, ["OK", $count, $lastId]);
+        } else {
+          array_push($resrow, ["OK", $count]);
+        };      
         if ($VMethod == "GET") {
           while ($row = $stmt->fetch()) {  // Получить одну строку
+             if (array_key_exists('DATA1', $row)){
+               $row["DATA"] = base64_encode($row["DATA1"]);
+               $row["DATA_SIZE"] = strlen($row["DATA"]);
+
+               unset($row["DATA1"]); // Удаление элемента из массива
+             };
              array_push($resrow, $row);
+
           };   
         };  
         array_push($rows, $resrow);
@@ -154,6 +166,26 @@ function GenSQL(&$Param, &$ResARRAY){
     $Res = GetSQL_SaveFile($Param, $ResARRAY);
   };   
 
+  if ($VFunction == "SaveFile"  and $VMethod == "SET"){
+    $Res = GetSQL_SaveFile($Param, $ResARRAY);
+  };   
+
+  if ($VFunction == "FileList"  and $VMethod == "GET"){
+    $Res = GetSQL_FileList($Param, $ResARRAY);
+  };   
+
+  if ($VFunction == "LoadFileOnly"  and $VMethod == "GET"){
+    $Res = GetSQL_LoadFileOnly($Param, $ResARRAY);
+  };   
+  if ($VFunction == "Test"  and $VMethod == "INSERT"){
+    $Res = GetSQL_InsetTest($Param, $ResARRAY);
+  };   
+  if ($VFunction == "SaveFileMain"  and $VMethod == "INSERT"){
+    $Res = GetSQL_InsetSaveFileMain($Param, $ResARRAY);
+  };   
+  if ($VFunction == "SaveFileData"  and $VMethod == "INSERT"){
+    $Res = GetSQL_InsetSaveFileData($Param, $ResARRAY);
+  };   
   Return $Res;
 };
 
@@ -424,17 +456,86 @@ function GetSQL_SaveFile(&$Param, &$ResARRAY){
     $para['FName'] = $fileName;
     $para['FSize'] = $fileSize;
     $para['FPrivilege'] = $_POST["VPrivilege"];
-    $para['FData'] = $fileData;
+//    $para['FData'] = base64_encode($row["DATA1"]);$fileData;
+    $para['FData'] = base64_encode($fileData);
     
     array_push($ResARRAY, array("query" => $sql, "param" =>$para));
+/************************************************************************/
+    $blobData = base64_encode($fileData);
+    $chunkSize = 1024 * 50; // Размер части в байтах
+    $chunks = str_split($blobData, $chunkSize);
+
+    foreach ($chunks as $index => $chunk) {
+      $p=[];
+        // Обработка части $chunk
+        file_put_contents("part_" . $index . ".bin", $chunk);
+    };
+
+
+
+
     return "ARRAY";
   }else{
     return "ERROR";
   };
 };
 
+function GetSQL_FileList(&$Param, &$ResARRAY){
+  $para = [];
+  $sql = "SELECT TFiles.IDFile, TFiles.FileAutorID, TFiles.FileDesc, TFiles.FileName, TFiles.FileSize, TFiles.FilePrivilege, TFiles.FileDateCreate, TUser.UserNameS \n"
+      . "FROM u198290_blin.TFiles \n"
+      . "INNER JOIN u198290_blin.TUser ON TFiles.FileAutorID = TUser.IDUser\n"
+      . "Order by TFiles.FileDateCreate, TFiles.IDFile\n";
+    array_push($ResARRAY, array("query" => $sql, "param" =>$para));
+    return "ARRAY";
+};
 
-/*
+function GetSQL_LoadFileOnly(&$Param, &$ResARRAY){
+  $para['IDFile'] = $_POST["VIDFile"];
+  $sql = "SELECT TFileData.FDData, TFiles.FileName \n"
+        ."FROM u198290_blin.TFiles \n"
+        ."INNER JOIN u198290_blin.TFileData ON TFiles.IDFile = TFileData.FDFileID  \n"
+        ."WHERE TFiles.IDFile =:IDFile \n"
+        ."ORDER BY TFileData.IDFileData \n";
+  array_push($ResARRAY, array("query" => $sql, "param" =>$para));
+  return "ARRAY";
+};
+
+
+function GetSQL_InsetTest(&$Param, &$ResARRAY){
+  $sql = "INSERT INTO u198290_blin.TOffice(OfName, OfAddr) VALUES (:OfName, :OfAddr)";
+  $para['OfName'] = "Проба";
+  $para['OfAddr'] = "Проба";
+  array_push($ResARRAY, array("query" => $sql, "param" =>$para));
+  return "ARRAY";
+}
+
+function GetSQL_InsetSaveFileMain(&$Param, &$ResARRAY){
+    $sql = "INSERT INTO u198290_blin.TFiles(FileAutorID, FileDesc, FileName, FileSize, FilePrivilege)\n"  
+        ." VALUES (:FUserID, :FDesc, :FName, :FSize, :FPrivilege)";
+
+    $para['FUserID'] = $_POST["VID"];
+    $para['FDesc'] = $_POST["VDesc"];
+    $para['FName'] = $_POST["VFileName"];
+    $para['FSize'] = $_POST["VFileSize"];
+    $para['FPrivilege'] = $_POST["VPrivilege"];
+    
+    array_push($ResARRAY, array("query" => $sql, "param" =>$para));
+    return "ARRAY";
+};
+
+function GetSQL_InsetSaveFileData(&$Param, &$ResARRAY){
+    $sql = "INSERT INTO u198290_blin.TFileData(FDFileID, FDData)\n"  
+        ." VALUES (:FDFileID, :FDData)";
+    $para['FDFileID'] = $_POST["VFileID"];
+    $para['FDData'] = $_POST["VFileData"];
+    
+    array_push($ResARRAY, array("query" => $sql, "param" =>$para));
+    return "ARRAY";
+};
+
+
+    /*
 
 
 

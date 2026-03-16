@@ -42,14 +42,12 @@
 .win_list{
     background-color: #fafbe4;
     color: #000000;
-    opacity: 0.8;
+    opacity: 0.9;
     font-family: JuraLight;
     font-weight: 800;
     font-size: 15px; 
     text-align: center;
 }
-
-
 
 .grid {
 	display: table;	

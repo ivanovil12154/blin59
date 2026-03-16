@@ -1,12 +1,35 @@
 let win_MOOverduelist = document.querySelector("#win_MOOverduelist");
 let grid_MOOverduelist = win_MOOverduelist.querySelector(".grid");
-
 let win_file_save = document.querySelector("#win_file_save");
+let win_file_list = document.querySelector("#win_file_list");
+let grid_file_list = win_file_list.querySelector(".grid");
+
+let Win_list=[win_MOOverduelist, win_file_save, win_file_list];
+
+VisibleWin(Win_list, null);
+//win_MOOverduelist.classList.add("elem_hide");
+
+/*let p = VisibleWin(4, 5);
 
 
-win_MOOverduelist.classList.add("elem_hide");
+function VisibleWin1(SpisWin, VisWin){
+    for (let ind = 0; ind < SpisWin.length; ind++){
+        if (SpisWin[ind] == VisWin) {
+            SpisWin[ind].ClassList.remove('elem_hide');
+        } else {
+            SpisWin[ind].ClassList.add('elem_hide');
+        }
+    }
+	return SpisWin + VisWin;
+
+}*/
 
 
+
+
+/****************************************** */
+/****************************************** */
+/****************************************** */
 
 function KeyGoUserList(){
 	let params = {VGIDUser: GIDUser, 
@@ -58,8 +81,10 @@ function GeneratorRow(Row0, names){
 	}
 }
 
+
+
 function KeyMOOverdue_ClickOK(str, param){  
-	win_MOOverduelist.classList.remove("elem_hide");
+//	win_MOOverduelist.classList.remove("elem_hide");
   	const arr = JSON.parse(str);
 	for (let q = 0; q < arr.length; q++){
 	    if ((arr[q][0][0] == "OK") && (arr[q][0][1] > 0)){
@@ -83,8 +108,10 @@ function KeyMOOverdue_ClickOK(str, param){
 				}
 			}
 		}
-	}
+	};
+	VisibleWin(Win_list, win_MOOverduelist);
 };
+/*********************************************** */
 /*********************************************** */
 function KeyFileList_Click(){
 	let LFormDate = new FormData;
@@ -94,14 +121,141 @@ function KeyFileList_Click(){
 	LFormDate.append('VFunction', "FileList"); 
 	LFormDate.append('VMethod', "GET");
     SendData('../fphp/phpsql.php', LFormDate, KeyFileList_response, '', FERR_Error);
-
 };
 
-function KeyFileList_response(){
+function KeyFileList_response(str, param){
   	const arr = JSON.parse(str);
-    if ((arr[0][0][0] == "OK") && (arr[0][0][1] > 0)){
+    if (arr[0][0][0] != "OK"){
+		alert ("Ошибка");
 	};
+
+	for (let r = 1; r < arr[0].length; r++) {
+		VarRow = GeneratorRowForGrid("grid-tr", "grid-td", "item",  
+			 [arr[0][r].FileDateCreate, 
+               arr[0][r].UserNameS, 
+			   arr[0][r].FileName, 
+			   arr[0][r].FileDesc]);
+		CellButton = document.createElement('div');	   
+		CellButton.className = "grid-td";
+		VarRow.append(CellButton);
+
+		CellBuItems = document.createElement('input');		  
+		CellBuItems.type = "button"
+//		CellBuItems.innerHTML = "Загрузить";
+		CellBuItems.onclick = KeyLoadFileOnly_click;
+		CellBuItems.setAttribute("IDFile", arr[0][r].IDFile);
+		CellButton.append(CellBuItems);
+ 		grid_file_list.append(VarRow);
+	}
+	VisibleWin(Win_list, win_file_list);
+
 };	
+
+function KeyFileSaveForm_Click(){
+	VisibleWin(Win_list, win_file_save);
+};
+
+
+/*********************************************** */
+/*********************************************** */
+
+function KeyLoadFileOnly_click(){
+	let IDF = this.getAttribute("IDFIle");
+	let LFormDate = new FormData;
+	LFormDate.append('VID', GIDUser);
+	LFormDate.append('VLogin', GUserLogin);
+	LFormDate.append('VSession', GSession);
+	LFormDate.append('VFunction', "LoadFileOnly"); 
+	LFormDate.append('VMethod', "GET");
+	LFormDate.append('VIDFile', IDF);
+    SendData('../fphp/phpsql.php', LFormDate, KeyLoadFileOnly_response, '', FERR_Error);
+};
+
+function KeyLoadFileOnly_response(str, para){
+  	const arr = JSON.parse(str);
+    if (arr[0][0][0] != "OK"){
+		return;
+	};
+    if (arr[0][0][1] < 1){
+		alert ("Файл не наден");
+		return;
+	};
+
+	let res = "";
+	for (let ind = 1; ind < arr[0].length; ind++){
+		res = res + arr[0][ind].FDData;
+	}
+
+	let size = res.length;
+
+	let ind = res.indexOf(";base64,")
+	let TD = res.slice(0, ind+8);
+	let res1 = res.slice(ind+8);
+//	let TD = str.slice(5, ind);
+
+//	"data:audio/mpeg;base64,SUQzAwAA
+
+	blob = Base64ToBlob(res1);
+	saveFile(blob, arr[0][1].FileName);
+}
+
+function saveFile(blob, filename) {
+//  const blob = new Blob([data], { type: 'text/plain' });
+/*
+
+Plain Text	const blob = new Blob(['Hello World'], { type: 'text/plain' });
+JSON Data	const obj = { name: 'Bob', id: 123 };
+const blob = new Blob([JSON.stringify(obj)], { type: 'application/json' });
+Binary Data	const binaryData = new Uint8Array([72, 101, 108, 108, 111]); // "Hello"
+const blob = new Blob([binaryData], { type: 'application/octet-stream' });
+
+
+*/
+//  const blob = new Blob([data], { type: 'application/octet-stream' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  
+  a.style.display = 'none';
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  
+  window.URL.revokeObjectURL(url);
+  document.body.removeChild(a);
+}
+
+
+///////////////////////////////////////////
+
+function Base64ToBlob(data){
+//	const base64Data = 'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=='; // Пример base64
+	const base64Data = data;
+//	const contentType = 'image/png'; // Укажите правильный MIME-тип
+	const contentType = 'application/octet-stream'; 
+	
+
+	// 1. Декодируем base64
+	const sliceSize = 512;
+	const byteCharacters = atob(base64Data);
+	const byteArrays = [];
+
+	// 2. Преобразуем в бинарный формат
+	for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+  		const slice = byteCharacters.slice(offset, offset + sliceSize);
+  		const byteNumbers = new Array(slice.length);
+  		for (let i = 0; i < slice.length; i++) {
+    		byteNumbers[i] = slice.charCodeAt(i);
+  		}
+  		const byteArray = new Uint8Array(byteNumbers);
+  		byteArrays.push(byteArray);
+	}
+
+	// 3. Создаем Blob
+	const blob = new Blob(byteArrays, {type: contentType});
+	return blob;
+};	
+
 /******************************************* */
 function KeyFileSave_click(){
    	let IDSaveFile = document.querySelector("#IDSaveFile");
@@ -115,7 +269,10 @@ function KeyFileSave_click(){
 	if (file.size == 0) {
 		alert("Файл пустой");
 	};
-	let LFormDate = new FormData;
+
+
+/**************** Версия1 для  */
+/*	let LFormDate = new FormData;
 	LFormDate.append('VID', GIDUser);
 	LFormDate.append('VLogin', GUserLogin);
 	LFormDate.append('VSession', GSession);
@@ -126,7 +283,64 @@ function KeyFileSave_click(){
 	LFormDate.append('VDesc', IDFSDesc.value);	
 	LFormDate.append('VPrivilege', IDSelectPrivilege.value);	
     SendData('../fphp/phpsql.php', LFormDate, KeyFileSave_Requst, '', FERR_Error);
+*/	
+/**************** Версия2 для  */
+	const reader = new FileReader();
+
+  	// Обработчик успешного чтения
+  	reader.onload = (e) => {
+    	const content = e.target.result; // Содержимое файла
+		KeyFileSave_base64(content, file, IDSelectPrivilege.value, IDFSDesc.value);
+    };
+	//reader.readAsText(file); // Читаем как текст
+	//reader.readAsText(file); // Читает файл как текстовую строку.
+	reader.readAsDataURL(file);// Читает файл в виде base64 строки (для картинок).
+	//reader.readAsArrayBuffer(file);// Читает в бинарном формате.
 };
+
+function KeyFileSave_base64(content, file, VPrivilege, VDesc){
+	let LFormDate = new FormData;
+	LFormDate.append('VID', GIDUser);
+	LFormDate.append('VLogin', GUserLogin);
+	LFormDate.append('VSession', GSession);
+	LFormDate.append('VFunction', "SaveFileMain"); 
+	LFormDate.append('VMethod', "INSERT");
+//	LFormDate.append('VFileData', content);	
+	LFormDate.append('VFileSize', file.size);	
+	LFormDate.append('VFileName', file.name);	
+	LFormDate.append('VDesc', VDesc);	
+	LFormDate.append('VPrivilege', VPrivilege);	
+
+    let mas = splitString(content, 1024*500);	
+	let para = [];
+	para["mas"] = mas;
+	para["ID"] = 0;
+    SendData('../fphp/phpsql.php', LFormDate, KeyFileSave_Main, para, FERR_Error);
+}
+function KeyFileSave_Main(str, para){
+	const arr = JSON.parse(str);
+    if (arr[0][0][0] != "OK"){
+		alert('Ошибка при записи');
+        return;
+    };
+	if (para["mas"].length <1 ){
+		alert('Файл успешно сохранен в базе данных');
+		VisibleWin(Win_list, null);
+		return;
+	};
+	if (para["ID"] < 1) {
+		para["ID"] = arr[0][0][2];
+	}
+
+	let LFormDate = new FormData;
+	LFormDate.append('VFunction', "SaveFileData"); 
+	LFormDate.append('VMethod', "INSERT");
+//	LFormDate.append('VFileData', content);	
+	LFormDate.append('VFileData', para["mas"][0]);	
+	LFormDate.append('VFileID', para["ID"]);	
+	para["mas"].splice(0, 1);
+    SendData('../fphp/phpsql.php', LFormDate, KeyFileSave_Main, para, FERR_Error);
+}
 
 function KeyFileSave_Requst(str, para){
 	const arr = JSON.parse(str);
