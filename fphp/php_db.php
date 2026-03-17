@@ -1,36 +1,40 @@
 <?php
-  require_once  "php_db.php";
-//  require  "php_db.php";
-  $res = ExeSQL(null);
-  echo json_encode($res);
-/*
-  if ($_SERVER['REQUEST_METHOD'] <> 'POST') {
-    $rows = [["ERROR", "NotPost"]];
-    echo json_encode($rows);
-    exit;
-  };
-  $mysql = null;
+$MASPARA = null;
+function ExeSQL($VMASPARA){
+  $MASPARA = null;
+  if ($VMASPARA == null){
+    if ($_SERVER['REQUEST_METHOD'] <> 'POST') {
+      $rows = [["ERROR", "NotPost"]];
+      return $rows;
+      exit;
+    };
+    $MASPARA = $_POST;
+  } else {
+    $MASPARA = $VMASPARA;
+  };  
   $query = null;
 
-  $VFunction = $_POST['VFunction'];
+/*  $VFunction = $_POST['VFunction'];
   $VMethod = $_POST['VMethod'];
-  $VID = $_POST['VID'];
+  */
+  $VFunction = $MASPARA['VFunction'];
+  $VMethod = $MASPARA['VMethod'];
   
   $Param = [];
   $ResARRAY = [];
   $rows = [];  
 
-  $ResQuery = GenSQL($Param, $ResARRAY);
+  $ResQuery = GenSQL($Param, $ResARRAY, $MASPARA);
 
   if ($ResQuery == ''){
     $rows = [["ERROR", "NotMethod", $VFunction, $VMethod]];
-    echo json_encode($rows);
+    return $rows;
     exit;
   };
 
   if ($ResQuery == "ERROR"){
     $rows = [["ERROR", "Error", $VFunction, $VMethod]];
-    echo json_encode($rows);
+    return $rows;
     exit;
   }
 
@@ -70,7 +74,7 @@
           $lastId = $pdo->lastInsertId();
           array_push($resrow, ["OK", $count, $lastId]);
         } else {
-          array_push($resrow, ["OK", $count]);
+          array_push($resrow, ["OK", $count, count($_POST)]);
         };      
         if ($VMethod == "GET") {
           while ($row = $stmt->fetch()) {  // Получить одну строку
@@ -87,19 +91,20 @@
         array_push($rows, $resrow);
       };
     }  
-    echo json_encode($rows);
+    return $rows;
   } catch (Exception $e) {
     $rows = [["ERROR", "PHP", $e->getMessage(), $query]];
-    echo json_encode($rows);
+    return $rows;
   }finally {
     $stmt = null; // Закрыть запрос
     $pdo = null;  // Закрыть соединение
   };   
-/**/
+};
+
 /*************************************************** */
 /*************************************************** */
 /*************************************************** */
-/*
+
 function ConnectPDO(){
   //Подключение к БД 
 
@@ -124,15 +129,19 @@ $pdo = null;
 return $pdo;   
 
 };
-*/
 
 /*************************************************** */
 /*************************************************** */
 /*************************************************** */
-/*
-function GenSQL(&$Param, &$ResARRAY){
+
+function GenSQL(&$Param, &$ResARRAY, $MASPARA){
+  /*
   $VFunction = $_POST['VFunction'];
   $VMethod = $_POST['VMethod'];
+  */
+
+  $VFunction = $MASPARA['VFunction'];
+  $VMethod = $MASPARA['VMethod'];
 
   $Res = '';
   if ($VFunction == "GetSpisUserShot"  and $VMethod == "GET"){
@@ -161,20 +170,15 @@ function GenSQL(&$Param, &$ResARRAY){
   if ($VFunction == "ShowMOList"  and $VMethod == "GET"){
     $Res = GetSQL_ShowMOList($Param, $ResARRAY);
   };   
-/*  if ($VFunction == "ShowMOZad"  and $VMethod == "GET"){
-    $Res = GetSQL_ShowMOZad($Param, $ResARRAY);
-  };   */
-/*  if ($VFunction == "MOOverdueList"  and $VMethod == "GET"){
+
+  if ($VFunction == "MOOverdueList"  and $VMethod == "GET"){
     $Res = GetSQL_MOOverdueList($Param, $ResARRAY);
   };   
 
-  if ($VFunction == "SaveFile"  and $VMethod == "SET"){
+/*  if ($VFunction == "SaveFile"  and $VMethod == "SET"){
     $Res = GetSQL_SaveFile($Param, $ResARRAY);
   };   
-
-  if ($VFunction == "SaveFile"  and $VMethod == "SET"){
-    $Res = GetSQL_SaveFile($Param, $ResARRAY);
-  };   
+  */
 
   if ($VFunction == "FileList"  and $VMethod == "GET"){
     $Res = GetSQL_FileList($Param, $ResARRAY);
@@ -183,22 +187,30 @@ function GenSQL(&$Param, &$ResARRAY){
   if ($VFunction == "LoadFileOnly"  and $VMethod == "GET"){
     $Res = GetSQL_LoadFileOnly($Param, $ResARRAY);
   };   
+
   if ($VFunction == "Test"  and $VMethod == "INSERT"){
     $Res = GetSQL_InsetTest($Param, $ResARRAY);
-  };   
+  };    
+
   if ($VFunction == "SaveFileMain"  and $VMethod == "INSERT"){
     $Res = GetSQL_InsetSaveFileMain($Param, $ResARRAY);
   };   
+
   if ($VFunction == "SaveFileData"  and $VMethod == "INSERT"){
     $Res = GetSQL_InsetSaveFileData($Param, $ResARRAY);
   };   
+
+  if ($VFunction == "GetIdent"  and $VMethod == "GET"){
+    $Res = GetSQL_GetIdent($Param, $ResARRAY, $MASPARA);
+  };   
+  if ($VFunction == "InsertSession"  and $VMethod == "INSERT"){
+    $Res = GetSQL_InsertSession($Param, $ResARRAY, $MASPARA);
+  };   
+
+
   Return $Res;
 };
-*/
 
-/*************************************************** */
-/*************************************************** */
-/*
 function GenSQL_GetSpisUserShot(&$Param){
   $VSelID = $_POST['VSelID'];
   $Param = [];                  
@@ -218,8 +230,7 @@ function GenSQL_GetSpisUserShot(&$Param){
   $Res = $Res . " order by TUser.UserNameS";
   Return $Res;
 };
-/**/
-/*
+
 function GenSQL_GetUserFull(&$Param){
   $VSelID = $_POST['VSelID'];
   $Param = [];                  
@@ -231,8 +242,7 @@ function GenSQL_GetUserFull(&$Param){
     . "where IDUser = :id "; 
 Return $sql;
 };
-/**/
-/*
+
 function SetSQL_UdUser(&$Param){
   $Param = [];                  
   $Param['UserName'] = $_POST['VUserName'];
@@ -254,8 +264,7 @@ function SetSQL_UdUser(&$Param){
   Return $sql;
 };
 
-*/
-/*
+
 function GetSQL_GetUserMOO(&$Param){
   $Param = [];                  
   $Param['IDUser'] = $_POST['VSelID'];
@@ -268,8 +277,7 @@ function GetSQL_GetUserMOO(&$Param){
   Return $sql;
 };
 
-*/
-/*
+
 function SetSQL_UdMOO(&$Param, &$ResARRAY){
   $ResData = $_POST["VData"];
   $ResMas = json_decode($ResData, false);
@@ -290,10 +298,7 @@ function SetSQL_UdMOO(&$Param, &$ResARRAY){
     array_push($ResARRAY, array("query" => $sql, "param" =>$para));
   };  
   return "ARRAY";
-};
-/**/
-/*
-  
+};  
 
 function SetSQL_ADDMO(&$Param, &$ResARRAY){
   $sql = "INSERT INTO u198290_blin.TMOReestr(MOReUserID, MOReMOTypeID, MOReDateFrom, MOReDateTo, MOReAuthorUserID, MOReDopInf)  VALUES " .
@@ -307,15 +312,15 @@ function SetSQL_ADDMO(&$Param, &$ResARRAY){
   array_push($ResARRAY, array("query" => $sql, "param" =>$para));
   return "ARRAY";
 };
-*/
-/*
+
+
 function GetMOTypeList(&$Param, &$ResARRAY){
   $Res = "SELECT TMOType.IDMOType AS f_id, TMOType.MOTName AS f_name, MOTPeriodMon, MOTOnlyLife, MOTOnlyBegin " .
     "FROM u198290_blin.TMOType ORDER BY TMOType.MOTOrder";
   return $Res;
 };
-*/
-/*
+
+
 function GetSQL_ShowMOList(&$Param, &$ResARRAY){
   $para['MOReUserID'] = $_POST["VSelID"];
   $sql = "SELECT re.IDMOReestr, re.MOReDateFrom, re.MOReDateTo, re.MOReDopInf, re.MOReDateInser, mot.MOTName, usa.UserNameS \n"
@@ -328,43 +333,7 @@ function GetSQL_ShowMOList(&$Param, &$ResARRAY){
   array_push($ResARRAY, array("query" => $sql, "param" =>$para));
   return "ARRAY";
 };
-*/
-/*
-function GetSQL_ShowMOZad(&$Param, &$ResARRAY){
 
-
-
-   $sql = " SELECT T.IDUser, T.UserNameS, T.IDMOType, T.MOTName, T.MOAV, T.MODONE, TIMESTAMPDIFF(MONTH, T.MODONE, CURDATE()) as TTTT ".
-         " FROM  ".
-         " (SELECT TUser.IDUser, TUser.UserNameS, TMOType.IDMOType, TMOType.MOTName, TMOType.MOTPeriodMon AS MOAV,  ".
-         " nvl((SELECT TMOReestr.MOReDateTo  ".
-         " FROM TMOReestr  ".
-         " WHERE TMOReestr.MOReUserID = TUser.IDUser  ".
-         " AND TMOReestr.MOReMOTypeID = TMOType.IDMOType  ".
-         " ORDER BY MOReDateTo DESC  ".
-         " LIMIT 1  ".
-         " ), STR_TO_DATE('1900-01-01', '%Y-%m-%d')) AS MODONE  ".
-         " FROM TMOType ".
-         " INNER JOIN TMOObligatory ON TMOType.IDMOType = TMOObligatory.MOMoMOTypeID ".
-         " INNER JOIN TUser ON TMOObligatory.MOObUserID = TUser.IDUser ".
-         " WHERE TMOType.MOTPeriodMon > 0) T ".
-         " WHERE TIMESTAMPDIFF(MONTH, T.MODONE, CURDATE()) > -2 ".
-         " ORDER BY TTTT DESC ";
-
-
-$para['MOReUserID'] = $_POST["VSelID"];
-  $sql = "SELECT re.IDMOReestr, re.MOReDateFrom, re.MOReDateTo, re.MOReDopInf, re.MOReDateInser, mot.MOTName, usa.UserNameS \n"
-    . "FROM u198290_blin.TMOReestr re\n"
-    . "LEFT JOIN u198290_blin.TMOType mot ON re.MOReMOTypeID = mot.IDMOType\n"
-    . "LEFT JOIN u198290_blin.TUser usa ON re.MOReAuthorUserID = usa.IDUser\n"
-    . "WHERE re.MOReUserID = :MOReUserID\n"
-    . "ORDER BY re.MOReDateFrom DESC"
-    ;
-  array_push($ResARRAY, array("query" => $sql, "param" =>$para));
-  return "ARRAY";
-};
-*/
-/*
 function GetSQL_MOOverdueList(&$Param, &$ResARRAY){
   $VSerchFio = $_POST["VSerchFio"];
   $VSerchOffi = $_POST["VSerchOffi"];
@@ -455,7 +424,6 @@ function GetSQL_MOOverdueList(&$Param, &$ResARRAY){
   array_push($ResARRAY, array("query" => $sql, "param" =>$para));
   return "ARRAY";
 };
-*/
 /*
 function GetSQL_SaveFile(&$Param, &$ResARRAY){
   if ($_FILES['VFileData']['error'] === UPLOAD_ERR_OK) {
@@ -497,7 +465,6 @@ function GetSQL_SaveFile(&$Param, &$ResARRAY){
   };
 };
 */
-/*
 function GetSQL_FileList(&$Param, &$ResARRAY){
   $para = [];
   $sql = "SELECT TFiles.IDFile, TFiles.FileAutorID, TFiles.FileDesc, TFiles.FileName, TFiles.FileSize, TFiles.FilePrivilege, TFiles.FileDateCreate, TUser.UserNameS \n"
@@ -507,8 +474,7 @@ function GetSQL_FileList(&$Param, &$ResARRAY){
     array_push($ResARRAY, array("query" => $sql, "param" =>$para));
     return "ARRAY";
 };
-*/
-/*
+
 function GetSQL_LoadFileOnly(&$Param, &$ResARRAY){
   $para['IDFile'] = $_POST["VIDFile"];
   $sql = "SELECT TFileData.FDData, TFiles.FileName \n"
@@ -520,8 +486,7 @@ function GetSQL_LoadFileOnly(&$Param, &$ResARRAY){
   return "ARRAY";
 };
 
-*/
-/*
+
 function GetSQL_InsetTest(&$Param, &$ResARRAY){
   $sql = "INSERT INTO u198290_blin.TOffice(OfName, OfAddr) VALUES (:OfName, :OfAddr)";
   $para['OfName'] = "Проба";
@@ -529,8 +494,7 @@ function GetSQL_InsetTest(&$Param, &$ResARRAY){
   array_push($ResARRAY, array("query" => $sql, "param" =>$para));
   return "ARRAY";
 }
-*/
-/*
+
 function GetSQL_InsetSaveFileMain(&$Param, &$ResARRAY){
     $sql = "INSERT INTO u198290_blin.TFiles(FileAutorID, FileDesc, FileName, FileSize, FilePrivilege)\n"  
         ." VALUES (:FUserID, :FDesc, :FName, :FSize, :FPrivilege)";
@@ -544,8 +508,7 @@ function GetSQL_InsetSaveFileMain(&$Param, &$ResARRAY){
     array_push($ResARRAY, array("query" => $sql, "param" =>$para));
     return "ARRAY";
 };
-*/
-/*
+
 function GetSQL_InsetSaveFileData(&$Param, &$ResARRAY){
     $sql = "INSERT INTO u198290_blin.TFileData(FDFileID, FDData)\n"  
         ." VALUES (:FDFileID, :FDData)";
@@ -555,186 +518,39 @@ function GetSQL_InsetSaveFileData(&$Param, &$ResARRAY){
     array_push($ResARRAY, array("query" => $sql, "param" =>$para));
     return "ARRAY";
 };
-*/
 
-
-    /*
-
-
-
-try {
-  $id = 5;
-  $id1 = 4;
-  // С использованием именованных псевдопеременных
-  $stmt = $pdo->prepare("SELECT IDUser, UserLogin FROM u198290_blin.TUser WHERE IDUser = :id OR IDUser = :id1");
-  $stmt->execute(['id' => $id, 'id1' => $id1]);
-
-  while ($user = $stmt->fetch()) {  // Получить одну строку
-//    echo json_encode($user);
-    echo json_encode($user['IDUser']);
-    echo json_encode($user);
-	}
-  echo "OOOOO";
-} catch (Exception $e) {
-    echo "ERROR" . $e->getMessage();
-} 
+function GetSQL_GetIdent(&$Param, &$ResARRAY, $MASPARA){
+  $sql = "SELECT TUser.IDUser, TUser.UserLogin, TUser.UserNameS, TUser.UserStatus, TOffice.OfName, TProfession.ProfName \n"
+       . "FROM u198290_blin.TUser \n"
+       . " INNER JOIN u198290_blin.TOffice ON TUser.UserOfficeID = TOffice.IDOffice\n"
+       . " INNER JOIN u198290_blin.TProfession ON TUser.UserProfID = TProfession.IDProf\n"
+       . "WHERE TUser.UserLogin = :Login \n"
+       . " AND TUser.UserPassword = :Pass \n"
+       . " AND TUser.userEnabled = 'Y'";
+    $para['Login'] = $MASPARA['VLogin'];
+    $para['Pass'] = $MASPARA['VPassword'];
     
-*/
-//Чтение//Чтение//Чтение
-//Чтение//Чтение//Чтение
-//Чтение//Чтение//Чтение
-//Чтение//Чтение//Чтение
-///////////////////4. Выборка всех строк
-/*
-try {
-  $id = 5;
-  $id1 = 4;
+    array_push($ResARRAY, array("query" => $sql, "param" =>$para));
+    return "ARRAY";
+};
 
-$stmt = $pdo->query("SELECT UserLogin FROM u198290_blin.TUser WHERE IDUser = 5");
-//$stmt = $pdo->prepare("SELECT IDUser, UserLogin FROM u198290_blin.TUser WHERE IDUser = :id");
-
-$stmt->execute(['id' => $id]);
-//$stmt->execute(['id' => $id, 'id1' => $id1]);
-
-$users = $stmt->fetchAll(); // {Link: Извлечение всех строк, IBM https://www.ibm.com.en2ru.search.translate.goog/docs/SSSNY3_10.1.0/com.ibm.swg.im.dbclient.php.doc/doc/t0023505.html} [9]
-
-foreach ($users as $row) {
-    echo $row['UserLogin'] . "\n";
-}
-
-} catch (Exception $e) {
-    echo "ERROR" . $e->getMessage();
-} 
-*/
+function GetSQL_InsertSession(&$Param, &$ResARRAY, $MASPARA){
+  $sql = "INSERT INTO u198290_blin.TSession(SsGUID, SsUserID, SsSostID, SsAGENT, SsIP) VALUES "
+         ." (:FSsGUID, :FSsUserID, :FSsSostID, :FSsAGENT, :FSsIP)";
+  $para["FSsGUID"] = $MASPARA['VGUID'];
+  $para["FSsUserID"] = $MASPARA['VIDUser'];
+  $para["FSsSostID"] = 100;
+  $para["FSsAGENT"] = $MASPARA['VAGENT'];
+  $para["FSsIP"] = $MASPARA['VIP'];
+  array_push($ResARRAY, array("query" => $sql, "param" =>$para));
+  return "ARRAY";
+};  
 
 
-// Или используя PDO::FETCH_OBJ
-// $user = $stmt->fetch(PDO::FETCH_OBJ);
-// echo $user->name;
-
-/*
-
-    if (QueryCheckUser($mysql, $VLogin, $VPassword, $vID,  $vName,  $vStatus)){
-
-      session_start();
-
-      $_SESSION['idusert'] = $vID; 
-      $_SESSION['username'] = $vName;
-      $_SESSION['userstatus'] = $vStatus;
-      
-      $_SESSION['ua'] = $_SERVER['HTTP_USER_AGENT'];
-      $_SESSION['ra'] = $_SERVER['REMOTE_ADDR'];
-      $_SESSION['ff'] = $_SERVER['HTTP_X_FORWARDED_FOR'];
-
-      session_write_close(); 
-
-      $arr = array(
-          "res" => "OK",
-          "idr" => $vID,
-          "name" => $vName,
-          "status" => $vStatus,);
-    } else {
-      $arr = array(
-          "res" => "ErrorLogin",
-          "idr" => '',
-          "name" => '',
-          "status" => '',);
-    };
-    echo json_encode($arr);
-    */
-/********************************************* */
 
 
-/*  
 
-  $SRes = fTestLogin($mysql, $NewLogin);
+/**/
 
-  if ($SRes != 'OK'){
-    echo ($SRes);
-    mysqli_close($mysql);
-    exit;
-  };
-///////////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////
-  /////////////////  Старт транзации 
-  $query = "Start transaction";
-  if (mysqli_query ($mysql, $query)){
-    $SRes = 'OK';
-  }else{
-    $SRes = "ERROR - Start";
-    echo ($SRes);
-    mysqli_close($mysql);
-    exit;
-  };    
 
-  ///////////////////////////////////////////
-  //  echo ($SRes);
-  ///////////////////////////////////////////
-  $SRes = fUpDateTUser($mysql, $IDUser, $NewLogin);
-
-  if ($SRes =='OK'){
-    $SRes = fInsertTHist($mysql, $IDUser, $NewLogin);
-  }
-
-  if ($SRes != 'OK'){
-    $query = "ROLLBACK";
-    $SRes .= "ROLLBACK/";
-     } else {
-    $query = "COMMIT";
-    $SRes = "";
-  };
-
-  if (mysqli_query ($mysql, $query)){
-    $SRes .= "OK";
-  }else{
-    $SRes .= "ERROR - QCOM";
-  };    
-  mysqli_close($mysql);
-  echo ($SRes);
-*/
-  ////////////////////////////////////////////////////////////////////////////
-/*
-  function fTestLogin($mysql, $NewLogin){
-    $query = ' SELECT IDUser FROM bdschool.TUser WHERE UserLogin = "'.$NewLogin.'"';
-
-    //echo ($query);
-  
-    $res = mysqli_query($mysql, $query);
-    $rows = mysqli_num_rows($res); // количество полученных строк
-    if ($rows>0){
-      $SRes = 'LClose';  
-    } else {
-      $SRes = 'OK';  
-    };
-    return $SRes;
-  };  
-
-  function fUpDateTUser($mysql, $IDUser, $NewLogin){
-    $query = 'UpDate bdschool.TUser SET UserLogin = "'.$NewLogin.'" WHERE IDUser = '.$IDUser;
-    if (mysqli_query ($mysql, $query)){
-      $SRes = "OK";
-    }else{
-      $SRes = "ERROR - ";
-      if ($IDUser == 1) {
-        $SRes .= $query;
-      }
-    };    
-    return $SRes;
-  };
-
-  function fInsertTHist($mysql, $IDUser, $NewLogin){
-    $query = 'INSERT INTO bdschool.THist (HsDeystID, HsUserID, HsNode, HsDate) VALUES (';
-    $query .= '100, '.$IDUser.', "EDIT LOGIN SET - '.$NewLogin.'", NOW())';
-
-    if (mysqli_query ($mysql, $query)){
-      $SRes = "OK";
-    }else{
-      $SRes = "ERROR - ";
-      if ($IDUser == 1) {
-        $SRes .= $query;
-      }
-    };    
-    return $SRes;
-  };
-  */
 ?>
