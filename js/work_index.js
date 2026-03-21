@@ -7,25 +7,6 @@ let grid_file_list = win_file_list.querySelector(".grid");
 let Win_list=[win_MOOverduelist, win_file_save, win_file_list];
 
 VisibleWin(Win_list, null);
-//win_MOOverduelist.classList.add("elem_hide");
-
-/*let p = VisibleWin(4, 5);
-
-
-function VisibleWin1(SpisWin, VisWin){
-    for (let ind = 0; ind < SpisWin.length; ind++){
-        if (SpisWin[ind] == VisWin) {
-            SpisWin[ind].ClassList.remove('elem_hide');
-        } else {
-            SpisWin[ind].ClassList.add('elem_hide');
-        }
-    }
-	return SpisWin + VisWin;
-
-}*/
-
-
-
 
 /****************************************** */
 /****************************************** */
@@ -38,7 +19,7 @@ function KeyGoUserList(){
 				 VGSession: GSession};
     postToSameTab("work_user_sp.php", params);
 };
-
+///////////////////////////////////////////////////////////////////
 function KeyMOOverdue_Click(){
 	let v = document.querySelector("#serch_fio");
 	let v1 = v.value;
@@ -54,6 +35,7 @@ function KeyMOOverdue_Click(){
 		elem_remove_all(grid_MOOverdueList);
     	SendData('../fphp/phpsql.php', LFormDate, KeyMOOverdue_ClickOK, 'MOType', FERR_Error);
 };	
+
 function GeneratorRow(Row0, names){
 	let classRow = "";
 	let classTD = "";
@@ -81,10 +63,7 @@ function GeneratorRow(Row0, names){
 	}
 }
 
-
-
 function KeyMOOverdue_ClickOK(str, param){  
-//	win_MOOverduelist.classList.remove("elem_hide");
   	const arr = JSON.parse(str);
 	for (let q = 0; q < arr.length; q++){
 	    if ((arr[q][0][0] == "OK") && (arr[q][0][1] > 0)){
@@ -111,6 +90,7 @@ function KeyMOOverdue_ClickOK(str, param){
 	};
 	VisibleWin(Win_list, win_MOOverduelist);
 };
+
 /*********************************************** */
 /*********************************************** */
 function KeyFileList_Click(){
@@ -150,11 +130,11 @@ function KeyFileList_response(str, param){
 	VisibleWin(Win_list, win_file_list);
 
 };	
-
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
 function KeyFileSaveForm_Click(){
 	VisibleWin(Win_list, win_file_save);
 };
-
 
 /*********************************************** */
 /*********************************************** */
@@ -186,75 +166,13 @@ function KeyLoadFileOnly_response(str, para){
 		res = res + arr[0][ind].FDData;
 	}
 
-	let size = res.length;
-
 	let ind = res.indexOf(";base64,")
-	let TD = res.slice(0, ind+8);
+	let TD = res.slice(5, ind);
 	let res1 = res.slice(ind+8);
-//	let TD = str.slice(5, ind);
 
-//	"data:audio/mpeg;base64,SUQzAwAA
-
-	blob = Base64ToBlob(res1);
+	blob = Base64ToBlob(res1, TD);
 	saveFile(blob, arr[0][1].FileName);
 }
-
-function saveFile(blob, filename) {
-//  const blob = new Blob([data], { type: 'text/plain' });
-/*
-
-Plain Text	const blob = new Blob(['Hello World'], { type: 'text/plain' });
-JSON Data	const obj = { name: 'Bob', id: 123 };
-const blob = new Blob([JSON.stringify(obj)], { type: 'application/json' });
-Binary Data	const binaryData = new Uint8Array([72, 101, 108, 108, 111]); // "Hello"
-const blob = new Blob([binaryData], { type: 'application/octet-stream' });
-
-
-*/
-//  const blob = new Blob([data], { type: 'application/octet-stream' });
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  
-  a.style.display = 'none';
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  
-  window.URL.revokeObjectURL(url);
-  document.body.removeChild(a);
-}
-
-
-///////////////////////////////////////////
-
-function Base64ToBlob(data){
-//	const base64Data = 'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=='; // Пример base64
-	const base64Data = data;
-//	const contentType = 'image/png'; // Укажите правильный MIME-тип
-	const contentType = 'application/octet-stream'; 
-	
-
-	// 1. Декодируем base64
-	const sliceSize = 512;
-	const byteCharacters = atob(base64Data);
-	const byteArrays = [];
-
-	// 2. Преобразуем в бинарный формат
-	for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-  		const slice = byteCharacters.slice(offset, offset + sliceSize);
-  		const byteNumbers = new Array(slice.length);
-  		for (let i = 0; i < slice.length; i++) {
-    		byteNumbers[i] = slice.charCodeAt(i);
-  		}
-  		const byteArray = new Uint8Array(byteNumbers);
-  		byteArrays.push(byteArray);
-	}
-
-	// 3. Создаем Blob
-	const blob = new Blob(byteArrays, {type: contentType});
-	return blob;
-};	
 
 /******************************************* */
 function KeyFileSave_click(){
@@ -269,25 +187,8 @@ function KeyFileSave_click(){
 	if (file.size == 0) {
 		alert("Файл пустой");
 	};
-
-
-/**************** Версия1 для  */
-/*	let LFormDate = new FormData;
-	LFormDate.append('VID', GIDUser);
-	LFormDate.append('VLogin', GUserLogin);
-	LFormDate.append('VSession', GSession);
-	LFormDate.append('VFunction', "SaveFile"); 
-	LFormDate.append('VMethod', "SET");
-	LFormDate.append('VFileData', file);	
-	LFormDate.append('VFileSize', file.size);	
-	LFormDate.append('VDesc', IDFSDesc.value);	
-	LFormDate.append('VPrivilege', IDSelectPrivilege.value);	
-    SendData('../fphp/phpsql.php', LFormDate, KeyFileSave_Requst, '', FERR_Error);
-*/	
 /**************** Версия2 для  */
 	const reader = new FileReader();
-
-  	// Обработчик успешного чтения
   	reader.onload = (e) => {
     	const content = e.target.result; // Содержимое файла
 		KeyFileSave_base64(content, file, IDSelectPrivilege.value, IDFSDesc.value);
@@ -361,46 +262,14 @@ function KeyCansel_click(){
 
 };
 
-
-
 function work_getuserlist1(){
 	let LFormDate = new FormData;
 	LFormDate.append('VID', GIDUser);
-     
     SendData('../fphp/work/GetUserList.php', LFormDate, FunGUOK, '', FunGUError);
 };	
 
 function FunGUOK1(str, param){
-
     alert ('Удача - ' + str); 
-/*
-
-	const arr = JSON.parse(str);
-	if (arr.res == "OK") {
-      alert ('Удача - ' + arr.name); 
-	  document.location.href = '../workfol/workindex.php';
-
-	} else if (arr.res == "ErrorLogin") {
-		alert ("Ошибка, логин или пароль не найдены");
-	}
-*/
-
-/*
-	if (str == 'LClose'){
-		alert ('Логин занят')
-		return;
-	};
-
-	if (str != 'OK'){
-		alert ('Ошибка')
-		return;
-	};
-    alert ('Удача')
-	return;
-
-	OnClickCloseWinPred();
-	Llogin = param;
-    */
 }
 
 function FunGUError1(str, param){

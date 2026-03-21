@@ -62,10 +62,11 @@
 
 }
 .grid-tr {
-   height: 25px;
-	 display: table-row;
-   background-color:#e7e7cb;
-   color:rgb(25, 0, 255); 
+  height: 25px;
+	display: table-row;
+  background-color:#e7e7cb;
+  color:rgb(25, 0, 255); 
+  text-align: left;
 }
 /* Эффект при наведении */
 /*

@@ -44,3 +44,53 @@ function VisibleWin(SpisWin, VisWin){
   
     }
 }
+
+
+///////////////////////////////////////////
+function Base64ToBlob(data, TD){
+	const base64Data = data;
+//	const contentType = 'image/png'; // Укажите правильный MIME-тип
+	let contentType = ''; 
+
+    if (TD != null && TD.length > 0) {
+        contentType = TD; 
+    } else {
+        contentType = 'application/octet-stream'; 
+    };
+	
+
+	// 1. Декодируем base64
+	const sliceSize = 512;
+	const byteCharacters = atob(base64Data);
+	const byteArrays = [];
+
+	// 2. Преобразуем в бинарный формат
+	for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+  		const slice = byteCharacters.slice(offset, offset + sliceSize);
+  		const byteNumbers = new Array(slice.length);
+  		for (let i = 0; i < slice.length; i++) {
+    		byteNumbers[i] = slice.charCodeAt(i);
+  		}
+  		const byteArray = new Uint8Array(byteNumbers);
+  		byteArrays.push(byteArray);
+	}
+
+	// 3. Создаем Blob
+	const blob = new Blob(byteArrays, {type: contentType});
+	return blob;
+};	
+
+function saveFile(blob, filename) {
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  
+  a.style.display = 'none';
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  
+  window.URL.revokeObjectURL(url);
+  document.body.removeChild(a);
+}
+

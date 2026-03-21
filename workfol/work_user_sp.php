@@ -6,27 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/style_general.css">
     <link rel="stylesheet" href="../css/style_gridform.css">
+    <link rel="stylesheet" href="../css/style_win.css">    
     <link rel="stylesheet" href="../css/style_main.css">
     <link rel="stylesheet" href="../css/style_work.css">
+    <link rel="stylesheet" href="../css/style_work_user_sp.css">
     <title>Список персонала</title>
 </head>
 
 <body>
 <?php
-//  $UserName = 'Bdf';
-  require "../fphp/phpmain.php";    
-//  require "../fphp/AdminBDMainFun.php";    
-/*
-  $mysql = ConnBD();
-
-  session_start();
-  $IDUser = $_SESSION['idusert']; 
-  $UserName = $_SESSION['username']; 
-  $_SESSION['stwork'] = 'adminbd';
-  session_write_close(); 
-  echo ("<script> let LIDUser=".$IDUser."; let LUserName='".$UserName."' </script>");
-  */
-
+    require "../fphp/phpmain.php";    
     echo ("<script>");
     if ($_SERVER['REQUEST_METHOD'] <> 'POST') {
 /*        echo ("let GIDUser=".$IDUser.";");
@@ -45,10 +34,10 @@
 
 <div class="header">
     <?php
-          echo('<p>Администратор БД - '.$UserName.'</p>');
+          echo($UserName);
     ?>    
-    <div class="custom-button" role="button" tabindex="0" onclick="document.location.href = 'ident.php'">
-        Войти
+    <div class="custom-button" role="button" tabindex="0" onclick="document.location.href = '../index.php'">
+        Выйти
     </div>
 </div>
 <div class="wmain">
@@ -83,11 +72,18 @@
     <div class="wmain_right">
 <!--*******************  WiNDOWS **********************     -->                
 <!--*******************   User List **********************     -->        
-    <div id = "user_list">
+    <div id = "user_list" class = "win_list">
         <div class="wmain_zag">
             Список персонала
         </div>
-
+        <div class="wmain_serch">
+            <input type="text" id="serch_fio" placeholder="Ф.И.О.">
+            <input type="text" id="serch_prof" placeholder="Должн.">
+            <input type="text" id="serch_offi" placeholder="Мест. раб.">
+            <div class="custom-button" role="button"onclick="work_get_userlist()">
+                обновить
+            </div>
+        </div>    
         <div class="grid" id="user_list_gird">
 	        <div class="grid-tr-0">
 		    <div class="grid-td">
@@ -193,18 +189,22 @@
             Добавить мед.осмотр для 
         </div>
         <div class="form_edit">
+            <div class="form_edit_c0">Дата прохождения</div>
+            <div><input type="date" name="date_from" class="edit_control"></div>
+
             <div class="form_edit_c0">Тим MO</div>
             <div><select id="ListMOType" class= "edit_control_select" size="1" onchange="ListMO_change()">
                     <option value="0" dopinf = "adf">Не указана</option>
                 </select>
             </div>
-            <div class="form_edit_c0">Описание МО</div>
-            <div id ="MO_desc">fasfasdf</div>
 
-            <div class="form_edit_c0">Дата прохождения</div>
-            <div><input type="date" name="date_from" class="edit_control"></div>
+            <div class="form_edit_c0">Описание МО</div>
+            <div id ="MO_desc"></div>
+
             <div class="form_edit_c0">Действует до</div>
             <div><input type="date" name="date_to" class="edit_control"></div>
+
+
             <div class="form_edit_c0">Примечание</div>
             <div>
                 <input type="text" name="DopInf" class="edit_control" placeholder="Дополнительная информация">

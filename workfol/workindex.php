@@ -67,9 +67,9 @@
                 Необходимые Мед.Осмотры 
             </div>
             <div class="wmain_serch">
-                <input type="text" id="serch_fio">
-                <input type="text" id="serch_offise">
-                <input type="text" id="serch_mot">
+                <input type="text" id="serch_fio" placeholder="Ф.И.О.">
+                <input type="text" id="serch_offise" placeholder="Мест. раб.">
+                <input type="text" id="serch_mot" placeholder="MO">
                 <div class="custom-button" role="button"onclick="KeyMOOverdue_Click()">
                       обновить
                 </div>
@@ -169,6 +169,7 @@
 			            <div class="item">Сохранить</div>
 		            </div>
 	            </div>
+<!--                
                 <div class="grid-tr" onclick="work_user_sel()">
 	                <div class="grid-td">
 			            <div class="item">Блок №4</div>
@@ -186,6 +187,7 @@
 			            <input type = "button">Сохранить</input>
 		            </div>
 	            </div>
+-->
             </div>
         </div>  
 <!--*******************  WiNDOWS **********************     -->                

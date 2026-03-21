@@ -119,12 +119,19 @@ function work_get_userlist(){
 
    user_list_del();
 
+	let serch_fio = document.querySelector("#serch_fio");
+	let serch_offi = document.querySelector("#serch_offi");
+	let serch_prof = document.querySelector("#serch_prof");
+
 	let LFormDate = new FormData;
 	LFormDate.append('VID', GIDUser);
 	LFormDate.append('VLogin', GUserLogin);
 	LFormDate.append('VFunction', "GetSpisUserShot");
 	LFormDate.append('VMethod', "GET");
-	LFormDate.append('VSearchFIO', "");
+	LFormDate.append('VSearchFIO', serch_fio.value);
+	LFormDate.append('VSearchOffi', serch_offi.value);
+	LFormDate.append('VSearchProf', serch_prof.value);
+	
 	LFormDate.append('VSelID', "");	
      
     SendData('../fphp/phpsql.php', LFormDate, FOK_GetUserList, '', FERR_GetUserList);
@@ -343,28 +350,48 @@ function KeyADDMO_click(){
     const dateStr =  d.getFullYear() + '-' + 
 	                (`0${d.getMonth() + 1}`).slice(-2) + '-' + 
 	       			(`0${d.getDate()}`).slice(-2);
-	date_from.value = dateStr;
+//	date_from.value = dateStr;
 };
 
 
 
 function ListMO_change(){
 	let elemdesc = win_user_MOADD.querySelector("#MO_desc");
+	let date_from = win_user_MOADD.querySelector('[name="date_from"]');		
+	let date_to = win_user_MOADD.querySelector('[name="date_to"]');		
     const selectedIndex = Elem_List_MOType.selectedIndex;
     const MOTPeriodMon = Elem_List_MOType.options[selectedIndex].getAttribute("MOTPeriodMon");
     const MOTOnlyLife = Elem_List_MOType.options[selectedIndex].getAttribute("MOTOnlyLife");
     const MOTOnlyBegin = Elem_List_MOType.options[selectedIndex].getAttribute("MOTOnlyBegin");
 	if (MOTPeriodMon > 0) {
-	  elemdesc.innerHTML = "Периодич. - " + MOTPeriodMon + "мес."
+		elemdesc.innerHTML = "Периодич. - " + MOTPeriodMon + "мес."
+
+    	let dateStr = date_from.value;
+		if (dateStr != ""){
+	    	let parts = dateStr.split("-");
+     
+			let MontF = Number(parts[1]) - 1 + Number(MOTPeriodMon);	 
+	 		let Year = Math.trunc(MontF / 12);
+	 		let Mont = 0;
+	 		if (Year > 0) {
+	   			Mont = MontF - (Year * 12);
+	 		}
+	 		Year = Year + Number(parts[0]);
+     		const s =  Year+ '-' + 
+	                (`0${Mont + 1}`).slice(-2) + '-' + 
+	       			(`0${parts[2]}`).slice(-2);
+	 
+			date_to.value = s;
+		};	
 	} else if (MOTOnlyLife > 0) {
-	  elemdesc.innerHTML = MOTOnlyLife + " -  в жизни";
+		elemdesc.innerHTML = MOTOnlyLife + " -  в жизни";
+
 	} else if (MOTOnlyBegin > 0) {
-	  elemdesc.innerHTML = MOTOnlyBegin + " -  при поступ.";
+		elemdesc.innerHTML = MOTOnlyBegin + " -  при поступ.";
 	} else {
-	  elemdesc.innerHTML = "";
+		elemdesc.innerHTML = "";
 	};  
 };
-
 
 
 function KeyADDMOSave_click(){

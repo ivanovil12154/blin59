@@ -213,20 +213,41 @@ function GenSQL(&$Param, &$ResARRAY, $MASPARA){
 
 function GenSQL_GetSpisUserShot(&$Param){
   $VSelID = $_POST['VSelID'];
+  $VFIO = $_POST['VSearchFIO'];
+  $VOffi = $_POST['VSearchOffi'];
+  $VProf = $_POST['VSearchProf'];
   $Param = [];                  
   $Res = "select " .
-	              " TUser.IDUser, " .
-	              " TUser.UserNameS, " .
-	              " TProfession.ProfName, " .
-	              " TOffice.OfName " .
-	           " from " .
-		              " u198290_blin.TUser " .
-		              " left outer join u198290_blin.TProfession on TUser.UserProfID = TProfession.IDProf " .
-		              " left outer join u198290_blin.TOffice on TUser.UserOfficeID = TOffice.IDOffice ";
+	          " TUser.IDUser, " .
+	          " TUser.UserNameS, " .
+	          " TProfession.ProfName, " .
+	          " TOffice.OfName " .
+	        " from " .
+		        " u198290_blin.TUser " .
+		        " left join u198290_blin.TProfession on TUser.UserProfID = TProfession.IDProf " .
+		        " left join u198290_blin.TOffice on TUser.UserOfficeID = TOffice.IDOffice " .
+ 		      "where 1=1";
+
   if ($VSelID > 0) {
     $Param['id'] = $VSelID;
-    $Res = $Res . " where IDUser = :id";
+    $Res = $Res . " AND IDUser = :id";
   };  
+  
+  if ($VOffi != '') {
+    $Param['VOffi'] = "%" . $VOffi . "%";
+    $Res = $Res . " AND TOffice.OfName like :VOffi";
+  };  
+
+  if ($VFIO  != '') {
+    $Param['VFIO'] = "%" . $VFIO . "%";
+    $Res = $Res . " AND TUser.UserNameS like :VFIO";
+  };  
+
+  if ($VProf  != '') {
+    $Param['VProf'] = "%" . $VProf . "%";
+    $Res = $Res . " AND TProfession.ProfName like :VProf";
+  };  
+
   $Res = $Res . " order by TUser.UserNameS";
   Return $Res;
 };
