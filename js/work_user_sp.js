@@ -1,14 +1,26 @@
 /*********************  Declare ************************* */
 let win_user_list = document.querySelector("#user_list");
-let win_user_list_grid = document.querySelector("#user_list_gird");
 let win_user_edit = document.querySelector("#win_user_edit");
-let win_user_edit_prof = document.querySelector("#UserEditProf");
-let win_user_edit_offi = document.querySelector("#UserEditOffi");
 let win_user_edit_MOO = document.querySelector("#win_user_edit_MOO");
 let win_user_MOADD = document.querySelector("#win_user_MOADD");
 let win_showmo_list = document.querySelector("#win_showmo_list");
+let win_user_moaddlistperi = document.querySelector("#win_user_moaddlistperi"); 
+     
+let win_list = [win_user_list, 
+	            win_user_edit, 
+				win_user_edit_MOO,
+				win_user_MOADD, 
+				win_showmo_list, 
+				win_user_moaddlistperi];
+VisibleWin(win_list, win_user_list)
+
+let win_user_list_grid = document.querySelector("#user_list_gird");
+let win_user_edit_prof = document.querySelector("#UserEditProf");
+let win_user_edit_offi = document.querySelector("#UserEditOffi");
+
 let Elem_List_MOType = document.querySelector("#ListMOType");
 let elem_grid_list_showmo = document.querySelector("#grid_list_showmo");
+
 
 
 
@@ -17,18 +29,6 @@ let Edit_Reg = "ADD";
 let Edit_ID = 0;
 let Edit_FIO = '';
 
-/*let GSession = '1212';
-let GIDUser = LIDUser;
-let GUserFIO = "adfasdf";
-let GUserLogin = "asdfa";
-*/
-
-
-win_user_list.classList.remove('delete');
-win_user_edit.classList.add('delete');
-win_user_edit_MOO.classList.add('delete');
-win_user_MOADD.classList.add('delete');
-win_showmo_list.classList.add('delete');
 
 
 work_get_proffesion_list(work_get_office_list);  
@@ -110,14 +110,9 @@ function FOK_GetProfOffiList(str, param){
 //////////////////////////////////////////////////////////////////////////
 function work_get_userlist(){
 //    alert ('запуск - '); 
+	VisibleWin(win_list, win_user_list)   
 
-   win_user_list.classList.remove('delete');
-   win_user_edit.classList.add('delete');
-   win_user_edit_MOO.classList.add('delete');
-   win_user_MOADD.classList.add('delete');
-   win_showmo_list.classList.add('delete');
-
-   user_list_del();
+   	user_list_del();
 
 	let serch_fio = document.querySelector("#serch_fio");
 	let serch_offi = document.querySelector("#serch_offi");
@@ -149,11 +144,7 @@ function KeyEditUser_click(){
 		return;
 	};
 
-
-	win_user_list.classList.add('delete');
-	win_user_edit.classList.remove('delete');
-	win_user_edit_MOO.classList.add('delete');
-    win_user_MOADD.classList.add('delete');
+	VisibleWin(win_list,win_user_edit);   
 
 	element = win_user_edit.querySelector(".wmain_zag");
 	if (element != null){
@@ -216,11 +207,7 @@ function KeyEditMOO_click(){
 		return;
 	};
 
-	win_user_list.classList.add('delete');
-	win_user_edit.classList.add('delete');
-	win_user_edit_MOO.classList.remove('delete');
-    win_user_MOADD.classList.add('delete');
-    win_showmo_list.classList.add('delete');
+	VisibleWin(win_list,win_user_edit_MOO);
 
 	element = win_user_edit_MOO.querySelector(".wmain_zag");
 	if (element != null){
@@ -334,11 +321,9 @@ function KeyADDMO_click(){
 		alert("Не выбран персонал");
 		return;
 	};
-    win_user_list.classList.add('delete');
-    win_user_edit.classList.add('delete');
-    win_user_edit_MOO.classList.add('delete');
-    win_user_MOADD.classList.remove('delete'); 
-    win_showmo_list.classList.add('delete');
+
+	VisibleWin(win_list,win_user_MOADD);
+
 
 	let Zag = win_user_MOADD.querySelector(".wmain_zag");
 	Zag.innerHTML = 'Добавить мед.осмотр для ' + Edit_FIO;
@@ -435,32 +420,171 @@ function FOK_KeyADDMOSave_click(str, param){
 	work_get_userlist();
 };
 
+/************************************* */
+/************************************* */
+/************************************* */
+function KeyADDMOListPeri_click(){
+	if (Edit_ID < 1){
+		alert("Не указан персонал");
+		return;
+	};
+	let LFormDate = new FormData;
+	LFormDate.append('VID', GIDUser);
+	LFormDate.append('VLogin', GUserLogin);
+    LFormDate.append('VSession', GSession);
+	LFormDate.append('VFunction', "ADDMOListPeri_get");
+	LFormDate.append('VMethod', "GET");
+	LFormDate.append('VSelID', Edit_ID);
+  	SendData('../fphp/phpsql.php', LFormDate, KeyADDMOListPeri_response, '', FERR_AddUser);
 
+	VisibleWin(win_list,win_user_moaddlistperi);
+};
+function KeyADDMOListPeri_response(str, param){
+	const arr = JSON.parse(str);
+    if (arr[0][0][0] != "OK"){
+      alert ('Oшибка - ' + arr[0][1]);     
+      return;
+    };
+	VisibleWin(win_list,win_user_moaddlistperi);	
+	win_user_moaddlistperi.style.width = "683px";
+	let form_grid = win_user_moaddlistperi.querySelector(".grid");  
+	let elems = form_grid.querySelectorAll(".grid-tr");
+	for (let elem of elems){
+		elem.remove();
+	}
+	for (let row = 1; row < arr[0].length; row++ ){
+		elemrow = document.createElement("div");
+		elemrow.className = "grid-tr";
+		elemrow.setAttribute("IDMOType", arr[0][row].IDMOType);
+		elemrow.setAttribute("MOTPeriodMon", arr[0][row].MOTPeriodMon);
+		form_grid.append(elemrow);
+		
+		elem1 = document.createElement("div");
+		elem1.className = "grid-td";
+		elem1.innerHTML = arr[0][row].MOTName;
+		elemrow.append(elem1);
 
+		elem1 = document.createElement("div");
+		elem1.className = "grid-td";
+		elem1.innerHTML = DateDBStrToDateUsStr(arr[0][row].DATETO);
+		elemrow.append(elem1);
 
+		elem1 = document.createElement("div");
+		elem1.className = "grid-td";
+		elem2 = document.createElement("input");
+		elem2.type = "checkbox";
+		elem2.onchange = chb_mo_enbaled;
+		elem1.append(elem2);
+		elemrow.append(elem1);
+
+		elem1 = document.createElement("div");
+		elem1.className = "grid-td";
+		elem2 = document.createElement("input");
+		elem2.type = "date";
+		elem2.setAttribute("ElemName", "DateFrom");
+		elem2.disabled = true;
+		elem2.onchange = DateOnChange;
+		
+		elem1.append(elem2);
+		elemrow.append(elem1);
+
+		elem1 = document.createElement("div");
+		elem1.className = "grid-td";
+		elem2 = document.createElement("input");
+		elem2.type = "date";
+		elem2.setAttribute("ElemName", "DateTo");
+		elem2.disabled = true;
+		elem1.append(elem2);
+		elemrow.append(elem1);
+	}
+};
+
+function chb_mo_enbaled(){
+	//let row = this.parentElement;
+	let row = this.closest(".grid-tr");
+	let DateFrom = row.querySelector('input[ElemName="DateFrom"]');
+	let DateTo = row.querySelector('input[ElemName="DateTo"]');
+	DateFrom.disabled = !this.checked;
+	DateTo.disabled = !this.checked;
+}
+
+function DateOnChange(){
+	let row = this.closest(".grid-tr");
+	if (row != null){
+		let Peri = row.getAttribute("MOTPeriodMon");
+		let DateFrom = row.querySelector('input[ElemName="DateFrom"]');
+		let DateTo = row.querySelector('input[ElemName="DateTo"]');
+
+		let s = DateAddMont(DateFrom, Peri);
+		if (s != ""){
+			DateTo.value = s;
+		}
+	};
+};
+
+function KeyADDMOListPeriSave_onclick(){
+	let form_grid = win_user_moaddlistperi.querySelector(".grid");  
+	let Rows = form_grid.querySelectorAll(".grid-tr");
+	let RowMain = [];
+
+	for (let i=0; i < Rows.length; i++){
+		let row = Rows[i];
+		let DateFrom = row.querySelector('input[ElemName="DateFrom"]');
+		let DateTo = row.querySelector('input[ElemName="DateTo"]');
+        let IDMOType  = row.getAttribute("IDMOType");
+		let Check = row.querySelector('input[type="checkbox"]');
+		if (Check.checked){
+
+			if (DateFrom.value == "") {
+				Alert ("Не указана дата МО");
+				return;
+			}
+			if (DateTo.value == "") {
+				Alert ("Не указана дата до");
+				return;
+			}
+			const RowOnly = [IDMOType, DateFrom.value, DateTo.value];
+			RowMain.push(RowOnly);
+		};	
+	};
+	const ResultData = JSON.stringify(RowMain);
+	let LFormDate = new FormData;
+	LFormDate.append('VID', GIDUser);
+	LFormDate.append('VLogin', GUserLogin);
+    LFormDate.append('VSession', GSession);
+	LFormDate.append('VFunction', "ADDMOListPeri_set");
+	LFormDate.append('VMethod', "SET");
+	LFormDate.append('VData', ResultData);
+	LFormDate.append('VIDUser', Edit_ID);
+    SendData('../fphp/phpsql.php', LFormDate, KeyADDMOListPeriSave_response, '', FERR_AddUser);
+}
+
+function KeyADDMOListPeriSave_response(str, para){
+  	const arr = JSON.parse(str);
+    if (arr[0][0] != "OK"){
+      alert ('Oшибка - ' + arr[0][1]);     
+      exit;
+    };
+};
+/************************************* */
+/************************************* */
+/************************************* */
 /************************************* */
 function KeyADDUser_click(){
 	element = win_user_edit.querySelector(".wmain_zag");
 	if (element != null){
 		element.innerHTML = "Добавить персонал"
 	}
-    win_user_list.classList.add('delete');
-    win_user_edit_MOO.classList.add('delete');	
-    win_user_edit.classList.remove('delete');
-	win_user_MOADD.classList.add('delete');	
-    win_showmo_list.classList.add('delete');
+
+	VisibleWin(win_list,win_user_edit);
+
 	Edit_Reg = "ADD";
 
 
 };
 
 function  KeyDelUser_click(){
-    win_user_list.classList.add('delete');
-    win_user_edit_MOO.classList.add('delete');	
-    win_user_edit.classList.add('delete');
-	win_user_MOADD.classList.add('delete');	
-    win_showmo_list.classList.add('delete');
-
+	VisibleWin(win_list,null);
 };
 
 
@@ -627,11 +751,8 @@ function KeyShowMO_click(){
 		return;
 	};
 
-    win_user_list.classList.add('delete');
-    win_user_edit.classList.add('delete');
-    win_user_edit_MOO.classList.add('delete');
-    win_user_MOADD.classList.add('delete'); 
-    win_showmo_list.classList.remove('delete');
+	VisibleWin(win_list, win_showmo_list);
+
 
 	let Zag = win_showmo_list.querySelector(".wmain_zag");
 	Zag.innerHTML = 'Список МО персонала "' + Edit_FIO + '"';

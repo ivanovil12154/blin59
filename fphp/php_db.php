@@ -40,6 +40,7 @@ function ExeSQL($VMASPARA){
 
   try{
     $pdo = ConnectPDO();
+    SaveLog($pdo, "Begin");
     if ($ResQuery != "ARRAY") {    
       $stmt = $pdo->prepare($ResQuery);
       if ($Param != null) {
@@ -59,9 +60,12 @@ function ExeSQL($VMASPARA){
         $rows = [["OK", $count, $query]];
       };  
     } else {
+      SaveLog($pdo, "Array");
       $resrow = [];
-      $countOK = 0;
+      $countOK = 0;      
+      SaveLog($pdo,   "count - ". count($ResARRAY));
       foreach ($ResARRAY as $ResSet) {
+        SaveLog($pdo, $ResSet["query"]);
         $resrow = [];
         $stmt = $pdo->prepare($ResSet["query"]);
         if ($ResSet["param"] != null) {
@@ -99,6 +103,13 @@ function ExeSQL($VMASPARA){
     $stmt = null; // Закрыть запрос
     $pdo = null;  // Закрыть соединение
   };   
+};
+
+
+function SaveLog($pdo, $Mess){
+  $stmt = $pdo->prepare("INSERT INTO u198290_blin.TLog (LogMess) VALUES (:Mess)");
+  $Param['Mess'] = $Mess;
+  $stmt->execute($Param);
 };
 
 /*************************************************** */
@@ -206,7 +217,15 @@ function GenSQL(&$Param, &$ResARRAY, $MASPARA){
   if ($VFunction == "InsertSession"  and $VMethod == "INSERT"){
     $Res = GetSQL_InsertSession($Param, $ResARRAY, $MASPARA);
   };   
+  if ($VFunction == "ADDMOListPeri_get"  and $VMethod == "GET"){
+    $Res = GetSQL_ADDMOListPeri_get($Param, $ResARRAY, $MASPARA);
+  };   
+  if ($VFunction == "ADDMOListPeri_set"  and $VMethod == "SET"){
+    $Res = GetSQL_ADDMOListPeri_set($Param, $ResARRAY, $MASPARA);
+  };   
 
+
+  
 
   Return $Res;
 };
@@ -567,9 +586,45 @@ function GetSQL_InsertSession(&$Param, &$ResARRAY, $MASPARA){
   return "ARRAY";
 };  
 
+function GetSQL_ADDMOListPeri_get(&$Param, &$ResARRAY, $MASPARA){
+  $sql = "SELECT TMOType.IDMOType, TMOType.MOTName, TMOType.MOTPeriodMon, \n"
+    . "(SELECT TMOReestr.MOReDateTo \n"
+    . " FROM u198290_blin.TMOReestr \n"
+    . " WHERE TMOReestr.MOReUserID = TUser.IDUser \n"
+    . " AND TMOReestr.MOReMOTypeID = TMOType.IDMOType\n"
+    . " ORDER BY TMOReestr.MOReDateTo DESC\n"
+    . " LIMIT 1) AS DATETO\n"
+    . "FROM u198290_blin.TUser\n"
+    . "INNER JOIN u198290_blin.TMOObligatory ON TUser.IDUser = TMOObligatory.MOObUserID\n"
+    . "INNER JOIN u198290_blin.TMOType ON TMOObligatory.MOMoMOTypeID = TMOType.IDMOType\n"
+    . "WHERE TUser.IDUser = :UID\n"
+    . "AND TMOType.MOTPeriodMon > 0\n"
+    . "ORDER BY TMOType.MOTOrder ";
+  $para["UID"] = $MASPARA['VSelID'];    
+  array_push($ResARRAY, array("query" => $sql, "param" =>$para));
+  return "ARRAY";
+};
 
+function GetSQL_ADDMOListPeri_set(&$Param, &$ResARRAY, $MASPARA){
+  $ResData = $MASPARA["VData"];
+  $ResMas = json_decode($ResData, false);
+  $i = 0;
+  foreach ($ResMas as $ResRow) {
+    $sql = "INSERT INTO u198290_blin.TMOReestr ".
+         "(MOReUserID, MOReMOTypeID, MOReDateFrom, MOReDateTo, MOReAuthorUserID) ".
+         " VALUES ". 
+         "(:MOReUserID, :MOReMOTypeID, :MOReDateFrom, :MOReDateTo, :MOReAuthorUserID)";
 
-
+    $para['MOReUserID'] = $MASPARA["VIDUser"];
+    $para['MOReMOTypeID'] = $ResRow[0];
+    $para['MOReDateFrom'] = $ResRow[1];
+    $para['MOReDateTo'] = $ResRow[2];
+    $para['MOReAuthorUserID'] = $MASPARA["VID"];
+    array_push($ResARRAY, array("query" => $sql, "param" =>$para));    
+  };
+  return "ARRAY";
+//  return ;
+};  
 
 /**/
 

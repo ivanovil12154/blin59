@@ -57,6 +57,9 @@
         <div class="custom-button" role="button" tabindex="1" onclick="KeyADDMO_click()">
             Добавить мед.осмотр
         </div>
+        <div class="custom-button" role="button" tabindex="1" onclick="KeyADDMOListPeri_click()">
+            Добавить MO переод.
+        </div>
         <div class="custom-button" role="button" tabindex="1" onclick="KeyShowMO_click()">
             Просмотр мед.осмотров
         </div>
@@ -258,10 +261,48 @@
 
       </div>
     </div>  
+<!--*******************  WiNDOWS **********************     -->        
+<!--*******************   MO ADD LIST **********************     -->        
+    <div id=win_user_moaddlistperi class="win_list">
+        <div class="wmain_zag">
+            Добавить МО списком - 
+        </div>
+        <div class="grid">
+            <div class="grid-tr-0">
+                <div class = "grid-td">МО</div>
+                <div class = "grid-td">Дата до</div>
+                <div class = "grid-td">Зап. нов</div>
+                <div class = "grid-td">Дата МО</div>
+                <div class = "grid-td">Дата до</div>
+            </div>
+<!--            
+            <div class="form_edit_c0">Фамилия И.О.</div>
+            <div>
+                <input type="checkbox" class="edit_control">
+            </div>
+            <div class="form_edit_c0">Фамилия И.О.</div>
+            <div>
+                <input type="checkbox" name="fio" class="edit_control" placeholder="Фамилия И.О.">
+            </div>
+-->
+        </div>
+        <div>
+            <div class="custom-button" role="button" tabindex="0" onclick="KeyADDMOListPeriSave_onclick()">
+                Сохранить
+            </div>
+            <div class="custom-button" role="button" tabindex="0" onclick="work_get_userlist()">
+                Отмена
+            </div>
+        </div>
+    </div>
+<!--*******************  WiNDOWS **********************     -->        
+<!--*******************   User Edit MO Obligate **********************     -->        
+
 </div>    
 </div>
 <div class="footer"></div> 
 
+<script src="../js/modul/general_fun.js"></script>
 <script src="../js/work_index.js"></script>
 <script src="../js/modul/xmls.js"></script>
 <script src="../js/work_user_sp.js"></script>

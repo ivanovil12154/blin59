@@ -1,6 +1,23 @@
 /*****************************************************/
 /*******        Редакт.Добавить               ********/
 /*****************************************************/
+.form_grid {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  margin: 10px;
+  vertical-align: middle;
+}  
+
+.form_grid * {
+    height: 30px;
+  	padding: 3px;
+    text-align: left; /* Контент размещаем в центре по горизонтали */
+    vertical-align: middle;
+}
+
+
+
+
 .form_edit {
   display: grid;
   grid-template-columns: 120px 1fr;
