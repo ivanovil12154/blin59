@@ -70,6 +70,10 @@
         <div class="custom-button" role="button" tabindex="1" onclick="KeyGoMainMenu_click()">
             Основное меню
         </div>
+        <div class="custom-button" role="button" tabindex="1" onclick="KeyPrivilege_click()">
+            Привилегии
+        </div>
+
 
     </div>
     <div class="wmain_right">

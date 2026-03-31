@@ -5,6 +5,8 @@ let win_user_edit_MOO = document.querySelector("#win_user_edit_MOO");
 let win_user_MOADD = document.querySelector("#win_user_MOADD");
 let win_showmo_list = document.querySelector("#win_showmo_list");
 let win_user_moaddlistperi = document.querySelector("#win_user_moaddlistperi"); 
+
+let form_priv = null;
      
 let win_list = [win_user_list, 
 	            win_user_edit, 
@@ -22,31 +24,641 @@ let Elem_List_MOType = document.querySelector("#ListMOType");
 let elem_grid_list_showmo = document.querySelector("#grid_list_showmo");
 
 
+class TKurUser{
+  	Elem_KUR = null;
+  	Edit_Reg = "ADD";
+  	Edit_ID = 0;
+  	Edit_FIO = '';
+  	SetKur(thiselem){
+		this.Edit_ID = thiselem.getAttribute("IDUser");
+		this.Edit_FIO = thiselem.getAttribute("UserFIO");
+		let elements = win_user_list_grid.querySelectorAll(".grid-tr");
+		KurUser.Elem_KUR = null;
+		for (let i= 0; i< elements.length; i++){
+			let element = elements[i];
+			let vID = element.getAttribute("IDUser"); 
+			if (vID == this.Edit_ID) {
+				this.set_kur(element, "1");
+			} else if (element.getAttribute("SetKur") == "1") {
+				this.set_kur(element, "0");	
+			};		
+		};
+	};	
+	set_kur(element, zkur){
+		element.setAttribute("SetKur", zkur);
+		if (zkur == "1"){
+			element.classList.add('elem_kur');
+  			this.Elem_KUR = element;
+		} else {
+      		element.classList.remove('elem_kur');
+		};
+	};
+};
+let KurUser = new TKurUser;
+
+class TUsersList{
+	GetSpis(){
+		VisibleWin(win_list, win_user_list)   
+
+		Grid_Del_All_Row(win_user_list_grid, ".grid-tr");
+
+		let serch_fio = document.querySelector("#serch_fio");
+		let serch_offi = document.querySelector("#serch_offi");
+		let serch_prof = document.querySelector("#serch_prof");
+
+		let LFormDate = new FormData;
+		LFormDate.append('VID', GIDUser);
+		LFormDate.append('VLogin', GUserLogin);
+		LFormDate.append('VFunction', "GetSpisUserShot");
+		LFormDate.append('VMethod', "GET");
+		LFormDate.append('VSearchFIO', serch_fio.value);
+		LFormDate.append('VSearchOffi', serch_offi.value);
+		LFormDate.append('VSearchProf', serch_prof.value);
+	
+		LFormDate.append('VSelID', "");	
+     
+    	SendData('../fphp/phpsql.php', LFormDate, this.FOK_GetUserList1, '', FERR_Error);
+	};
+
+    FOK_GetUserList1(str, param){
+	  	const arr = JSON.parse(str);
+    	if (arr[0][0] != "OK"){
+      		alert ('Oшибка - ' + arr[0][1]);     
+      		return;
+    	};
+
+		let elem = null;
+    	let cr = arr.length;
+    	if (cr > 1){
+      		for (let r = 1; r < arr.length; r++) {
+        		let elemrow = document.createElement('div');
+        		elemrow.className = "grid-tr";
+				elemrow.setAttribute("IDUser", arr[r].IDUser);
+				elemrow.setAttribute("UserFIO", arr[r].UserNameS);
+				elemrow.addEventListener('click', function() {	
+					KurUser.SetKur(this);
+				})
+				elemrow.id = "ID-" + arr[r].IDUser;
+
+				win_user_list_grid.append(elemrow);
+
+        		elem = document.createElement('div');		  
+        		elem.className = 'grid-td';
+        		elem.innerHTML = arr[r].UserNameS;
+        		elemrow.append(elem);
+
+		        elem = document.createElement('div');		  
+        		elem.className = 'grid-td';
+        		elem.innerHTML = arr[r].ProfName;
+        		elemrow.append(elem);
+
+        		elem = document.createElement('div');		  
+        		elem.className = 'grid-td';
+        		elem.innerHTML = arr[r].OfName;
+        		elemrow.append(elem);
+      		};
+    	};
+	};
+}
+let UsersList = new TUsersList;
+//////////////////////////////////////////////////////////////////////////
+class TUserEdit{
+	KeyADDUser_click(){
+		let element = win_user_edit.querySelector(".wmain_zag");
+		if (element != null){
+			element.innerHTML = "Добавить персонал"
+		}
+		VisibleWin(win_list,win_user_edit);
+		KurUser.Edit_Reg = "ADD";
+	};
+
+	KeyEditUser_click(){
+	    if (KurUser.Edit_ID < 1) {
+  			alert("Персонал не определен")
+			return;
+		};
+
+		VisibleWin(win_list,win_user_edit);   
+
+		let element = win_user_edit.querySelector(".wmain_zag");
+		if (element != null){
+			element.innerHTML = "Изменить данные персонала"
+		}
+
+		let LFormDate = new FormData;
+		LFormDate.append('VID', GIDUser);
+		LFormDate.append('VLogin', GUserLogin);
+    	LFormDate.append('VSession', GSession);
+		LFormDate.append('VFunction', "GetUserFull");
+		LFormDate.append('VMethod', "GET");
+		LFormDate.append('VSearchFIO', "");
+		LFormDate.append('VSelID', KurUser.Edit_ID);	
+    	SendData('../fphp/phpsql.php', LFormDate, this.FOK_GetUserFull, '', FERR_Error);
+	};
+	/************************************************ */
+	/************************************************ */
+	FOK_GetUserFull(str, param){
+  		const arr = JSON.parse(str);
+    	if (arr[0][0] != "OK"){
+      		alert ('Oшибка - ' + arr[0][1]);     
+      		returt;
+    	};
+		let fio = win_user_edit.querySelector('[name="fio"]');	
+		let prof = win_user_edit.querySelector('[name="prof"]');	
+		let offi = win_user_edit.querySelector('[name="offi"]');		
+		let login = win_user_edit.querySelector('[name="login"]');		
+		let password = win_user_edit.querySelector('[name="password"]');		
+		let status = win_user_edit.querySelector('[name="status"]');		
+		let date_birth = win_user_edit.querySelector('[name="date_birth"]');		
+		let date_begin = win_user_edit.querySelector('[name="date_begin"]');		
+
+		fio.value = arr[1].UserNameS;
+		prof.value = arr[1].UserProfID; 
+		offi.value = arr[1].UserOfficeID;
+		login.value = arr[1].UserLogin;
+		password.value = "****"
+		status.value = arr[1].UserStatus;
+		date_birth.value = arr[1].UserDateBirth;
+		date_begin.value = arr[1].UserDateBegin;
+
+		let element = win_user_edit.querySelector(".wmain_zag");
+		if (element != null){
+			element.innerHTML = "Изменить данные персонала - " + arr[1].UserNameS
+		};
+		KurUser.Edit_Reg = "EDIT";
+	};	
+
+	KeyADDUserSave_click(){		
+		let fio = win_user_edit.querySelector('[name="fio"]');	
+		let prof = win_user_edit.querySelector('[name="prof"]');	
+		let offi = win_user_edit.querySelector('[name="offi"]');		
+		let login = win_user_edit.querySelector('[name="login"]');		
+		let password = win_user_edit.querySelector('[name="password"]');		
+		let status = win_user_edit.querySelector('[name="status"]');		
+		let date_birth = win_user_edit.querySelector('[name="date_birth"]');		
+		let date_begin = win_user_edit.querySelector('[name="date_begin"]');		
+
+		let fio_v = fio.value;
+		let prof_v = prof.value;	
+		let offi_v = offi.value;		
+		let login_v = login.value;		
+		let password_v = password.value;		
+		let status_v = status.value;		
+		let date_birth_v = date_birth.value;		
+		let date_begin_v = date_begin.value;		
+
+		let LFormDate = new FormData;
+    	if (KurUser.Edit_Reg == "ADD") {
+	   		LFormDate.append('fio', fio_v);
+			LFormDate.append('prof', prof_v);
+			LFormDate.append('offi', offi_v);
+			LFormDate.append('login', login_v);
+			LFormDate.append('password', password_v);
+			LFormDate.append('status', status_v);
+			LFormDate.append('date_birth', date_birth_v);
+			LFormDate.append('date_begin', date_begin_v);
+        	SendData('../fphp/work/AddUser.php', LFormDate, FOK_OK, '', FERR_Error);
+		};
+    	if (KurUser.Edit_Reg == "EDIT") {
+			LFormDate.append('VID', GIDUser);
+			LFormDate.append('VLogin', GUserLogin);
+	    	LFormDate.append('VSession', GSession);
+			LFormDate.append('VFunction', "UdUser");
+			LFormDate.append('VMethod', "SET");
+
+			LFormDate.append('VUserName', fio_v);
+			LFormDate.append('VUserStatus', status_v);
+			LFormDate.append('VUserOfficeID', offi_v);
+			LFormDate.append('VUserProfID', prof_v);
+			LFormDate.append('VUserDateBirth', date_birth_v);
+			LFormDate.append('VUserDateBegin', date_begin_v);
+			LFormDate.append('VSelID', KurUser.Edit_ID);
+    		SendData('../fphp/phpsql.php', LFormDate, FOK_OK, '', FERR_Error);
+		};
+	};
+}
+let UserEdit = new TUserEdit;
+
+class TEditMOO{
+	KeyEditMOO_click(){
+    	if (KurUser.Edit_ID < 1) {
+  			alert("Персонал не определен")
+			return;
+		};
+
+		VisibleWin(win_list,win_user_edit_MOO);
+
+		let element = win_user_edit_MOO.querySelector(".wmain_zag");
+		if (element != null){
+			element.innerHTML = "Изменить данные персонала"
+		};
+
+		let LFormDate = new FormData;
+		LFormDate.append('VID', GIDUser);
+		LFormDate.append('VLogin', GUserLogin);
+    	LFormDate.append('VSession', GSession);
+		LFormDate.append('VFunction', "GetUserMOO");
+		LFormDate.append('VMethod', "GET");
+		LFormDate.append('VSearchFIO', "");
+		LFormDate.append('VSelID', KurUser.Edit_ID);	
+    	SendData('../fphp/phpsql.php', LFormDate, this.FOK_GetUserMOO, '', FERR_Error);
+	};
+
+	FOK_GetUserMOO(str, param){
+  		const arr = JSON.parse(str);
+    	if (arr[0][0] != "OK"){
+      		alert ('Oшибка - ' + arr[0][1]);     
+      		return;
+    	};
+	
+		let element = win_user_edit_MOO.querySelector(".wmain_zag");
+		if (element != null){
+			element.innerHTML = "Настройка обяз. мо для " + arr[1].UserNameS;
+		};
+
+	    let mainelem = win_user_edit_MOO.querySelector(".form_edit_MO");
+
+		Grid_Del_All_Row(mainelem, "*");
+
+	    let cr = arr.length;
+    	if (cr > 1){
+      		for (let r = 1; r < arr.length; r++) {
+      		  	let elemrow1 = document.createElement('div');
+        		elemrow1.className = "form_edit_c0";
+				elemrow1.innerHTML = arr[r].MOTName
+				mainelem.append(elemrow1);
+
+				let elemrow2 = document.createElement('div');
+
+				mainelem.append(elemrow2);
+
+				let eleminput = document.createElement('input');
+				eleminput.type = "checkbox";
+				eleminput.setAttribute("IDTypeMO", arr[r].IDMOType);
+				if (arr[r].Obligatory > 0) {
+          			eleminput.checked = true;
+				} else {
+          			eleminput.checked = false;
+				}
+				elemrow2.append(eleminput);
+      		};
+    	};
+	};
+
+	KeyEditMOOSave_click(){
+		const ObligMain = [];
+		let mainelem = win_user_edit_MOO.querySelector(".form_edit_MO");
+		let elements = mainelem.querySelectorAll("input");
+
+		let id_mo = null;
+		let oblic = null;
+		for (let i = 0; i < elements.length; i++){
+			id_mo = elements[i].getAttribute("IDTypeMO");
+			if (elements[i].checked){
+				oblic = 1;
+			} else {
+				oblic = 0;
+			};
+			const arr = [id_mo, oblic, KurUser.Edit_ID];
+			ObligMain.push(arr); 
+		}
+		const resultdata = JSON.stringify(ObligMain);
+
+		let LFormDate = new FormData;
+		LFormDate.append('VID', GIDUser);
+		LFormDate.append('VLogin', GUserLogin);
+    	LFormDate.append('VSession', GSession);
+		LFormDate.append('VFunction', "UdMOO");
+		LFormDate.append('VMethod', "SET");
+		LFormDate.append('VData', resultdata);
+		LFormDate.append('VIDUser', KurUser.Edit_ID);
+    	SendData('../fphp/phpsql.php', LFormDate, FOK_OK, '', FERR_Error);
+	};
+}
+let EditMOO = new TEditMOO;
+
+class TAddMO{
+	KeyADDMO_click(){
+		if ((KurUser.Edit_FIO == '') || (KurUser.Edit_ID == '')) {
+			alert("Не выбран персонал");
+			return;
+		};
+
+		VisibleWin(win_list,win_user_MOADD);
 
 
-let Elem_KUR = null;
-let Edit_Reg = "ADD";
-let Edit_ID = 0;
-let Edit_FIO = '';
+		let Zag = win_user_MOADD.querySelector(".wmain_zag");
+		Zag.innerHTML = 'Добавить мед.осмотр для ' + KurUser.Edit_FIO;
+
+		let date_from = win_user_MOADD.querySelector('[name="date_from"]');		
+		//	let date_Еo = win_user_MOADD.querySelector('[name="date_to"]');		
+
+    	const d = new Date();
+    	const dateStr =  d.getFullYear() + '-' + 
+	    	            (`0${d.getMonth() + 1}`).slice(-2) + '-' + 
+	       				(`0${d.getDate()}`).slice(-2);
+		//	date_from.value = dateStr;
+	};
+
+	ListMO_change(){
+		let elemdesc = win_user_MOADD.querySelector("#MO_desc");
+		let date_from = win_user_MOADD.querySelector('[name="date_from"]');		
+		let date_to = win_user_MOADD.querySelector('[name="date_to"]');		
+    	const selectedIndex = Elem_List_MOType.selectedIndex;
+    	const MOTPeriodMon = Elem_List_MOType.options[selectedIndex].getAttribute("MOTPeriodMon");
+    	const MOTOnlyLife = Elem_List_MOType.options[selectedIndex].getAttribute("MOTOnlyLife");
+    	const MOTOnlyBegin = Elem_List_MOType.options[selectedIndex].getAttribute("MOTOnlyBegin");
+		if (MOTPeriodMon > 0) {
+			elemdesc.innerHTML = "Периодич. - " + MOTPeriodMon + "мес."
+
+    		let dateStr = date_from.value;
+			if (dateStr != ""){
+	    		let parts = dateStr.split("-");
+     
+				let MontF = Number(parts[1]) - 1 + Number(MOTPeriodMon);	 
+	 			let Year = Math.trunc(MontF / 12);
+	 			let Mont = 0;
+	 			if (Year > 0) {
+	   				Mont = MontF - (Year * 12);
+	 			}
+	 			Year = Year + Number(parts[0]);
+     			const s =  Year+ '-' + 
+	            	    (`0${Mont + 1}`).slice(-2) + '-' + 
+	       				(`0${parts[2]}`).slice(-2);
+	 
+				date_to.value = s;
+			};	
+		} else if (MOTOnlyLife > 0) {
+			elemdesc.innerHTML = MOTOnlyLife + " -  в жизни";
+		} else if (MOTOnlyBegin > 0) {
+			elemdesc.innerHTML = MOTOnlyBegin + " -  при поступ.";
+		} else {
+			elemdesc.innerHTML = "";
+		};  
+	};
+
+	KeyADDMOSave_click(){
+		let date_from = win_user_MOADD.querySelector('[name="date_from"]').value;		
+		let date_to = win_user_MOADD.querySelector('[name="date_to"]').value;		
+		let DopInf = win_user_MOADD.querySelector('[name="DopInf"]').value;		
+		let MOType = Elem_List_MOType.value;
+		let LFormDate = new FormData;
+		if (date_to == ""){
+			alert("Необходимо указать дату до")
+			return;
+		};
+		if (date_from == ""){
+			alert("Необходимо указать дату c")
+			return;
+		};
+		if (MOType < 1) {
+			alert("Необходимо указать Мед.Осомотр")
+			return;
+		}
+
+		LFormDate.append('VID', GIDUser);
+		LFormDate.append('VLogin', GUserLogin);
+    	LFormDate.append('VSession', GSession);
+		LFormDate.append('VFunction', "ADDMO");
+		LFormDate.append('VMethod', "SET");
+		LFormDate.append('VSelID', KurUser.Edit_ID);
+		LFormDate.append('VMOType', MOType);
+		LFormDate.append('VDateFrom', date_from);
+		LFormDate.append('VDateTo', date_to);
+		LFormDate.append('VDopInf', DopInf);
+  		SendData('../fphp/phpsql.php', LFormDate, FOK_OK, '', FERR_Error);
+	};
+};
+let AddMO = new TAddMO;
+
+class TADDMOListPeri{
+	KeyADDMOListPeri_click(){
+		if (KurUser.Edit_ID < 1){
+			alert("Не указан персонал");
+			return;
+		};
+		let LFormDate = new FormData;
+		LFormDate.append('VID', GIDUser);
+		LFormDate.append('VLogin', GUserLogin);
+    	LFormDate.append('VSession', GSession);
+		LFormDate.append('VFunction', "ADDMOListPeri_get");
+		LFormDate.append('VMethod', "GET");
+		LFormDate.append('VSelID', KurUser.Edit_ID);
+  		SendData('../fphp/phpsql.php', LFormDate, this.KeyADDMOListPeri_response, '', FERR_Error);
+
+		VisibleWin(win_list,win_user_moaddlistperi);
+	};
+
+	KeyADDMOListPeri_response(str, param){
+		const arr = JSON.parse(str);
+    	if (arr[0][0][0] != "OK"){
+      		alert ('Oшибка - ' + arr[0][1]);     
+      	return;
+    	};
+		VisibleWin(win_list,win_user_moaddlistperi);	
+		win_user_moaddlistperi.style.width = "683px";
+		let form_grid = win_user_moaddlistperi.querySelector(".grid");  
+		Grid_Del_All_Row(form_grid, ".grid-tr");
+		for (let row = 1; row < arr[0].length; row++ ){
+			let elemrow = document.createElement("div");
+			elemrow.className = "grid-tr";
+			elemrow.setAttribute("IDMOType", arr[0][row].IDMOType);
+			elemrow.setAttribute("MOTPeriodMon", arr[0][row].MOTPeriodMon);
+			form_grid.append(elemrow);
+		
+			let elem1 = document.createElement("div");
+			elem1.className = "grid-td";
+			elem1.innerHTML = arr[0][row].MOTName;
+			elemrow.append(elem1);
+
+			elem1 = document.createElement("div");
+			elem1.className = "grid-td";
+			elem1.innerHTML = DateDBStrToDateUsStr(arr[0][row].DATETO);
+			elemrow.append(elem1);
+
+			elem1 = document.createElement("div");
+			elem1.className = "grid-td";
+				let elem2 = document.createElement("input");
+				elem2.type = "checkbox";
+//				elem2.onchange = chb_mo_enbaled;
+				elem2.addEventListener('change', function() {
+					ADDMOListPeri.chb_mo_enbaled(this);
+				});
+			elem1.append(elem2);
+			elemrow.append(elem1);
+
+			elem1 = document.createElement("div");
+			elem1.className = "grid-td";
+				elem2 = document.createElement("input");
+				elem2.type = "date";
+				elem2.setAttribute("ElemName", "DateFrom");
+				elem2.disabled = true;
+//				elem2.onchange = DateOnChange;
+				elem2.addEventListener('change', function() {
+					ADDMOListPeri.DateOnChange(this);
+				});
+			elem1.append(elem2);
+			elemrow.append(elem1);
+
+			elem1 = document.createElement("div");
+			elem1.className = "grid-td";
+				elem2 = document.createElement("input");
+				elem2.type = "date";
+				elem2.setAttribute("ElemName", "DateTo");
+				elem2.disabled = true;
+			elem1.append(elem2);
+			elemrow.append(elem1);
+		}
+	};
+
+	chb_mo_enbaled(elem){
+		//let row = this.parentElement;
+		let row = elem.closest(".grid-tr");
+		let DateFrom = row.querySelector('input[ElemName="DateFrom"]');
+		let DateTo = row.querySelector('input[ElemName="DateTo"]');
+		DateFrom.disabled = !elem.checked;
+		DateTo.disabled = !elem.checked;
+	}
+
+	DateOnChange(elem){
+		let row = elem.closest(".grid-tr");
+		if (row != null){
+			let Peri = row.getAttribute("MOTPeriodMon");
+			let DateFrom = row.querySelector('input[ElemName="DateFrom"]');
+			let DateTo = row.querySelector('input[ElemName="DateTo"]');
+
+			let s = DateAddMont(DateFrom, Peri);
+			if (s != ""){
+				DateTo.value = s;
+			}
+		};
+	};
+
+	KeyADDMOListPeriSave_onclick(){
+		let form_grid = win_user_moaddlistperi.querySelector(".grid");  
+		let Rows = form_grid.querySelectorAll(".grid-tr");
+		let RowMain = [];
+
+		for (let i=0; i < Rows.length; i++){
+			let row = Rows[i];
+			let DateFrom = row.querySelector('input[ElemName="DateFrom"]');
+			let DateTo = row.querySelector('input[ElemName="DateTo"]');
+        	let IDMOType  = row.getAttribute("IDMOType");
+			let Check = row.querySelector('input[type="checkbox"]');
+			if (Check.checked){
+
+				if (DateFrom.value == "") {
+					Alert ("Не указана дата МО");
+					return;
+				}
+				if (DateTo.value == "") {
+					Alert ("Не указана дата до");
+					return;
+				}
+				const RowOnly = [IDMOType, DateFrom.value, DateTo.value];
+				RowMain.push(RowOnly);
+			};	
+		};
+		const ResultData = JSON.stringify(RowMain);
+		let LFormDate = new FormData;
+		LFormDate.append('VID', GIDUser);
+		LFormDate.append('VLogin', GUserLogin);
+    	LFormDate.append('VSession', GSession);
+		LFormDate.append('VFunction', "ADDMOListPeri_set");
+		LFormDate.append('VMethod', "SET");
+		LFormDate.append('VData', ResultData);
+		LFormDate.append('VIDUser', KurUser.Edit_ID);
+    	SendData('../fphp/phpsql.php', LFormDate, FOK_OK, '', FERR_Error);
+	}
+};
+
+let ADDMOListPeri = new TADDMOListPeri;
+
+class TShowMOList{
+	KeyShowMO_click(){
+		if ((KurUser.Edit_FIO == '') || (KurUser.Edit_ID == '')) {
+			alert("Не выбран персонал");
+			return;
+		};
+
+		VisibleWin(win_list, win_showmo_list);
 
 
+		let Zag = win_showmo_list.querySelector(".wmain_zag");
+		Zag.innerHTML = 'Список МО персонала "' + KurUser.Edit_FIO + '"';
 
-work_get_proffesion_list(work_get_office_list);  
+		let LFormDate = new FormData;
+		LFormDate.append('VID', GIDUser);
+		LFormDate.append('VLogin', GUserLogin);
+    	LFormDate.append('VSession', GSession);
+		LFormDate.append('VFunction', "ShowMOList");
+		LFormDate.append('VMethod', "GET");
+		LFormDate.append('VSelID', KurUser.Edit_ID);
+  		SendData('../fphp/phpsql.php', LFormDate, this.FOK_KeyShowMO_click, '', FERR_Error);
+	};
 
-//work_get_office_list();  
-//work_get_userlist();
+	FOK_KeyShowMO_click(str, param){
+	  	const arr = JSON.parse(str);
+    	if (arr[0][0][0] != "OK"){
+      		alert ('Oшибка - ' + arr[0][1]);     
+      		return;
+    	};
+
+		Grid_Del_All_Row(elem_grid_list_showmo, ".grid-tr");
+    
+		let elem = null;
+    	let countsql = arr.length;
+    	if (countsql == 1){
+			let cr = arr[0].length;
+	  		if (cr > 1) {
+      			for (let r = 1; r < arr[0].length; r++) {
+        			let elemrow = document.createElement('div');
+        			elemrow.className = "grid-tr";
+					elemrow.setAttribute("IDMOReestr", arr[0][r].IDMOReestr);
+					//elemrow.onclick = row_user_click;
+    	        	elem_grid_list_showmo.append(elemrow);
+
+	        		elem = document.createElement('div');		  
+    	    		elem.className = 'grid-td_mo';
+        			elem.innerHTML = arr[0][r].MOTName;
+        			elemrow.append(elem);
+
+	        		elem = document.createElement('div');		  
+    	    		elem.className = 'grid-td_mo';
+        			elem.innerHTML = arr[0][r].MOReDateFrom;
+        			elemrow.append(elem);
+
+		       		elem = document.createElement('div');		  
+        			elem.className = 'grid-td_mo';
+        			elem.innerHTML = arr[0][r].MOReDateTo;
+	        		elemrow.append(elem);
+
+    	    		elem = document.createElement('div');		  
+        			elem.className = 'grid-td_mo';
+        			elem.innerHTML = arr[0][r].UserNameS + "(" + arr[0][r].MOReDateInser + ")";
+	        		elemrow.append(elem);
+		    	};
+    		};
+		};
+	};	
+}
+let ShowMOList = new TShowMOList;
+
+
+/****************************************************** */
+work_get_proffesion_list();  
 
 /*********************  Function Get ************************* */
 function work_get_proffesion_list(){
 	let LFormDate = new FormData;
     LFormDate.append('VNameSpis', 'ProfList');
-    SendData('../fphp/work/GetList.php', LFormDate, FOK_GetProfOffiList, 'prof', FERR_GetUserList);
+    SendData('../fphp/work/GetList.php', LFormDate, FOK_GetProfOffiList, 'prof', FERR_Error);
 };
 
 function work_get_office_list(){
 	let LFormDate = new FormData;
     LFormDate.append('VNameSpis', 'OffiLis');
-    SendData('../fphp/work/GetList.php',  LFormDate, FOK_GetProfOffiList, 'offi', FERR_GetUserList);
+    SendData('../fphp/work/GetList.php',  LFormDate, FOK_GetProfOffiList, 'offi', FERR_Error);
 };
 
 function GetMOTypeList(){
@@ -56,7 +668,7 @@ function GetMOTypeList(){
 	LFormDate.append('VSession', GSession);
 	LFormDate.append('VFunction', "GetMOTypeList"); 
 	LFormDate.append('VMethod', "GET");
-    SendData('../fphp/phpsql.php', LFormDate, FOK_GetProfOffiList, 'MOType', FERR_GetUserList);
+    SendData('../fphp/phpsql.php', LFormDate, FOK_GetProfOffiList, 'MOType', FERR_Error);
 };
 
 function FOK_GetProfOffiList(str, param){
@@ -65,9 +677,8 @@ function FOK_GetProfOffiList(str, param){
       alert ('Oшибка - ' + arr[0][1]);     
       exit;
     };
- //   alert ('Удача, кол-во записей - ' + arr[0][1]);     
 
-    elemselect = null;
+	elemselect = null;
 	if (param == 'prof'){
 		elemselect = win_user_edit_prof;
 	}else if (param == 'offi'){
@@ -91,7 +702,6 @@ function FOK_GetProfOffiList(str, param){
 					elemopt.value = arr[r][0];
 					elemopt.text = arr[r][1];
 				}
-				//elemopt.selected = true; // Делает этот пункт активным
 				elemselect.append(elemopt);
       		};
     	};
@@ -106,210 +716,24 @@ function FOK_GetProfOffiList(str, param){
 	};
 };
 
-
+//////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 function work_get_userlist(){
-//    alert ('запуск - '); 
-	VisibleWin(win_list, win_user_list)   
-
-   	user_list_del();
-
-	let serch_fio = document.querySelector("#serch_fio");
-	let serch_offi = document.querySelector("#serch_offi");
-	let serch_prof = document.querySelector("#serch_prof");
-
-	let LFormDate = new FormData;
-	LFormDate.append('VID', GIDUser);
-	LFormDate.append('VLogin', GUserLogin);
-	LFormDate.append('VFunction', "GetSpisUserShot");
-	LFormDate.append('VMethod', "GET");
-	LFormDate.append('VSearchFIO', serch_fio.value);
-	LFormDate.append('VSearchOffi', serch_offi.value);
-	LFormDate.append('VSearchProf', serch_prof.value);
-	
-	LFormDate.append('VSelID', "");	
-     
-    SendData('../fphp/phpsql.php', LFormDate, FOK_GetUserList, '', FERR_GetUserList);
+	UsersList.GetSpis();
 };	
 
 //////////////////////////////////////////////////////////////////////////
 function KeyEditUser_click(){
-    IDUser = null;
-	if (Elem_KUR != null){
-		IDUser = Elem_KUR.getAttribute("IDUser");
-	};
-
-    if (IDUser < 1) {
-  		alert("Персонал не определен")
-		return;
-	};
-
-	VisibleWin(win_list,win_user_edit);   
-
-	element = win_user_edit.querySelector(".wmain_zag");
-	if (element != null){
-		element.innerHTML = "Изменить данные персонала"
-	}
-
-	let LFormDate = new FormData;
-	LFormDate.append('VID', GIDUser);
-	LFormDate.append('VLogin', GUserLogin);
-    LFormDate.append('VSession', GSession);
-	LFormDate.append('VFunction', "GetUserFull");
-	LFormDate.append('VMethod', "GET");
-	LFormDate.append('VSearchFIO', "");
-	LFormDate.append('VSelID', IDUser);	
-	Edit_ID = IDUser;
-     
-    SendData('../fphp/phpsql.php', LFormDate, FOK_GetUserFull, '', FERR_GetUserList);
-};
-/************************************************ */
-function FOK_GetUserFull(str, param){
-  	const arr = JSON.parse(str);
-    if (arr[0][0] != "OK"){
-      alert ('Oшибка - ' + arr[0][1]);     
-      exit;
-    };
-//    alert ('Удача, кол-во записей - ' + arr[0][1]);     
-	let fio = win_user_edit.querySelector('[name="fio"]');	
-	let prof = win_user_edit.querySelector('[name="prof"]');	
-	let offi = win_user_edit.querySelector('[name="offi"]');		
-	let login = win_user_edit.querySelector('[name="login"]');		
-	let password = win_user_edit.querySelector('[name="password"]');		
-	let status = win_user_edit.querySelector('[name="status"]');		
-	let date_birth = win_user_edit.querySelector('[name="date_birth"]');		
-	let date_begin = win_user_edit.querySelector('[name="date_begin"]');		
-
-	fio.value = arr[1].UserNameS;
-	prof.value = arr[1].UserProfID; 
-	offi.value = arr[1].UserOfficeID;
-	login.value = arr[1].UserLogin;
-	password.value = "****"
-	status.value = arr[1].UserStatus;
-	date_birth.value = arr[1].UserDateBirth;
-	date_begin.value = arr[1].UserDateBegin;
-
-	element = win_user_edit.querySelector(".wmain_zag");
-	if (element != null){
-		element.innerHTML = "Изменить данные персонала - " + arr[1].UserNameS
-	};
-	Edit_Reg = "EDIT";
+	UserEdit.KeyEditUser_click();
 };	
 
 function KeyEditMOO_click(){
-    IDUser = null;
-	if (Elem_KUR != null){
-		IDUser = Elem_KUR.getAttribute("IDUser");
-	};
-
-    if (IDUser < 1) {
-  		alert("Персонал не определен")
-		return;
-	};
-
-	VisibleWin(win_list,win_user_edit_MOO);
-
-	element = win_user_edit_MOO.querySelector(".wmain_zag");
-	if (element != null){
-		element.innerHTML = "Изменить данные персонала"
-	};
-
-	let LFormDate = new FormData;
-	LFormDate.append('VID', GIDUser);
-	LFormDate.append('VLogin', GUserLogin);
-    LFormDate.append('VSession', GSession);
-	LFormDate.append('VFunction', "GetUserMOO");
-	LFormDate.append('VMethod', "GET");
-	LFormDate.append('VSearchFIO', "");
-	LFormDate.append('VSelID', IDUser);	
-	Edit_ID = IDUser;
-     
-    SendData('../fphp/phpsql.php', LFormDate, FOK_GetUserMOO, '', FERR_GetUserList);
-};
-
-function FOK_GetUserMOO(str, param){
-  	const arr = JSON.parse(str);
-    if (arr[0][0] != "OK"){
-      alert ('Oшибка - ' + arr[0][1]);     
-      exit;
-    };
-//    alert ('Удача, кол-во записей - ' + arr[0][1]);     
-	element = win_user_edit_MOO.querySelector(".wmain_zag");
-	if (element != null){
-		element.innerHTML = "Настройка обяз. мо для " + arr[1].UserNameS;
-	};
-
-
-
-    let mainelem = win_user_edit_MOO.querySelector(".form_edit_MO");
-
-    let elements =  mainelem.querySelectorAll("*");
-	for (let element of elements) {
-      element.remove();
-    };
-
-    let cr = arr.length;
-    if (cr > 1){
-      for (let r = 1; r < arr.length; r++) {
-        let elemrow1 = document.createElement('div');
-        elemrow1.className = "form_edit_c0";
-		elemrow1.innerHTML = arr[r].MOTName
-		mainelem.append(elemrow1);
-
-		let elemrow2 = document.createElement('div');
-
-		mainelem.append(elemrow2);
-
-		let eleminput = document.createElement('input');
-		eleminput.type = "checkbox";
-		eleminput.setAttribute("IDTypeMO", arr[r].IDMOType);
-		if (arr[r].Obligatory > 0) {
-          eleminput.checked = true;
-		} else {
-          eleminput.checked = false;
-		}
-		elemrow2.append(eleminput);
-      };
-    };
+	EditMOO.KeyEditMOO_click();
 };
 
 function KeyEditMOOSave_click(){
-	const ObligMain = [];
-	let mainelem = win_user_edit_MOO.querySelector(".form_edit_MO");
-	let elements = mainelem.querySelectorAll("input");
-
-	let id_mo = null;
-	let oblic = null;
-	for (let i = 0; i < elements.length; i++){
-		id_mo = elements[i].getAttribute("IDTypeMO");
-		if (elements[i].checked){
-			oblic = 1;
-		} else {
-			oblic = 0;
-		};
-		const arr = [id_mo, oblic, Edit_ID];
-		ObligMain.push(arr); 
-	}
-	const resultdata = JSON.stringify(ObligMain);
-
-	let LFormDate = new FormData;
-	LFormDate.append('VID', GIDUser);
-	LFormDate.append('VLogin', GUserLogin);
-    LFormDate.append('VSession', GSession);
-	LFormDate.append('VFunction', "UdMOO");
-	LFormDate.append('VMethod', "SET");
-	LFormDate.append('VData', resultdata);
-	LFormDate.append('VIDUser', Edit_ID);
-    SendData('../fphp/phpsql.php', LFormDate, FOK_UdMOO, '', FERR_AddUser);
+	EditMOO.KeyEditMOOSave_click();
 };
-function FOK_UdMOO(str, param){
-	const arr = JSON.parse(str);
-    if (arr[0][0][0] != "OK"){
-      alert ('Oшибка - ' + arr[0][1]);     
-      exit;
-    };
-	work_get_userlist();
-}
 
 /******************************************************** */
 /******************************************************** */
@@ -317,500 +741,51 @@ function FOK_UdMOO(str, param){
 /******************************************************** */
 
 function KeyADDMO_click(){
-	if ((Edit_FIO == '') || (Edit_ID == '')) {
-		alert("Не выбран персонал");
-		return;
-	};
-
-	VisibleWin(win_list,win_user_MOADD);
-
-
-	let Zag = win_user_MOADD.querySelector(".wmain_zag");
-	Zag.innerHTML = 'Добавить мед.осмотр для ' + Edit_FIO;
-
-	let date_from = win_user_MOADD.querySelector('[name="date_from"]');		
-//	let date_Еo = win_user_MOADD.querySelector('[name="date_to"]');		
-
-    const d = new Date();
-    const dateStr =  d.getFullYear() + '-' + 
-	                (`0${d.getMonth() + 1}`).slice(-2) + '-' + 
-	       			(`0${d.getDate()}`).slice(-2);
-//	date_from.value = dateStr;
+	AddMO.KeyADDMO_click();
 };
-
-
 
 function ListMO_change(){
-	let elemdesc = win_user_MOADD.querySelector("#MO_desc");
-	let date_from = win_user_MOADD.querySelector('[name="date_from"]');		
-	let date_to = win_user_MOADD.querySelector('[name="date_to"]');		
-    const selectedIndex = Elem_List_MOType.selectedIndex;
-    const MOTPeriodMon = Elem_List_MOType.options[selectedIndex].getAttribute("MOTPeriodMon");
-    const MOTOnlyLife = Elem_List_MOType.options[selectedIndex].getAttribute("MOTOnlyLife");
-    const MOTOnlyBegin = Elem_List_MOType.options[selectedIndex].getAttribute("MOTOnlyBegin");
-	if (MOTPeriodMon > 0) {
-		elemdesc.innerHTML = "Периодич. - " + MOTPeriodMon + "мес."
-
-    	let dateStr = date_from.value;
-		if (dateStr != ""){
-	    	let parts = dateStr.split("-");
-     
-			let MontF = Number(parts[1]) - 1 + Number(MOTPeriodMon);	 
-	 		let Year = Math.trunc(MontF / 12);
-	 		let Mont = 0;
-	 		if (Year > 0) {
-	   			Mont = MontF - (Year * 12);
-	 		}
-	 		Year = Year + Number(parts[0]);
-     		const s =  Year+ '-' + 
-	                (`0${Mont + 1}`).slice(-2) + '-' + 
-	       			(`0${parts[2]}`).slice(-2);
-	 
-			date_to.value = s;
-		};	
-	} else if (MOTOnlyLife > 0) {
-		elemdesc.innerHTML = MOTOnlyLife + " -  в жизни";
-
-	} else if (MOTOnlyBegin > 0) {
-		elemdesc.innerHTML = MOTOnlyBegin + " -  при поступ.";
-	} else {
-		elemdesc.innerHTML = "";
-	};  
+	AddMO.ListMO_change();
 };
-
 
 function KeyADDMOSave_click(){
-	let date_from = win_user_MOADD.querySelector('[name="date_from"]').value;		
-	let date_to = win_user_MOADD.querySelector('[name="date_to"]').value;		
-	let DopInf = win_user_MOADD.querySelector('[name="DopInf"]').value;		
-	let MOType = Elem_List_MOType.value;
-	let LFormDate = new FormData;
-	if (date_to == ""){
-		alert("Необходимо указать дату до")
-		return;
-	};
-	if (date_from == ""){
-		alert("Необходимо указать дату c")
-		return;
-	};
-	if (MOType < 1) {
-		alert("Необходимо указать Мед.Осомотр")
-		return;
-	}
-
-	LFormDate.append('VID', GIDUser);
-	LFormDate.append('VLogin', GUserLogin);
-    LFormDate.append('VSession', GSession);
-	LFormDate.append('VFunction', "ADDMO");
-	LFormDate.append('VMethod', "SET");
-	LFormDate.append('VSelID', Edit_ID);
-	LFormDate.append('VMOType', MOType);
-	LFormDate.append('VDateFrom', date_from);
-	LFormDate.append('VDateTo', date_to);
-	LFormDate.append('VDopInf', DopInf);
-  	SendData('../fphp/phpsql.php', LFormDate, FOK_KeyADDMOSave_click, '', FERR_AddUser);
-};
-
-function FOK_KeyADDMOSave_click(str, param){
-	const arr = JSON.parse(str);
-    if (arr[0][0][0] != "OK"){
-      alert ('Oшибка - ' + arr[0][1]);     
-      return;
-    };
-	work_get_userlist();
+	AddMO.KeyADDMOSave_click();
 };
 
 /************************************* */
 /************************************* */
 /************************************* */
 function KeyADDMOListPeri_click(){
-	if (Edit_ID < 1){
-		alert("Не указан персонал");
-		return;
-	};
-	let LFormDate = new FormData;
-	LFormDate.append('VID', GIDUser);
-	LFormDate.append('VLogin', GUserLogin);
-    LFormDate.append('VSession', GSession);
-	LFormDate.append('VFunction', "ADDMOListPeri_get");
-	LFormDate.append('VMethod', "GET");
-	LFormDate.append('VSelID', Edit_ID);
-  	SendData('../fphp/phpsql.php', LFormDate, KeyADDMOListPeri_response, '', FERR_AddUser);
-
-	VisibleWin(win_list,win_user_moaddlistperi);
+	ADDMOListPeri.KeyADDMOListPeri_click();
 };
-function KeyADDMOListPeri_response(str, param){
-	const arr = JSON.parse(str);
-    if (arr[0][0][0] != "OK"){
-      alert ('Oшибка - ' + arr[0][1]);     
-      return;
-    };
-	VisibleWin(win_list,win_user_moaddlistperi);	
-	win_user_moaddlistperi.style.width = "683px";
-	let form_grid = win_user_moaddlistperi.querySelector(".grid");  
-	let elems = form_grid.querySelectorAll(".grid-tr");
-	for (let elem of elems){
-		elem.remove();
-	}
-	for (let row = 1; row < arr[0].length; row++ ){
-		elemrow = document.createElement("div");
-		elemrow.className = "grid-tr";
-		elemrow.setAttribute("IDMOType", arr[0][row].IDMOType);
-		elemrow.setAttribute("MOTPeriodMon", arr[0][row].MOTPeriodMon);
-		form_grid.append(elemrow);
-		
-		elem1 = document.createElement("div");
-		elem1.className = "grid-td";
-		elem1.innerHTML = arr[0][row].MOTName;
-		elemrow.append(elem1);
-
-		elem1 = document.createElement("div");
-		elem1.className = "grid-td";
-		elem1.innerHTML = DateDBStrToDateUsStr(arr[0][row].DATETO);
-		elemrow.append(elem1);
-
-		elem1 = document.createElement("div");
-		elem1.className = "grid-td";
-		elem2 = document.createElement("input");
-		elem2.type = "checkbox";
-		elem2.onchange = chb_mo_enbaled;
-		elem1.append(elem2);
-		elemrow.append(elem1);
-
-		elem1 = document.createElement("div");
-		elem1.className = "grid-td";
-		elem2 = document.createElement("input");
-		elem2.type = "date";
-		elem2.setAttribute("ElemName", "DateFrom");
-		elem2.disabled = true;
-		elem2.onchange = DateOnChange;
-		
-		elem1.append(elem2);
-		elemrow.append(elem1);
-
-		elem1 = document.createElement("div");
-		elem1.className = "grid-td";
-		elem2 = document.createElement("input");
-		elem2.type = "date";
-		elem2.setAttribute("ElemName", "DateTo");
-		elem2.disabled = true;
-		elem1.append(elem2);
-		elemrow.append(elem1);
-	}
-};
-
-function chb_mo_enbaled(){
-	//let row = this.parentElement;
-	let row = this.closest(".grid-tr");
-	let DateFrom = row.querySelector('input[ElemName="DateFrom"]');
-	let DateTo = row.querySelector('input[ElemName="DateTo"]');
-	DateFrom.disabled = !this.checked;
-	DateTo.disabled = !this.checked;
-}
-
-function DateOnChange(){
-	let row = this.closest(".grid-tr");
-	if (row != null){
-		let Peri = row.getAttribute("MOTPeriodMon");
-		let DateFrom = row.querySelector('input[ElemName="DateFrom"]');
-		let DateTo = row.querySelector('input[ElemName="DateTo"]');
-
-		let s = DateAddMont(DateFrom, Peri);
-		if (s != ""){
-			DateTo.value = s;
-		}
-	};
-};
-
 function KeyADDMOListPeriSave_onclick(){
-	let form_grid = win_user_moaddlistperi.querySelector(".grid");  
-	let Rows = form_grid.querySelectorAll(".grid-tr");
-	let RowMain = [];
-
-	for (let i=0; i < Rows.length; i++){
-		let row = Rows[i];
-		let DateFrom = row.querySelector('input[ElemName="DateFrom"]');
-		let DateTo = row.querySelector('input[ElemName="DateTo"]');
-        let IDMOType  = row.getAttribute("IDMOType");
-		let Check = row.querySelector('input[type="checkbox"]');
-		if (Check.checked){
-
-			if (DateFrom.value == "") {
-				Alert ("Не указана дата МО");
-				return;
-			}
-			if (DateTo.value == "") {
-				Alert ("Не указана дата до");
-				return;
-			}
-			const RowOnly = [IDMOType, DateFrom.value, DateTo.value];
-			RowMain.push(RowOnly);
-		};	
-	};
-	const ResultData = JSON.stringify(RowMain);
-	let LFormDate = new FormData;
-	LFormDate.append('VID', GIDUser);
-	LFormDate.append('VLogin', GUserLogin);
-    LFormDate.append('VSession', GSession);
-	LFormDate.append('VFunction', "ADDMOListPeri_set");
-	LFormDate.append('VMethod', "SET");
-	LFormDate.append('VData', ResultData);
-	LFormDate.append('VIDUser', Edit_ID);
-    SendData('../fphp/phpsql.php', LFormDate, KeyADDMOListPeriSave_response, '', FERR_AddUser);
+	ADDMOListPeri.KeyADDMOListPeriSave_onclick();
 }
 
-function KeyADDMOListPeriSave_response(str, para){
-  	const arr = JSON.parse(str);
-    if (arr[0][0] != "OK"){
-      alert ('Oшибка - ' + arr[0][1]);     
-      exit;
-    };
-};
 /************************************* */
 /************************************* */
 /************************************* */
 /************************************* */
-function KeyADDUser_click(){
-	element = win_user_edit.querySelector(".wmain_zag");
-	if (element != null){
-		element.innerHTML = "Добавить персонал"
-	}
-
-	VisibleWin(win_list,win_user_edit);
-
-	Edit_Reg = "ADD";
-
-
-};
 
 function  KeyDelUser_click(){
 	VisibleWin(win_list,null);
 };
 
-
-///////////////////////////////////////////////////////////////
-function user_list_del(){
-    let elements =  win_user_list_grid.querySelectorAll(".grid-tr");
-	for (let element of elements) {
-    element.remove();
-    };
-}
-///////////////////////////////////////////////////////////////
-function grid_del_row(RowElem){
-    let elements =  RowElem.querySelectorAll(".grid-tr");
-	for (let element of elements) {
-    element.remove();
-    };
-}
-
-/////////////////////////////////////////////////
-function FOK_GetUserList(str, param){
-  	const arr = JSON.parse(str);
-    if (arr[0][0] != "OK"){
-      alert ('Oшибка - ' + arr[0][1]);     
-      exit;
-    };
-//    alert ('Удача, кол-во записей - ' + arr[0][1]);     
-
-	let elem = null;
-    let cr = arr.length;
-    if (cr > 1){
-      for (let r = 1; r < arr.length; r++) {
-        let elemrow = document.createElement('div');
-        elemrow.className = "grid-tr";
-		elemrow.setAttribute("IDUser", arr[r].IDUser);
-		elemrow.setAttribute("UserFIO", arr[r].UserNameS);
-		elemrow.onclick = row_user_click;
-
-		elemrow.id = "ID-" + arr[r].IDUser;
-
-		win_user_list_grid.append(elemrow);
-
-        elem = document.createElement('div');		  
-        elem.className = 'grid-td';
-        elem.innerHTML = arr[r].UserNameS;
-        elemrow.append(elem);
-
-        elem = document.createElement('div');		  
-        elem.className = 'grid-td';
-        elem.innerHTML = arr[r].ProfName;
-        elemrow.append(elem);
-
-        elem = document.createElement('div');		  
-        elem.className = 'grid-td';
-        elem.innerHTML = arr[r].OfName;
-        elemrow.append(elem);
-      };
-    };
-};
-
-function row_user_click(){
-	IDUser = this.getAttribute("IDUser");
-	Edit_ID = this.getAttribute("IDUser");
-	Edit_FIO = this.getAttribute("UserFIO");
-	elements = win_user_list_grid.querySelectorAll(".grid-tr");
-	Elem_KUR = null;
-	for (let i= 0; i< elements.length; i++){
-		element = elements[i];
-		vID = element.getAttribute("IDUser"); 
-		if (vID == IDUser) {
-			set_kur(element, "1");
-		} else if (element.getAttribute("SetKur") == "1") {
-			set_kur(element, "0");	
-		};		
-	};
-};
-
-function set_kur(element, zkur){
-	element.setAttribute("SetKur", zkur);
-	if (zkur == "1"){
-		element.classList.add('elem_kur');
-
-		
-  		Elem_KUR = element;
-	} else {
-      	element.classList.remove('elem_kur');
-	};
-};
-
-
-
-function FERR_GetUserList(str, param){
-	alert ('Ошибка')
-	return;
-};
-
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 function KeyADDUserSave_click(){
-	let fio = win_user_edit.querySelector('[name="fio"]');	
-	let prof = win_user_edit.querySelector('[name="prof"]');	
-	let offi = win_user_edit.querySelector('[name="offi"]');		
-	let login = win_user_edit.querySelector('[name="login"]');		
-	let password = win_user_edit.querySelector('[name="password"]');		
-	let status = win_user_edit.querySelector('[name="status"]');		
-	let date_birth = win_user_edit.querySelector('[name="date_birth"]');		
-	let date_begin = win_user_edit.querySelector('[name="date_begin"]');		
-
-	let fio_v = fio.value;
-	let prof_v = prof.value;	
-	let offi_v = offi.value;		
-	let login_v = login.value;		
-	let password_v = password.value;		
-	let status_v = status.value;		
-	let date_birth_v = date_birth.value;		
-	let date_begin_v = date_begin.value;		
-
-	let LFormDate = new FormData;
-    if (Edit_Reg == "ADD") {
-	   	LFormDate.append('fio', fio_v);
-		LFormDate.append('prof', prof_v);
-		LFormDate.append('offi', offi_v);
-		LFormDate.append('login', login_v);
-		LFormDate.append('password', password_v);
-		LFormDate.append('status', status_v);
-		LFormDate.append('date_birth', date_birth_v);
-		LFormDate.append('date_begin', date_begin_v);
-        SendData('../fphp/work/AddUser.php', LFormDate, FOK_AddUser, '', FERR_AddUser);
-	};
-    if (Edit_Reg == "EDIT") {
-		LFormDate.append('VID', GIDUser);
-		LFormDate.append('VLogin', GUserLogin);
-    	LFormDate.append('VSession', GSession);
-		LFormDate.append('VFunction', "UdUser");
-		LFormDate.append('VMethod', "SET");
-
-		LFormDate.append('VUserName', fio_v);
-		LFormDate.append('VUserStatus', status_v);
-		LFormDate.append('VUserOfficeID', offi_v);
-		LFormDate.append('VUserProfID', prof_v);
-		LFormDate.append('VUserDateBirth', date_birth_v);
-		LFormDate.append('VUserDateBegin', date_begin_v);
-		LFormDate.append('VSelID', Edit_ID);
-    	SendData('../fphp/phpsql.php', LFormDate, FOK_AddUser, '', FERR_AddUser);
-	};
+	UserEdit.KeyADDUserSave_click();
 };
 
-function FOK_AddUser(str, param){
-	const arr = JSON.parse(str);
-    if (arr[0][0] != "OK"){
-      alert ('Oшибка - ' + arr[0][1]);     
-      exit;
-    };
-//    alert ('Удача, кол-во записей - ' + arr[0][1]);     
-	work_get_userlist();
+function KeyADDUser_click(){
+	UserEdit.KeyADDUser_click();
 };
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
-
 function KeyShowMO_click(){
-	if ((Edit_FIO == '') || (Edit_ID == '')) {
-		alert("Не выбран персонал");
-		return;
-	};
-
-	VisibleWin(win_list, win_showmo_list);
-
-
-	let Zag = win_showmo_list.querySelector(".wmain_zag");
-	Zag.innerHTML = 'Список МО персонала "' + Edit_FIO + '"';
-
-	let LFormDate = new FormData;
-	LFormDate.append('VID', GIDUser);
-	LFormDate.append('VLogin', GUserLogin);
-    LFormDate.append('VSession', GSession);
-	LFormDate.append('VFunction', "ShowMOList");
-	LFormDate.append('VMethod', "GET");
-	LFormDate.append('VSelID', Edit_ID);
-  	SendData('../fphp/phpsql.php', LFormDate, FOK_KeyShowMO_click, '', FERR_AddUser);
-};
-
-function FOK_KeyShowMO_click(str, param){
-
-  	const arr = JSON.parse(str);
-    if (arr[0][0][0] != "OK"){
-      alert ('Oшибка - ' + arr[0][1]);     
-      exit;
-    };
-
-    grid_del_row(elem_grid_list_showmo);
-    
-	let elem = null;
-    let countsql = arr.length;
-    if (countsql == 1){
-		let cr = arr[0].length;
-	  	if (cr > 1) {
-      		for (let r = 1; r < arr[0].length; r++) {
-        		let elemrow = document.createElement('div');
-        		elemrow.className = "grid-tr";
-				elemrow.setAttribute("IDMOReestr", arr[0][r].IDMOReestr);
-				//elemrow.onclick = row_user_click;
-    	        elem_grid_list_showmo.append(elemrow);
-
-	        	elem = document.createElement('div');		  
-    	    	elem.className = 'grid-td_mo';
-        		elem.innerHTML = arr[0][r].MOTName;
-        		elemrow.append(elem);
-
-	        	elem = document.createElement('div');		  
-    	    	elem.className = 'grid-td_mo';
-        		elem.innerHTML = arr[0][r].MOReDateFrom;
-        		elemrow.append(elem);
-
-		       	elem = document.createElement('div');		  
-        		elem.className = 'grid-td_mo';
-        		elem.innerHTML = arr[0][r].MOReDateTo;
-	        	elemrow.append(elem);
-
-    	    	elem = document.createElement('div');		  
-        		elem.className = 'grid-td_mo';
-        		elem.innerHTML = arr[0][r].UserNameS + "(" + arr[0][r].MOReDateInser + ")";
-	        	elemrow.append(elem);
-		    };
-    	};
-	};
+	ShowMOList.KeyShowMO_click();
 };	
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -823,81 +798,231 @@ function KeyGoMainMenu_click(){
     postToSameTab("workindex.php", params);
 };
 
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+function FOK_OK(str, param){
+	const arr = JSON.parse(str);
+    if (arr[0][0][0] != "OK" && arr[0][0] != "OK"){
+      alert ('Oшибка - ' + arr[0][1]);     
+      exit;
+    };
+	work_get_userlist();
+}
 
-
-function FERR_AddUser(str, param){
+function FERR_Error(str, param){
 	alert ('Ошибка')
 	return;
 };	
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+class form_grid{
+	parent = null;
+	maint_elem = null;
+	chapter_zag = null;
+	chapter_search = null;
+	chapter_grid = null;
+	chapter_footer = null;
+	key_save = null;
+	key_cansel = null;
+	config_col = [];
+	config_row = [];
+	constructor(vparent){
+		this.parent = vparent;
+	}
+	build(){
+		this.maint_elem = document.createElement("div");
+		this.maint_elem.className = "win_list";
+		this.parent.append(this.maint_elem);
 
+		this.chapter_zag = document.createElement("div");
+		this.chapter_zag.className = "wmain_zag";
+		this.chapter_zag.innerHTML = "Привилегии";
+		this.maint_elem.append(this.chapter_zag);
 
-//////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
-function work_getmslist(){
-//   alert ('Введите логин');
-   
+		this.chapter_search = document.createElement("div");
+		this.chapter_search.className = "wmain_serch";
+		this.maint_elem.append(this.chapter_search);
 
-/*
+		this.chapter_grid = document.createElement("div");
+		this.chapter_grid.className = "grid";
+		this.maint_elem.append(this.chapter_grid);
 
-  let ElemLogin = WMIdent.querySelector('#WMIKS_LoginText');
-  let ElemPassword = WMIdent.querySelector('#WMIKS_PasswordText');
+		this.chapter_footer = document.createElement("div");
+		this.chapter_footer.className = "form_footer";
+		this.maint_elem.append(this.chapter_footer);
 
-  let TextLogin = ElemLogin.value.trim();
-  let TextPassword = ElemPassword.value.trim();
+		this.key_save = document.createElement("div");
+		this.key_save.className = "custom-button";
+		this.key_save.innerHTML = "Записать"
+		this.key_save.addEventListener('click', function() {
+					form_priv.key_save_onclick();
+		});
+		this.chapter_footer.append(this.key_save);
 
-//  TextLogin = 'Login';  
-//   TextPassword = 'Password';
+		this.key_cansel = document.createElement("div");
+		this.key_cansel.className = "custom-button";
+		this.key_cansel.innerHTML = "Отмена"
+		this.key_cansel.addEventListener('click', function() {
+					form_priv.key_cansel_onclick();
+		});
+		this.chapter_footer.append(this.key_cansel);
 
-  if (TextLogin == ''){
-    alert ('Введите логин');
-    return;
-  };
-  if (TextPassword == ''){
-		alert('Введите пароль');
-		return;
+	}
+
+	GetRows(){
+		let rows = this.chapter_grid.querySelectorAll(".grid-tr");
+		return rows;
 	};
-    */
+	GetIDRow(Row){
+		let ID = Row.getAttribute("IDRow");
+		return ID;
+	}
+	GetElemI(Row, Ind){
+		let Elem = Row.querySelector("[IndCol='" + Ind + "']");
+		return Elem;
+	}
+
+	key_save_onclick(){
+		let Rows = this.GetRows();
+		let Data = [];
+		let ch = null;
+		for (let i = 0; i < Rows.length; i++){
+			let ID = this.GetIDRow(Rows[i]);
+			let elemchb = this.GetElemI(Rows[i], 1);
+			if (elemchb.checked) {
+				ch = 'Y';
+			} else {
+				ch = 'N';
+			}
+			const arr = [ID, ch];
+			Data.push(arr);
+		};	
+		let LFormDate = new FormData;
+		LFormDate.append('VID', GIDUser);
+		LFormDate.append('VLogin', GUserLogin);
+    	LFormDate.append('VSession', GSession);
+		LFormDate.append('VFunction', "PrivSave");
+		LFormDate.append('VMethod', "SET");
+		LFormDate.append('VData', JSON.stringify(Data));
+		LFormDate.append('VDebug', "Y");
+
+		LFormDate.append('VIDUser', KurUser.Edit_ID);
+    	SendData('../fphp/phpsql.php', LFormDate, this.FOK_OK, '', FERR_Error);		
+	}
+
+	FOK_OK(str, param){
+		if (str != 'OF'){
+
+		};
+	};
+
+	key_cansel_onclick(){
+		alert ("Otmena");
+	}
+
+	buildRow0(){
+		let elemrow = document.createElement("div");
+		elemrow.className = "grid-tr-0";
+		this.chapter_grid.append(elemrow);
+		let elem;
+		let elemi;
+		for (let i=0; i< this.config_col.length; i++){
+			elem = document.createElement("div");
+			elem.className = "grid-td";
+			elemrow.append(elem);
+			elemi = document.createElement("div");
+			elemi.className = "item";
+			elemi.innerHTML = this.config_col[i].Zag;
+			elem.append(elemi);
+		}
+	}
+	GetPrivilegeUserList(str, para){
+  		const arr = JSON.parse(str);
+    	if (arr[0][0][0] != "OK"){
+      		alert ('Oшибка - ' + arr[0][1]);     
+			return;
+    	};
+		let g = [{Zag: "Привилегия",Type: "text",Field: "PrivName"},
+					{Zag: "Вкл",	Type: "checkbox",	Field: "priv_enabled"}];
+		form_priv.config_col = g;
+		form_priv.build();
+		form_priv.buildRow0();
+		form_priv.LoadData(arr[0], 1, arr[0].length - 1);
+	}
+
+
+	LoadData(data, begin, end){
+		for (let r=begin; r< end+1; r++){
+			let elemrow = document.createElement("div");
+			elemrow.className = "grid-tr";
+			elemrow.setAttribute("TypeElem", "Row");
+			elemrow.setAttribute("IndRow", r)
+			if (this.config_row.IDRow != ''){
+				elemrow.setAttribute("IDRow", data[r][this.config_row.IDRow]);
+			};
+			this.chapter_grid.append(elemrow);
+			let elem;
+			let elemi;
+			for (let i=0; i < this.config_col.length; i++){
+				elem = document.createElement("div");
+				elem.className = "grid-td";
+				elemrow.append(elem);
+				elemi = null;
+				if (this.config_col[i].Type == "text"){
+					elemi = document.createElement("div");
+					elemi.className = "item";
+					if (this.config_col[i].Field != ""){
+						elemi.innerHTML = data[r][this.config_col[i].Field];
+					}
+					elem.append(elemi);
+				}
+				if (this.config_col[i].Type == "button"){
+					elemi = document.createElement("input");
+					elemi.type = "button";
+					elem.append(elemi);
+				}
+				if (this.config_col[i].Type == "checkbox"){
+					elemi = document.createElement("input");
+					elemi.type = "checkbox";
+					if (this.config_col[i].Field != ""){
+						if (data[r][this.config_col[i].Field] = "0"){
+							elemi.checked = false;
+						} else {
+							elemi.checked = true;
+						}
+					}
+					elem.append(elemi);
+				}
+				if (this.config_col[i].Type == "date"){
+					elemi = document.createElement("input");
+					elemi.type = "date";
+					elem.append(elemi);
+				}
+				if (elemi != null){
+					elemi.setAttribute("TypeElem", "Cell");
+					elemi.setAttribute("IndCol", i);
+				}
+			}
+		}
+	};
+}
+
+function KeyPrivilege_click(){
+	elemr = document.querySelector(".wmain_right")
+	form_priv = new form_grid(elemr);
+	let g = [{Zag: "Привилегия",Type: "text",Field: "PrivName"},
+					{Zag: "Вкл",	Type: "checkbox",	Field: "priv_enabled"}];
+	form_priv.config_col = g;
+	let cr = {IDRow: "IDPriv"}
+	form_priv.config_row = cr;
 
 	let LFormDate = new FormData;
 	LFormDate.append('VID', GIDUser);
-     
-  SendData('../fphp/work/GetMsList.php', LFormDate, FunNLOK, '', FunNLError);
-};
+	LFormDate.append('VLogin', GUserLogin);
+    LFormDate.append('VSession', GSession);
+	LFormDate.append('VFunction', "GetPrivilegeUserList");
+	LFormDate.append('VMethod', "GET");
+	LFormDate.append('VSelID', KurUser.Edit_ID);	
+    SendData('../fphp/phpsql.php', LFormDate, form_priv.GetPrivilegeUserList, '', FERR_Error);
+}
 
-function FunNLOK(str, param){
- //   alert ('Удача - ' + str); 
-/*
-
-	const arr = JSON.parse(str);
-	if (arr.res == "OK") {
-      alert ('Удача - ' + arr.name); 
-	  document.location.href = '../workfol/workindex.php';
-
-	} else if (arr.res == "ErrorLogin") {
-		alert ("Ошибка, логин или пароль не найдены");
-	}
-*/
-
-/*
-	if (str == 'LClose'){
-		alert ('Логин занят')
-		return;
-	};
-
-	if (str != 'OK'){
-		alert ('Ошибка')
-		return;
-	};
-    alert ('Удача')
-	return;
-
-	OnClickCloseWinPred();
-	Llogin = param;
-    */
-};
-
-function FunNLError(str, param){
-	alert ('Ошибка')
-	return;
-};

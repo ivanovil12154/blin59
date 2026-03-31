@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="/css/style_work.css">
 -->
     <link rel="stylesheet" href="/css/style_general.css">
+    <link rel="stylesheet" href="/css/style_gridform.css">    
+
     <link rel="stylesheet" href="/css/style_main.css">
 
     <title>Масленица в Березниках</title>
@@ -48,19 +50,8 @@
         <div>
             Новости
         </div>
-
         <div class="news_zag">
-            11.03.2026 Не знаю что писать
-        </div>
-        <div class="news_body">
-            Тут необходимо что то написать, пока не знаю что
-        </div>
-
-        <div class="news_zag">
-            20.02.2026 Заработал сайт
-        </div>
-        <div class="news_body">
-            Всех приветствую наконецто заработал этот сайт. 
+            00.00.0000 Раздел пока пустой.
         </div>
     </div>  
 <!--*******************  WiNDOWS **********************     -->                
@@ -70,10 +61,7 @@
             Меню
         </div>
         <div class="menu_body">
-            Мороженное можно установить картинку. очень вкусно
-        </div>
-        <div class="menu_body">
-            Блины еще вкуснее
+            Раздел пока пустой
         </div>
     </div>  
 
@@ -83,9 +71,7 @@
             Контакты
         </div>
         <div class="kont_body">
-            8(912)13123123  Директор <br>
-            8(912)13123123  Зам директора <br>
-            8(912)13123123  Зам зама директора <br>
+            Раздел пока пустой
         </div>
     </div>  
 
@@ -95,9 +81,7 @@
             Вакансии
         </div>
         <div class="vaka_body">
-            Директор - зарплата огог какая<br>
-            Зам директора - помогает тому кому нечего делать<br>
-            Зам зама директора - проверка<br>
+            Пока нет вакансий<br>
         </div>
     </div>  
 <!--*******************  Offers  **********************     -->        
@@ -107,54 +91,47 @@
         </div>
 
         <div class="offers_zag">
-            11.03.2026 Игорь
+            00.00.0000
         </div>
         <div class="offers_body">
-            Кафе отличное, только нет сайта. Пригласите сделаю
-        </div>
-
-        <div class="offers_zag">
-            20.02.2026 Сергей
-        </div>
-        <div class="offers_body">
-            Класное кафе, очень все пондравилось
+            Пока нет предложений.
         </div>
     </div>  
 
    <!--*******************   get_offers **********************     -->        
-    <div id=win_offers_get>
+    <div id=win_mess_gost>
         <div class="wmain_zag">
             Обратная связь
         </div>
-        <div class="form_offers">
+        <div class="form_edit">
             <div class="form_edit_c0">Имя</div>
             <div>
-                <input type="text" name="fio" id="name" class="edit_control" placeholder="Имя">
+                <input type="text" IDField="name" class="edit_control" placeholder="Имя">
             </div>
             <div class="form_edit_c0">Приватность</div>
-            <div><select id="UserEditProf" name="prof" class= "edit_control_select" size="1">
+            <div><select IDField="private" class= "edit_control_select" size="1">
                     <option value="0">Не публиковать (для администрации) </option>
                     <option value="1">Опубликовать </option>
                 </select>
             </div>
             <div class="form_edit_c0">Электронная почта</div>
             <div>
-                <input type="text" name="fio" id="name" class="edit_control" placeholder="email">
+                <input type="text" IDField="email" class="edit_control" placeholder="email">
             </div>
             <div class="form_edit_c0">Телефон</div>
             <div>
-                <input type="text" name="fio" id="name" class="edit_control" placeholder="телефон">
+                <input type="text" IDField="tele" class="edit_control" placeholder="телефон">
             </div>
+            <div> Текст </div>
+            <textarea IDField="message" rows="5" cols="30">
+            </textarea>
+
         </div>
-        <div> Текст </div>
-        <textarea name="message" rows="5" cols="30">
-            
-        </textarea>
         <div>
-            <div class="button_offers" role="button" tabindex="0" onclick="KeyADDUserSave_click()">
+            <div class="button_offers" role="button" tabindex="0" onclick="KeyMessGost_click()">
                 Сохранить
             </div>
-            <div class="button_offers" role="button" tabindex="0" onclick="work_get_userlist()">
+            <div class="button_offers" role="button" tabindex="0" onclick="hintall()">
                 Отмена
             </div>
         </div>
@@ -162,7 +139,7 @@
 </div>    
 </div>
 <div class="footer"></div>
-
+<script src="/js/modul/xmls.js"></script>
 <script src="/js/index.js"></script>
 <script src="/js/modul/xmls.js"></script>
 

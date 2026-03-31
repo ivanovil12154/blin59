@@ -263,7 +263,7 @@ body {
   text-align: left;
 }
 /*******************************************************/
-#win_offers_get{
+#win_mess_gost{
   min-width: 350px; 
   margin: 5px;
   background-color: #fafbe4;
@@ -276,7 +276,7 @@ body {
   font-family: JuraLight;
   font-size: 20px;
   font-weight: 800;
-  
+      
   color: #000000;
   opacity: 0.9;  
 
@@ -305,8 +305,10 @@ body {
     display: inline-block;
     padding: 10px;
     margin: 5px;
-    width: 147px;
-    font-size: 20px;
+    width: 113px;
+    height: 17px;
+
+    font-size: 16px;
     /* font-style: italic; */
     background-color: #a71e1e;
     color: #e1ff01;
@@ -317,9 +319,14 @@ body {
     opacity: 0.6;
 }    
 
+.form_edit_c0{
+  text-align: left;
+}
+
 .edit_control{
   width: 214px;
   height: 16px;
+  text-align: left;
 }
 
 

@@ -129,6 +129,12 @@ function DateAddMont(SDate, AddMont){
   }
 };
 
+function Grid_Del_All_Row(RowElem, Select){ // .grid-tr
+  let elements =  RowElem.querySelectorAll(Select);
+	for (let element of elements) {
+    element.remove();
+  };
+}
 
 
 function CheckPassword(Pass1, Pass2, PassOld){

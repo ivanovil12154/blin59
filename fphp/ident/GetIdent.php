@@ -12,6 +12,12 @@
 
   require_once  "../php_db.php";  
   $RES = ExeSQL($PARAM);
+
+  if ($RES[0][0][0] == "OK" AND $RES[0][0][1] < 1) {
+    SaveLog(null, "LogPassword_Error Log:". $VLogin, null);
+    SaveLog(null, "LogPassword_Error Password:". $VPassword, null);
+  };  
+
   if ($RES[0][0][0] == "OK" AND $RES[0][0][1] == 1) {
     $PARAM['VFunction'] = 'InsertSession';
     $PARAM['VMethod'] = 'INSERT';
@@ -46,7 +52,6 @@
           "error" => "ErrorLogin");
   }; 
   echo json_encode($arr);
-
 //  exit;
 
 /*

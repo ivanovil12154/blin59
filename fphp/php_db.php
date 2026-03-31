@@ -1,5 +1,6 @@
 <?php
-$MASPARA = null;
+$MASPARA = [];
+
 function ExeSQL($VMASPARA){
   $MASPARA = null;
   if ($VMASPARA == null){
@@ -26,6 +27,9 @@ function ExeSQL($VMASPARA){
 
   $ResQuery = GenSQL($Param, $ResARRAY, $MASPARA);
 
+
+  
+
   if ($ResQuery == ''){
     $rows = [["ERROR", "NotMethod", $VFunction, $VMethod]];
     return $rows;
@@ -38,10 +42,13 @@ function ExeSQL($VMASPARA){
     exit;
   }
 
+  $pdo = null; 
+  $Query = null;
   try{
     $pdo = ConnectPDO();
-    SaveLog($pdo, "Begin");
+//    SaveLog($pdo, "Begin", $MASPARA['VSession']);
     if ($ResQuery != "ARRAY") {    
+      $Query = $ResQuery;
       $stmt = $pdo->prepare($ResQuery);
       if ($Param != null) {
         $stmt->execute($Param);
@@ -60,13 +67,19 @@ function ExeSQL($VMASPARA){
         $rows = [["OK", $count, $query]];
       };  
     } else {
-      SaveLog($pdo, "Array");
+//      SaveLog($pdo, "Array", $MASPARA['VSession']);
       $resrow = [];
       $countOK = 0;      
-      SaveLog($pdo,   "count - ". count($ResARRAY));
+  //    SaveLog($pdo,   "count - ". count($ResARRAY), $MASPARA['VSession']);
       foreach ($ResARRAY as $ResSet) {
-        SaveLog($pdo, $ResSet["query"]);
+        if ($MASPARA['VDebug'] == 'Y') {
+          SaveLog($pdo, $ResSet["query"], $MASPARA['VSession']);
+          if ($ResSet["doppar"] != ''){
+            SaveLog($pdo, "doppar - " . $ResSet["doppar"], $MASPARA['VSession']);
+          };
+        };  
         $resrow = [];
+        $Query = $ResSet["query"];
         $stmt = $pdo->prepare($ResSet["query"]);
         if ($ResSet["param"] != null) {
           $stmt->execute($ResSet["param"]);
@@ -97,7 +110,9 @@ function ExeSQL($VMASPARA){
     }  
     return $rows;
   } catch (Exception $e) {
-    $rows = [["ERROR", "PHP", $e->getMessage(), $query]];
+    $rows = [["ERROR", "PHP", "", ""]];
+    SaveLog($pdo, "Error - :". $e->getMessage(), $MASPARA['VSession']);
+    SaveLog($pdo, "Error SQL - :". $Query, $MASPARA['VSession']);
     return $rows;
   }finally {
     $stmt = null; // Закрыть запрос
@@ -106,10 +121,36 @@ function ExeSQL($VMASPARA){
 };
 
 
-function SaveLog($pdo, $Mess){
-  $stmt = $pdo->prepare("INSERT INTO u198290_blin.TLog (LogMess) VALUES (:Mess)");
-  $Param['Mess'] = $Mess;
-  $stmt->execute($Param);
+function SaveLog($pdo, $Mess, $Session){
+  if ($pdo == null) {
+    $vpdo = ConnectPDO();
+  } else {
+    $vpdo = $pdo;
+  };
+  
+
+  try {
+
+    $stmt = $vpdo->prepare("INSERT INTO u198290_blin.TLog (LogMess, LogAgent, LogAddr, LogSession) ". 
+         " VALUES " . 
+         "(:Mess, :Agent, :Addr, :Session)");
+    
+    $Param['Mess'] = $Mess;
+    $Param['Agent'] = $_SERVER['HTTP_USER_AGENT'];
+    $Param['Addr'] = $_SERVER['REMOTE_ADDR'];
+
+    if ($Session == null) {
+      $Param['Session'] = "";
+    } else {  
+      $Param['Session'] = $Session;
+    };  
+    $stmt->execute($Param);
+  }finally{
+    if ($pdo == null) {
+      $stmt = null; // Закрыть запрос
+      $vpdo = null;  // Закрыть соединение
+    }  
+  }    
 };
 
 /*************************************************** */
@@ -224,8 +265,18 @@ function GenSQL(&$Param, &$ResARRAY, $MASPARA){
     $Res = GetSQL_ADDMOListPeri_set($Param, $ResARRAY, $MASPARA);
   };   
 
+  if ($VFunction == "MessGostSet"  and $VMethod == "INSERT"){
+    $Res = GetSQL_MessGostSet($Param, $ResARRAY, $MASPARA);
+  };   
 
-  
+  if ($VFunction == "GetPrivilegeUserList"  and $VMethod == "GET"){
+    $Res = GetSQL_GetPrivilegeUserList($Param, $ResARRAY, $MASPARA);
+  };   
+
+  if ($VFunction == "PrivSave"  and $VMethod == "SET"){
+    $Res = GetSQL_PrivSave($Param, $ResARRAY, $MASPARA);
+  };   
+
 
   Return $Res;
 };
@@ -623,10 +674,54 @@ function GetSQL_ADDMOListPeri_set(&$Param, &$ResARRAY, $MASPARA){
     array_push($ResARRAY, array("query" => $sql, "param" =>$para));    
   };
   return "ARRAY";
-//  return ;
 };  
 
-/**/
 
+function GetSQL_MessGostSet(&$Param, &$ResARRAY, $MASPARA){
+  $sql = "INSERT INTO u198290_blin.TMessGost(MGUserName, MGTele, MGEMail, MGPrivat, MGMessage, MGAgent, MGAddr)" .
+  " VALUES ".
+  "(:MGUserName, :MGTele, :MGEMail, :MGPrivat, :MGMessage, :MGAgent, :MGAddr)";
+  $para['MGUserName'] = $MASPARA["MGUserName"];
+  $para['MGTele'] = $MASPARA["MGTele"];
+  $para['MGEMail'] = $MASPARA["MGEMail"];
+  $para['MGPrivat'] = $MASPARA["MGPrivat"];
+  $para['MGMessage'] = $MASPARA["MGMessage"];
+  $para['MGAgent'] = $_SERVER['HTTP_USER_AGENT'];
+  $para['MGAddr'] = $_SERVER['REMOTE_ADDR'];
+  array_push($ResARRAY, array("query" => $sql, "param" =>$para));    
+  return "ARRAY";  
+};
 
+function GetSQL_GetPrivilegeUserList($Param, &$ResARRAY, &$MASPARA){
+  $sql = "SELECT TPriv.IDPriv, TPriv.PrivName, TUserPrivReg.UPRUserID, " .
+  " CASE " .
+  "   WHEN TUserPrivReg.UPRUserID is not null THEN '1' " .
+  "   ELSE '0' " .
+  "  END AS priv_enabled" .
+         " FROM u198290_blin.TPriv " .  
+         " LEFT JOIN u198290_blin.TUserPrivReg ON TPriv.IDPriv = TUserPrivReg.UPRPrivID AND TUserPrivReg.UPRUserID = :IDUser";
+  $para['IDUser'] = $MASPARA["VSelID"];
+  array_push($ResARRAY, array("query" => $sql, "param" =>$para));    
+  return "ARRAY";  
+};
+
+function GetSQL_PrivSave(&$Param, &$ResARRAY, $MASPARA){
+  $ResData = $MASPARA["VData"];
+  $ResMas = json_decode($ResData, false);
+
+  unset($para);
+  $sql = "DELETE FROM u198290_blin.TUserPrivReg WHERE UPRUserID = :UserID";
+  $para['UserID'] = $MASPARA["VIDUser"];
+  array_push($ResARRAY, array("query" => $sql, "param" =>$para, "doppar" =>$ResData));
+  foreach ($ResMas as $ResRow) {
+    if ($ResRow[1] == "Y") {
+      $sql = "INSERT INTO u198290_blin.TUserPrivReg (UPRUserID, UPRPrivID) VALUES (:UserID, :PrivID)";
+      unset($para);
+      $para['UserID'] = $MASPARA["VIDUser"];
+      $para['PrivID'] = $ResRow[0];
+      array_push($ResARRAY, array("query" => $sql, "param" =>$para));
+    }  
+  };  
+  return "ARRAY";
+}
 ?>

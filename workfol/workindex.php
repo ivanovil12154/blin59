@@ -147,7 +147,7 @@
                 <input type="text" id="serch_fio">
                 <input type="text" id="serch_offise">
                 <input type="text" id="serch_mot">
-                <div class="custom-button" role="button"onclick="KeyMOOverdue_Click()">
+                <div class="custom-button" role="button"onclick="KeyFileList_Click()">
                       обновить
                 </div>
             </div>    
